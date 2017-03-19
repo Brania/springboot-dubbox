@@ -2,8 +2,8 @@ spring:
   redis:
     database: 0
     host: 127.0.0.1
-    #password: # Login password of the redis server.
-    port: 6379
+    password: iDoo0Hao123 # Login password of the redis server.
+    port: 7000
     timeout: 0
     pool:
       max-active: 8 #最大连接数

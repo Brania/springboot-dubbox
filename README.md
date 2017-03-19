@@ -18,9 +18,6 @@
 - 接口访问次数限制
 - okhttp3第三方接口调用
 - druid sql监控
-
----
-
 - 项目依赖Mysql、Zookeeper、Redis
 - platform-admin-web为管理平台接口
 - platform-mobile-client为移动客户端接口

@@ -2,13 +2,14 @@ spring:
   redis:
     database: 1
     host: 127.0.0.1
-    port: 6379
+    port: 7000
     timeout: 0
     pool:
       max-active: 300 #\u6700\u5927\u8FDE\u63A5\u6570
       max-idle: 100 #\u6700\u5927\u7A7A\u95F2\u8FDE\u63A5\u6570
       max-wait: -1 #\u6700\u5927\u7B49\u5F85\u65F6\u95F4
-      min-idle: 0 #\u521D\u59CB\u5316\u8FDE\u63A5\u6570
+      min-idle: 0
+    password: iDoo0Hao123 #\u521D\u59CB\u5316\u8FDE\u63A5\u6570
   http:
     multipart:
       enabled: true # Enable support of multi-part uploads.

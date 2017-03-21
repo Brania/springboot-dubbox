@@ -43,8 +43,8 @@ public class AbstractWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-            .userDetailsService(this.userDetailsService)
-            .passwordEncoder(this.passwordEncoder())
+                .userDetailsService(this.userDetailsService)
+                .passwordEncoder(this.passwordEncoder())
         ;
     }
 
@@ -66,15 +66,15 @@ public class AbstractWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity security) throws Exception {
-        security
-            .csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(new MyAuthenticationEntryPoint()).and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests()
-            .anyRequest().authenticated();
+        security.cors().and()
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(new MyAuthenticationEntryPoint()).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests()
+                .anyRequest().authenticated();
 
         // Custom JWT based security filter
         security
-            .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
 }

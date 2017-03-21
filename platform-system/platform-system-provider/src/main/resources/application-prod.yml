@@ -2,9 +2,9 @@ spring:
   # DataSource Config
   datasource:
     write:
-      url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+      url: jdbc:mysql://127.0.0.1:3306/GUAMS?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
       username: root
-      password: root
+      password: lifeV587
       driver-class-name: com.mysql.jdbc.Driver
       max-active: 20
       initial-size: 1
@@ -23,9 +23,9 @@ spring:
       # 合并多个DruidDataSource的监控数据
       #spring.datasource.useGlobalDataSourceStat=true
     read:
-      url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+      url: jdbc:mysql://127.0.0.1:3306/GUAMS?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
       username: root
-      password: root
+      password: lifeV587
       driver-class-name: com.mysql.jdbc.Driver
       max-active: 20
       initial-size: 1
@@ -56,10 +56,10 @@ spring:
       min-idle: 0 #初始化连接数
 
   rabbitmq:
-    host: localhost
+    host: 192.168.32.2
     port: 5672
-    username: admin
-    password: admin
+    username: guest
+    password: guest
     virtualHost: /
   mail:
     host: xxx

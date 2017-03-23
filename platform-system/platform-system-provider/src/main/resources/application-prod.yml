@@ -55,12 +55,12 @@ spring:
       max-wait: -1 #最大等待时间
       min-idle: 0 #初始化连接数
 
-  rabbitmq:
-    host: 192.168.32.2
-    port: 5672
-    username: guest
-    password: guest
-    virtualHost: /
+#  rabbitmq:
+#    host: 192.168.32.2
+#    port: 5672
+#    username: guest
+#    password: guest
+#    virtualHost: /
   mail:
     host: xxx
     port: 25

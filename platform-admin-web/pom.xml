@@ -77,7 +77,7 @@
                 <dubbo.registry.file>/data/zookeeper/web_admin.cache</dubbo.registry.file>
                 <dubbo.application.logger>slf4j</dubbo.application.logger>
                 <dubbo.logback.level>error</dubbo.logback.level>
-                <dubbo.monitor.protocol>registry</dubbo.monitor.protocol>
+                <dubbo.monitor.protocol> </dubbo.monitor.protocol>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>

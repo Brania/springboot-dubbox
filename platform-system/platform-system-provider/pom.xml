@@ -35,9 +35,9 @@
                 <dubbo.logback.level>info</dubbo.logback.level>
                 <dubbo.monitor.protocol></dubbo.monitor.protocol>
             </properties>
-            <!--<activation>-->
-            <!--<activeByDefault>true</activeByDefault>-->
-            <!--</activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <profile>
             <id>dev</id>
@@ -76,11 +76,11 @@
                 <dubbo.protocol.dubbo.port>20000</dubbo.protocol.dubbo.port>
                 <dubbo.application.logger>slf4j</dubbo.application.logger>
                 <dubbo.logback.level>error</dubbo.logback.level>
-                <dubbo.monitor.protocol> </dubbo.monitor.protocol>
+                <dubbo.monitor.protocol></dubbo.monitor.protocol>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
         </profile>
     </profiles>
 

@@ -2,7 +2,7 @@ spring:
   # DataSource Config
   datasource:
     write:
-      url: jdbc:mysql://127.0.0.1:3306/GUAMS?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+      url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
       username: root
       password: hodoo123
       driver-class-name: com.mysql.jdbc.Driver
@@ -23,7 +23,7 @@ spring:
       # 合并多个DruidDataSource的监控数据
       #spring.datasource.useGlobalDataSourceStat=true
     read:
-      url: jdbc:mysql://127.0.0.1:3306/GUAMS?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+      url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
       username: root
       password: hodoo123
       driver-class-name: com.mysql.jdbc.Driver
@@ -55,12 +55,12 @@ spring:
       max-wait: -1 #最大等待时间
       min-idle: 0 #初始化连接数
 
-  rabbitmq:
-    host: rabbitmq.docker.com
-    port: 5672
-    username: guest
-    password: guest
-    virtualHost: /
+#  rabbitmq:
+#    host: rabbitmq.docker.com
+#    port: 5672
+#    username: guest
+#    password: guest
+#    virtualHost: /
   mail:
     host: xxx
     port: 25

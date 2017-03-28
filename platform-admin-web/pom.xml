@@ -32,13 +32,13 @@
                 <dubbo.registry.file>tmp/web_admin.cache</dubbo.registry.file>
                 <dubbo.application.logger>slf4j</dubbo.application.logger>
                 <dubbo.logback.level>info</dubbo.logback.level>
-                <dubbo.monitor.protocol> </dubbo.monitor.protocol>
+                <dubbo.monitor.protocol></dubbo.monitor.protocol>
 
                 <access.log.appender>STDOUT</access.log.appender>
             </properties>
-            <!--<activation>-->
-                <!--<activeByDefault>true</activeByDefault>-->
-            <!--</activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
         <profile>
             <id>dev</id>
@@ -77,11 +77,11 @@
                 <dubbo.registry.file>/data/zookeeper/web_admin.cache</dubbo.registry.file>
                 <dubbo.application.logger>slf4j</dubbo.application.logger>
                 <dubbo.logback.level>error</dubbo.logback.level>
-                <dubbo.monitor.protocol> </dubbo.monitor.protocol>
+                <dubbo.monitor.protocol></dubbo.monitor.protocol>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <!--<activation>-->
+            <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
         </profile>
     </profiles>
 
@@ -91,6 +91,29 @@
             <artifactId>platform-common-web</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
     <build>

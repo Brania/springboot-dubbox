@@ -17,6 +17,17 @@ spring:
       location: /tmp # Intermediate location of uploaded files.
       max-file-size: 5Mb # Max file size. Values can use the suffixed "MB" or "KB" to indicate a Megabyte or Kilobyte size.
       max-request-size: 50Mb # Max request size. Values can use the suffixed "MB" or "KB" to indicate a Megabyte or Kilobyte size.
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/njxzc?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: hodoo123
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+
+
 
 server:
   port: 8080

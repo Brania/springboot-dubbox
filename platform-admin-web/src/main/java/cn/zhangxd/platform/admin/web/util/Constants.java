@@ -20,6 +20,9 @@ package cn.zhangxd.platform.admin.web.util;
  */
 public class Constants {
 
+
+    public static final String PAGE_SIZE = "10";
+
     /**
      * 院系编码前缀
      */

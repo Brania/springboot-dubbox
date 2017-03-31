@@ -37,8 +37,6 @@ public class AdClass extends IdEntity {
 
     private Boolean enabled;
 
-    private Date createTime;
-
     public String getCode() {
         return code;
     }
@@ -63,12 +61,4 @@ public class AdClass extends IdEntity {
         this.enabled = enabled;
     }
 
-    @Column(name = "create_time")
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

@@ -9,6 +9,7 @@
 package cn.zhangxd.platform.admin.web.util;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA
@@ -44,5 +45,19 @@ public abstract class IdEntity {
 
     public void setChecked(Boolean checked) {
         this.checked = checked;
+    }
+
+    /**
+     * 记录创建时间
+     */
+    private Date createTime;
+
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

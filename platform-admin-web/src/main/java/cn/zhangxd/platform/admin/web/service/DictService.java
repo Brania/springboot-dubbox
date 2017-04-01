@@ -11,7 +11,9 @@ package cn.zhangxd.platform.admin.web.service;
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,10 +29,17 @@ import java.util.Map;
 public interface DictService {
 
     /**
-     * 分页显示院系列表
+     * 分页查询院系列表
      * @param searchParams
      * @param paging
      * @return
      */
     Page<Depart> getDepartPages(final Map<String, Object> searchParams, Paging paging);
+
+    /**
+     * 查询所有院系列表
+     * @param sort
+     * @return
+     */
+    Iterable<Depart> findAll(Sort sort);
 }

@@ -22,14 +22,24 @@ import cn.zhangxd.platform.admin.web.repository.MajorRepository;
 import cn.zhangxd.platform.admin.web.repository.StudentRepository;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
+import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import cn.zhangxd.platform.admin.web.util.sequence.Sequence;
+import cn.zhangxd.platform.common.api.Paging;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 /**
@@ -61,8 +71,22 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
-    public Boolean save(Student student) {
-        return null;
+    public Student findOne(Long id) {
+        return studentRepository.findOne(id);
+    }
+
+    @Override
+    public Page<Student> getStudentPages(Map<String, Object> searchParams, Paging paging) {
+
+        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy());
+
+
+        return studentRepository.findAll(new Specification<Student>() {
+            @Override
+            public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                return null;
+            }
+        }, pageRequest);
     }
 
 
@@ -119,6 +143,7 @@ public class StudentServiceImpl implements StudentService {
                     } else {
                         major = new Major();
                         major.setEnabled(Boolean.TRUE);
+                        major.setCreateTime(createOrUpdateTime);
                         major.setName(s.getZy().trim());
                         StringJoiner sj = new StringJoiner("");
                         sj.add(Constants.MAJOR_CODE_PREFIX).add(sequence.nextSeq());
@@ -135,6 +160,7 @@ public class StudentServiceImpl implements StudentService {
                     } else {
                         depart = new Depart();
                         depart.setEnabled(Boolean.TRUE);
+                        depart.setCreateTime(createOrUpdateTime);
                         depart.setName(s.getYx().trim());
                         StringJoiner joiner = new StringJoiner("");
                         joiner.add(Constants.DEPART_CODE_PREFIX).add(sequence.nextSeq());
@@ -189,8 +215,6 @@ public class StudentServiceImpl implements StudentService {
 
                 studentRepository.save(student);
             });
-
-
         }
 
         return logImpExcel;

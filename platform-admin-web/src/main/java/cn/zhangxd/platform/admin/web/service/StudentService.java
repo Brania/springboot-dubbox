@@ -11,8 +11,11 @@ package cn.zhangxd.platform.admin.web.service;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
+import cn.zhangxd.platform.common.api.Paging;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA
@@ -27,7 +30,15 @@ import java.util.List;
 public interface StudentService {
 
 
-    Boolean save(Student student);
+    Student findOne(Long id);
+
+    /**
+     * 分页查询学生列表
+     * @param searchParams
+     * @param paging
+     * @return
+     */
+    Page<Student> getStudentPages(final Map<String, Object> searchParams, Paging paging);
 
     /**
      * 导入学生名单

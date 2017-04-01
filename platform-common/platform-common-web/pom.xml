@@ -70,6 +70,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- zookeeper start -->
         <dependency>
             <groupId>com.netflix.curator</groupId>

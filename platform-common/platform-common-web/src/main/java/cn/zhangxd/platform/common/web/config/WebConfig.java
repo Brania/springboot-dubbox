@@ -1,6 +1,7 @@
 package cn.zhangxd.platform.common.web.config;
 
 import ch.qos.logback.access.servlet.TeeFilter;
+import cn.zhangxd.platform.common.web.interceptor.LicenseInterceptor;
 import cn.zhangxd.platform.common.web.mapper.JsonMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.catalina.filters.RemoteIpFilter;
@@ -12,10 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 /**
  * WEB配置类
@@ -24,6 +22,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LicenseInterceptor()).addPathPatterns("/auth/token");
+    }
 
     /**
      * Remote ip filter remote ip filter.
@@ -118,6 +122,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 .allowedHeaders("*")
                 .allowedMethods("*")
                 .allowedOrigins("*");
-
     }
+
+
 }

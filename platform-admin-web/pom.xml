@@ -13,6 +13,8 @@
 
     <properties>
         <start-class>cn.zhangxd.platform.admin.web.WebAdminApplication</start-class>
+        <birt.version>4.4.0</birt.version>
+        <onbarccode.version>2.2.1</onbarccode.version>
     </properties>
 
     <profiles>
@@ -119,6 +121,34 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+
+        <!-- birt runtime start -->
+        <dependency>
+            <groupId>org.eclipse.birt.runtime</groupId>
+            <artifactId>org.eclipse.birt.runtime</artifactId>
+            <version>${birt.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.apache.poi</artifactId>
+                    <groupId>org.eclipse.birt.runtime</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.onbarcode.barcode.birt</groupId>
+            <artifactId>com.onbarcode.barcode.birt</artifactId>
+            <version>${onbarccode.version}</version>
         </dependency>
 
     </dependencies>

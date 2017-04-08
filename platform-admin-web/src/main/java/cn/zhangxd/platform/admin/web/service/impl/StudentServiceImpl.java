@@ -37,10 +37,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA
@@ -69,6 +66,56 @@ public class StudentServiceImpl implements StudentService {
 
     Sequence sequence = new Sequence(0, 0);
 
+    @Override
+    public Iterable<Student> findAll() {
+        return this.studentRepository.findAll();
+    }
+
+
+    @Override
+    public Student save(Student student) {
+
+        Date createOrUpdateTime = new Date();
+
+        if (null != student.getId()) {
+            student.setUpdateTime(createOrUpdateTime);
+        } else {
+            student = new Student();
+            student.setCreateTime(createOrUpdateTime);
+        }
+
+        student.setExamineeNo(student.getExamineeNo());
+        student.setAdmissionNo(student.getAdmissionNo());
+        student.setStudentNo(student.getStudentNo());
+        student.setName(student.getName());
+        student.setSex(student.getSex());
+        student.setNationality(student.getNationality());
+        student.setIdCard(student.getIdCard());
+        student.setMajor(student.getMajor());
+        // 院系必填
+        String departName = student.getDepart().getName().trim();
+        Depart depart = this.departRepository.findByName(departName);
+        if (null != depart) {
+            student.setDepart(student.getDepart());
+        } else {
+            depart = new Depart();
+            StringJoiner joiner = new StringJoiner("");
+            joiner.add(Constants.DEPART_CODE_PREFIX).add(sequence.nextSeq());
+            depart.setCode(joiner.toString());
+            depart.setName(departName);
+            depart = this.departRepository.save(depart);
+            student.setDepart(depart);
+        }
+
+        student.setAdClass(student.getAdClass());
+        student.setEntranceYear(student.getEntranceYear());
+        student.setFamilyAddress(student.getFamilyAddress());
+        student.setPostCode(student.getPostCode());
+        student.setLinkPerson(student.getLinkPerson());
+        student.setPrimaryPhone(student.getPrimaryPhone());
+        student.setBackupPhone(student.getBackupPhone());
+        return studentRepository.save(student);
+    }
 
     @Override
     public Student findOne(Long id) {

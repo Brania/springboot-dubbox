@@ -21,6 +21,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -57,6 +58,12 @@ public class StudentController {
     @GetMapping(value = "/{id}/detail")
     public Student findById(@PathVariable Long id) {
         return studentService.findOne(id);
+    }
+
+
+    @PostMapping(value = "/persist")
+    public Student saveOrUpdate(@Valid @RequestBody Student student) {
+        return studentService.save(student);
     }
 
     /**

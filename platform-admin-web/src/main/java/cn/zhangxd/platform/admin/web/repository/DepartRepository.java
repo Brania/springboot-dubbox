@@ -26,4 +26,5 @@ public interface DepartRepository extends PagingAndSortingRepository<Depart, Lon
 
     Depart findByName(String name);
 
+
 }

@@ -29,11 +29,17 @@ import java.util.Map;
  */
 public interface StudentService {
 
+    Iterable<Student> findAll();
+
+
+    Student save(Student student);
+
 
     Student findOne(Long id);
 
     /**
      * 分页查询学生列表
+     *
      * @param searchParams
      * @param paging
      * @return

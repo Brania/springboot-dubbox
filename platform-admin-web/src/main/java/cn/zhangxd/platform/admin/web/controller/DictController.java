@@ -10,21 +10,20 @@ package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.service.DictService;
+import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA
@@ -44,13 +43,50 @@ public class DictController {
     @Autowired
     private DictService dictService;
 
+    @Autowired
+    private StudentService studentService;
+
+
     @GetMapping(value = "/depart/list")
     public Page<Depart> listDepart(@RequestParam(value = "page", defaultValue = "1") int page,
                                    @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
-                                   @RequestParam(value = "sortType", defaultValue = "createTime") String sortType, @RequestParam Map<String, Object> searchParams) {
+                                   @RequestParam Map<String, Object> searchParams) {
 
 
-        return dictService.getDepartPages(searchParams, PaginationUtil.generate(page, pageSize, sortType));
+        return dictService.getDepartPages(searchParams, PaginationUtil.generate(page, pageSize));
+    }
+
+
+    @GetMapping(value = "/depart/{id}/detail")
+    public Depart findDepartForm(@PathVariable Long id) {
+        return dictService.findDepartById(id);
+    }
+
+    @PostMapping(value = "/depart/persist")
+    public Depart saveOrUpdateDepart(@Valid @RequestBody Depart depart) {
+        return dictService.persistDepart(depart);
+    }
+
+    @PostMapping(value = "/depart/{id}/delete")
+    public Map<String, Object> removeDepart(@PathVariable Long id) {
+
+        Depart depart = dictService.findDepartById(id);
+        Map<String, Object> results = new HashedMap();
+        String message = "";
+        Boolean flag = Boolean.FALSE;
+        if (null != depart) {
+            Long count = studentService.countByDepart(depart);
+            if (count > 0) {
+                StringJoiner sj = new StringJoiner("");
+                sj.add("共有").add(String.valueOf(count)).add("名学生归属于").add(depart.getName()).add("，您无法删除该院系!");
+                message = sj.toString();
+            } else {
+                flag = dictService.deleteDepartById(id);
+            }
+        }
+        results.put("success", flag);
+        results.put("message", message);
+        return results;
     }
 
     @GetMapping(value = "/depart/listAll")

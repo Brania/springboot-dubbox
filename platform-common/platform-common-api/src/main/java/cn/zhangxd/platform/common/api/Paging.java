@@ -22,6 +22,11 @@ public class Paging implements Serializable {
      */
     private String orderBy;
 
+    /**
+     * 排序类型
+     */
+    private String orderType;
+
     public Paging() {
         this.pageNum = 1;
         this.pageSize = 20;
@@ -32,10 +37,11 @@ public class Paging implements Serializable {
         this.pageSize = pageSize;
     }
 
-    public Paging(int pageNum, int pageSize, String orderBy) {
+    public Paging(int pageNum, int pageSize, String orderBy, String orderType) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
         this.orderBy = orderBy;
+        this.orderType = orderType;
     }
 
     public int getPageNum() {
@@ -60,5 +66,13 @@ public class Paging implements Serializable {
 
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 }

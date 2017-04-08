@@ -8,6 +8,7 @@
 
 package cn.zhangxd.platform.admin.web.service;
 
+import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
@@ -53,6 +54,9 @@ public interface StudentService {
      * @return
      */
     LogImpExcel importStudent(List<StudentXlsDto> list);
+
+
+    Long countByDepart(Depart depart);
 
 
 }

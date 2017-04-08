@@ -20,11 +20,12 @@ import cn.zhangxd.platform.admin.web.repository.AdClassRepository;
 import cn.zhangxd.platform.admin.web.repository.DepartRepository;
 import cn.zhangxd.platform.admin.web.repository.MajorRepository;
 import cn.zhangxd.platform.admin.web.repository.StudentRepository;
+import cn.zhangxd.platform.admin.web.service.DictService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
-import cn.zhangxd.platform.admin.web.util.sequence.Sequence;
 import cn.zhangxd.platform.common.api.Paging;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,6 +51,7 @@ import java.util.*;
  * Description:
  */
 @Service
+@Slf4j
 public class StudentServiceImpl implements StudentService {
 
     @Autowired
@@ -64,7 +66,8 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private AdClassRepository adClassRepository;
 
-    Sequence sequence = new Sequence(0, 0);
+    @Autowired
+    private DictService dictService;
 
     @Override
     public Iterable<Student> findAll() {
@@ -73,6 +76,12 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Long countByDepart(Depart depart) {
+        return studentRepository.countByDepart(depart);
+    }
+
+    @Override
+    @Transactional
     public Student save(Student student) {
 
         Date createOrUpdateTime = new Date();
@@ -80,7 +89,6 @@ public class StudentServiceImpl implements StudentService {
         if (null != student.getId()) {
             student.setUpdateTime(createOrUpdateTime);
         } else {
-            student = new Student();
             student.setCreateTime(createOrUpdateTime);
         }
 
@@ -91,22 +99,39 @@ public class StudentServiceImpl implements StudentService {
         student.setSex(student.getSex());
         student.setNationality(student.getNationality());
         student.setIdCard(student.getIdCard());
-        student.setMajor(student.getMajor());
+        // 专业
+        if (StringUtils.isNotBlank(student.getMajor().getName())) {
+            String majorName = student.getMajor().getName().trim();
+            Major major = this.majorRepository.findByName(majorName);
+            if (major == null) {
+                major = dictService.createMajor(majorName);
+            }
+            student.setMajor(major);
+        }
+
+
         // 院系必填
-        String departName = student.getDepart().getName().trim();
-        Depart depart = this.departRepository.findByName(departName);
-        if (null != depart) {
-            student.setDepart(student.getDepart());
-        } else {
-            depart = new Depart();
-            StringJoiner joiner = new StringJoiner("");
-            joiner.add(Constants.DEPART_CODE_PREFIX).add(sequence.nextSeq());
-            depart.setCode(joiner.toString());
-            depart.setName(departName);
-            depart = this.departRepository.save(depart);
+        if (StringUtils.isNotBlank(student.getDepart().getName())) {
+            String departName = student.getDepart().getName().trim();
+
+            Depart depart = this.departRepository.findByName(departName);
+            if (depart == null) {
+                depart = dictService.createDepart(departName);
+
+            }
             student.setDepart(depart);
         }
 
+
+        // 班级
+        if (StringUtils.isNotBlank(student.getAdClass().getName())) {
+            String adClassName = student.getAdClass().getName().trim();
+            AdClass adClass = this.adClassRepository.findByName(adClassName);
+            if (adClass == null) {
+                adClass = dictService.createAdClass(adClassName);
+            }
+            student.setAdClass(adClass);
+        }
         student.setAdClass(student.getAdClass());
         student.setEntranceYear(student.getEntranceYear());
         student.setFamilyAddress(student.getFamilyAddress());
@@ -125,13 +150,44 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Page<Student> getStudentPages(Map<String, Object> searchParams, Paging paging) {
 
-        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy());
+
+        String[] sortParams = PaginationUtil.buildSortableParam(String.valueOf(searchParams.get("orderBy")));
+
+        paging.setOrderBy(sortParams[0]);
+        paging.setOrderType(sortParams[1]);
+
+
+        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy(), paging.getOrderType());
 
 
         return studentRepository.findAll(new Specification<Student>() {
             @Override
             public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return null;
+
+
+                List<Predicate> predicates = new ArrayList<>();
+                List<Predicate> orPredicate = new ArrayList<>();
+
+                if (null != searchParams.get("gender") && String.valueOf(searchParams.get("gender")).length() > 0) {
+                    predicates.add(criteriaBuilder.equal(root.get("sex"), SexEnum.valueOf(String.valueOf(searchParams.get("gender")))));
+                }
+
+                if (null != searchParams.get("depart") && String.valueOf(searchParams.get("depart")).length() > 0) {
+                    predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), String.valueOf(searchParams.get("depart"))));
+                }
+
+                if (null != searchParams.get("sno") && String.valueOf(searchParams.get("sno")).length() > 0) {
+                    StringJoiner joiner = new StringJoiner("");
+                    joiner.add("%").add(String.valueOf(searchParams.get("sno"))).add("%");
+
+                    orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), String.valueOf(searchParams.get("sno"))));
+                    orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), String.valueOf(searchParams.get("sno"))));
+                    orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));
+                    predicates.add(criteriaBuilder.or(orPredicate.toArray(new Predicate[]{})));
+                }
+
+
+                return predicates.size() > 0 ? PaginationUtil.buildQueryPredicate(predicates, criteriaBuilder) : null;
             }
         }, pageRequest);
     }
@@ -188,15 +244,7 @@ public class StudentServiceImpl implements StudentService {
                     if (null != major) {
                         student.setMajor(major);
                     } else {
-                        major = new Major();
-                        major.setEnabled(Boolean.TRUE);
-                        major.setCreateTime(createOrUpdateTime);
-                        major.setName(s.getZy().trim());
-                        StringJoiner sj = new StringJoiner("");
-                        sj.add(Constants.MAJOR_CODE_PREFIX).add(sequence.nextSeq());
-                        major.setCode(sj.toString());
-                        major = majorRepository.save(major);
-                        student.setMajor(major);
+                        student.setMajor(dictService.createMajor(s.getZy().trim()));
                     }
                 }
 
@@ -205,15 +253,7 @@ public class StudentServiceImpl implements StudentService {
                     if (null != depart) {
                         student.setDepart(depart);
                     } else {
-                        depart = new Depart();
-                        depart.setEnabled(Boolean.TRUE);
-                        depart.setCreateTime(createOrUpdateTime);
-                        depart.setName(s.getYx().trim());
-                        StringJoiner joiner = new StringJoiner("");
-                        joiner.add(Constants.DEPART_CODE_PREFIX).add(sequence.nextSeq());
-                        depart.setCode(joiner.toString());
-                        depart = departRepository.save(depart);
-                        student.setDepart(depart);
+                        student.setDepart(dictService.createDepart(s.getYx().trim()));
                     }
                 }
 
@@ -223,15 +263,7 @@ public class StudentServiceImpl implements StudentService {
                     if (null != adClass) {
                         student.setAdClass(adClass);
                     } else {
-                        adClass = new AdClass();
-                        adClass.setName(s.getBj().trim());
-                        adClass.setCreateTime(createOrUpdateTime);
-                        adClass.setEnabled(Boolean.TRUE);
-                        StringJoiner stringJoiner = new StringJoiner("");
-                        stringJoiner.add(Constants.ADCLASS_CODE_PREFIX).add(sequence.nextSeq());
-                        adClass.setCode(stringJoiner.toString());
-                        adClass = adClassRepository.save(adClass);
-                        student.setAdClass(adClass);
+                        student.setAdClass(dictService.createAdClass(s.getBj().trim()));
                     }
                 }
 

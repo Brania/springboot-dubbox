@@ -37,4 +37,8 @@ public class Constants {
     public static final String ADCLASS_CODE_PREFIX = "C";
 
 
+    public static final String DEFAULT_SORT_BY = "createTime";
+    public static final String DEFAULT_SORT_TYPE = "DESC";
+
+
 }

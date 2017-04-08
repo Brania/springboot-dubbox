@@ -8,6 +8,7 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
+import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -25,4 +26,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface StudentRepository extends PagingAndSortingRepository<Student, Long>, JpaSpecificationExecutor<Student> {
 
     Student findByExamineeNo(String examineeNo);
+
+    /**
+     * 统计院系学生人数
+     * @param depart
+     * @return
+     */
+    Long countByDepart(Depart depart);
 }

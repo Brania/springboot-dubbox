@@ -22,9 +22,10 @@ spring:
     username: root
     password: hodoo123
     driver-class-name: com.mysql.jdbc.Driver
-#  jpa:
+  jpa:
 #    hibernate:
 #      ddl-auto: create
+    show-sql: true
 
 
 

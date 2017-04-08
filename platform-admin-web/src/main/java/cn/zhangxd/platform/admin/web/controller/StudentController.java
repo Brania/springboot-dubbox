@@ -49,9 +49,9 @@ public class StudentController {
     @GetMapping(value = "/list")
     public Page<Student> list(@RequestParam(value = "page", defaultValue = "1") int page,
                               @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
-                              @RequestParam(value = "sortType", defaultValue = "createTime") String sortType, @RequestParam Map<String, Object> searchParams) {
+                              @RequestParam Map<String, Object> searchParams) {
 
-        return studentService.getStudentPages(searchParams, PaginationUtil.generate(page, pageSize, sortType));
+        return studentService.getStudentPages(searchParams, PaginationUtil.generate(page, pageSize));
     }
 
 

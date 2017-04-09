@@ -40,5 +40,7 @@ public class Constants {
     public static final String DEFAULT_SORT_BY = "createTime";
     public static final String DEFAULT_SORT_TYPE = "DESC";
 
+    public static final String TRANSMIT_TYPE_PREFIX = "_";
+
 
 }

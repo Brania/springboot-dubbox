@@ -86,10 +86,13 @@ public class TransmitEventServiceImpl implements TransmitEventService {
             this.transmitEventTypeRepository.save(transmitEventType);
 
         } else {
-            TransmitEvent transmitEvent = transmitEventRepository.findOne(Long.parseLong(transmitEventTreeNode.getId()));
-            if (transmitEvent == null) {
+            TransmitEvent transmitEvent = null;
+            if (StringUtils.isNotBlank(transmitEventTreeNode.getId())) {
+                transmitEvent = transmitEventRepository.findOne(Long.parseLong(transmitEventTreeNode.getId()));
+            } else {
                 transmitEvent = new TransmitEvent();
             }
+
             transmitEvent.setName(transmitEventTreeNode.getName());
             transmitEvent.setCreateTime(new Date());
             transmitEvent.setEnabled(transmitEventTreeNode.getEnabled());

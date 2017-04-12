@@ -11,8 +11,6 @@ package cn.zhangxd.platform.admin.web.controller;
 import cn.zhangxd.platform.admin.web.birt.BIRTReport;
 import cn.zhangxd.platform.admin.web.birt.ReportRequest;
 import cn.zhangxd.platform.admin.web.birt.ReportRunner;
-import cn.zhangxd.platform.admin.web.domain.Student;
-import cn.zhangxd.platform.admin.web.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -54,9 +52,6 @@ public class ReportController {
                             reportRequest.getReportParameters(),
                             reportRunner)
                             .runReport().getReportContent().toByteArray();
-
-
-            log.info(";;;;;;---------------;;;;;;");
 
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));

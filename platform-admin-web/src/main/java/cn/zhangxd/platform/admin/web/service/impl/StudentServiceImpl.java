@@ -16,6 +16,7 @@ import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
 import cn.zhangxd.platform.admin.web.enums.SexEnum;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.repository.AdClassRepository;
 import cn.zhangxd.platform.admin.web.repository.DepartRepository;
 import cn.zhangxd.platform.admin.web.repository.MajorRepository;
@@ -30,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -74,6 +74,23 @@ public class StudentServiceImpl implements StudentService {
         return this.studentRepository.findAll();
     }
 
+    /**
+     * TODO : 增加删除校验条件
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Boolean deleteById(Long id) {
+        Boolean flag = Boolean.TRUE;
+        try {
+            studentRepository.delete(id);
+        } catch (Exception e) {
+            flag = Boolean.FALSE;
+            log.error("删除学生操作失败，传入参数ID={}，失败原因：{}", id, e.getMessage());
+        }
+        return flag;
+    }
 
     @Override
     public Long countByDepart(Depart depart) {
@@ -91,7 +108,7 @@ public class StudentServiceImpl implements StudentService {
         } else {
             student.setCreateTime(createOrUpdateTime);
         }
-
+        // TODO : 重构Student实体，对允许为空属性使用Optional容器包裹
         student.setExamineeNo(student.getExamineeNo());
         student.setAdmissionNo(student.getAdmissionNo());
         student.setStudentNo(student.getStudentNo());
@@ -99,8 +116,9 @@ public class StudentServiceImpl implements StudentService {
         student.setSex(student.getSex());
         student.setNationality(student.getNationality());
         student.setIdCard(student.getIdCard());
+
         // 专业
-        if (StringUtils.isNotBlank(student.getMajor().getName())) {
+        if (null != student.getMajor()) {
             String majorName = student.getMajor().getName().trim();
             Major major = this.majorRepository.findByName(majorName);
             if (major == null) {
@@ -111,7 +129,7 @@ public class StudentServiceImpl implements StudentService {
 
 
         // 院系必填
-        if (StringUtils.isNotBlank(student.getDepart().getName())) {
+        if (null != student.getDepart()) {
             String departName = student.getDepart().getName().trim();
 
             Depart depart = this.departRepository.findByName(departName);
@@ -124,7 +142,7 @@ public class StudentServiceImpl implements StudentService {
 
 
         // 班级
-        if (StringUtils.isNotBlank(student.getAdClass().getName())) {
+        if (null != student.getAdClass()) {
             String adClassName = student.getAdClass().getName().trim();
             AdClass adClass = this.adClassRepository.findByName(adClassName);
             if (adClass == null) {
@@ -139,12 +157,35 @@ public class StudentServiceImpl implements StudentService {
         student.setLinkPerson(student.getLinkPerson());
         student.setPrimaryPhone(student.getPrimaryPhone());
         student.setBackupPhone(student.getBackupPhone());
+        student.setSources(Constants.ADD_SOURCE);
+        student.setStatus(TransmitEnum.TRANSIENT);
         return studentRepository.save(student);
     }
 
     @Override
     public Student findOne(Long id) {
         return studentRepository.findOne(id);
+    }
+
+
+    @Override
+    public Student getStudentInfo(String searchParam) {
+
+        Student student = this.studentRepository.findByExamineeNo(searchParam);
+        if (null != student) {
+            return student;
+        } else {
+            student = this.studentRepository.findByIdCard(searchParam);
+            if (null != student) {
+                return student;
+            } else {
+                Iterable<Student> students = this.studentRepository.findByNameLike(searchParam);
+                if (students.iterator().hasNext()) {
+                    return students.iterator().next();
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -159,36 +200,28 @@ public class StudentServiceImpl implements StudentService {
 
         PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy(), paging.getOrderType());
 
+        return studentRepository.findAll((Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            List<Predicate> orPredicate = new ArrayList<>();
 
-        return studentRepository.findAll(new Specification<Student>() {
-            @Override
-            public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-
-
-                List<Predicate> predicates = new ArrayList<>();
-                List<Predicate> orPredicate = new ArrayList<>();
-
-                if (null != searchParams.get("gender") && String.valueOf(searchParams.get("gender")).length() > 0) {
-                    predicates.add(criteriaBuilder.equal(root.get("sex"), SexEnum.valueOf(String.valueOf(searchParams.get("gender")))));
-                }
-
-                if (null != searchParams.get("depart") && String.valueOf(searchParams.get("depart")).length() > 0) {
-                    predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), String.valueOf(searchParams.get("depart"))));
-                }
-
-                if (null != searchParams.get("sno") && String.valueOf(searchParams.get("sno")).length() > 0) {
-                    StringJoiner joiner = new StringJoiner("");
-                    joiner.add("%").add(String.valueOf(searchParams.get("sno"))).add("%");
-
-                    orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), String.valueOf(searchParams.get("sno"))));
-                    orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), String.valueOf(searchParams.get("sno"))));
-                    orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));
-                    predicates.add(criteriaBuilder.or(orPredicate.toArray(new Predicate[]{})));
-                }
-
-
-                return predicates.size() > 0 ? PaginationUtil.buildQueryPredicate(predicates, criteriaBuilder) : null;
+            if (null != searchParams.get("gender") && String.valueOf(searchParams.get("gender")).length() > 0) {
+                predicates.add(criteriaBuilder.equal(root.get("sex"), SexEnum.valueOf(String.valueOf(searchParams.get("gender")))));
             }
+
+            if (null != searchParams.get("depart") && String.valueOf(searchParams.get("depart")).length() > 0) {
+                predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), String.valueOf(searchParams.get("depart"))));
+            }
+
+            if (null != searchParams.get("sno") && String.valueOf(searchParams.get("sno")).length() > 0) {
+                StringJoiner joiner = new StringJoiner("");
+                joiner.add("%").add(String.valueOf(searchParams.get("sno"))).add("%");
+
+                orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), String.valueOf(searchParams.get("sno"))));
+                orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), String.valueOf(searchParams.get("sno"))));
+                orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));
+                predicates.add(criteriaBuilder.or(orPredicate.toArray(new Predicate[]{})));
+            }
+            return predicates.size() > 0 ? PaginationUtil.buildQueryPredicate(predicates, criteriaBuilder) : null;
         }, pageRequest);
     }
 
@@ -212,6 +245,8 @@ public class StudentServiceImpl implements StudentService {
                     student = new Student();
                     student.setCreateTime(createOrUpdateTime);
                 }
+                student.setSources(Constants.IMPORT_SOURCE);
+                student.setStatus(TransmitEnum.TRANSIENT);
 
                 if (StringUtils.isNotBlank(s.getKsh())) {
                     student.setExamineeNo(s.getKsh());

@@ -11,7 +11,10 @@ package cn.zhangxd.platform.admin.web.repository;
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
@@ -29,8 +32,13 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     /**
      * 统计院系学生人数
+     *
      * @param depart
      * @return
      */
     Long countByDepart(Depart depart);
+
+    Student findByIdCard(String idCard);
+
+    Iterable<Student> findByNameLike(String name);
 }

@@ -10,10 +10,14 @@ package cn.zhangxd.platform.admin.web.domain;
 
 import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
 import cn.zhangxd.platform.admin.web.enums.SexEnum;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+import com.google.common.collect.Sets;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA
@@ -96,13 +100,18 @@ public class Student extends IdEntity {
      */
     private String backupPhone;
     /**
-     * 导入时间
+     * 数据来源：IMPORT/ADD
      */
-    private Date createTime;
+    private String sources;
+    //private Date createTime;
     /**
      * 更新时间
      */
     private Date updateTime;
+
+    private Set<TransmitRecord> records = Sets.newHashSet();
+
+    private TransmitEnum status;
 
     @Column(name = "name")
     public String getName() {
@@ -254,13 +263,24 @@ public class Student extends IdEntity {
         this.adClass = adClass;
     }
 
-
-    public Date getCreateTime() {
-        return createTime;
+    @Column(name = "sources")
+    public String getSources() {
+        return sources;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setSources(String sources) {
+        this.sources = sources;
+    }
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    public TransmitEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransmitEnum status) {
+        this.status = status;
     }
 
     public Date getUpdateTime() {
@@ -269,5 +289,24 @@ public class Student extends IdEntity {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @OneToMany(mappedBy = "student")
+    public Set<TransmitRecord> getRecords() {
+        return records;
+    }
+
+    public void setRecords(Set<TransmitRecord> records) {
+        this.records = records;
+    }
+
+    /**
+     * 转接记录按照时间降序排序,第一条记录作为状态值
+     *
+     * @return
+     */
+    public TransmitRecord findLastestRecord() {
+        Stream<TransmitRecord> stream = records.stream().sorted((v1, v2) -> v2.getLocalDateTime().isAfter(v1.getLocalDateTime()) ? 0 : 1);
+        return stream.findFirst().get();
     }
 }

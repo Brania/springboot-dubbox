@@ -14,6 +14,7 @@ import cn.zhangxd.platform.admin.web.util.AbstractExecutableTask;
 import cn.zhangxd.platform.common.utils.ExcelHandleUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -59,14 +60,16 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
                 List<StudentXlsDto> datas = new ArrayList<>();
                 for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                     Row row = sheet.getRow(i);
-
                     StudentXlsDto dto = new StudentXlsDto();
 
                     for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
                         Cell cell = row.getCell(j);
                         if (cell != null) {
                             String cellStr = ExcelHandleUtil.getStringCellValue(cell);
-
+                            // 跳过行数据为空的记录
+                            if(j == 0 && StringUtils.isBlank(cellStr)){
+                                continue;
+                            }
                             switch (j) {
                                 // 考生号
                                 case 0:

@@ -9,7 +9,9 @@
 package cn.zhangxd.platform.admin.web.domain;
 
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Created with IntelliJ IDEA
@@ -44,11 +46,19 @@ public class TransmitRecord extends IdEntity {
      * 档案主体
      */
     private Student student;
-
     /**
-     * 转接人（系统判断转接人字段为空则该记录待操作）
+     * 转接操作人
      */
-    private String transitUserId;
+    private String opUserId;
+    /**
+     * 转接保管人
+     */
+    private String custodian;
+    /**
+     * 转接操作时间
+     */
+    private LocalDateTime localDateTime = LocalDateTime.now();
+
 
     @ManyToOne
     @JoinColumn(name = "event_type_id", referencedColumnName = "id")
@@ -89,12 +99,39 @@ public class TransmitRecord extends IdEntity {
         this.student = student;
     }
 
-    @Column(name = "transit_user_id")
-    public String getTransitUserId() {
-        return transitUserId;
+    @Column(name = "op_user_id")
+    public String getOpUserId() {
+        return opUserId;
     }
 
-    public void setTransitUserId(String transitUserId) {
-        this.transitUserId = transitUserId;
+    public void setOpUserId(String opUserId) {
+        this.opUserId = opUserId;
     }
+
+    @Column(name = "fluct_time")
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
+    @Column(name = "custodian")
+    public String getCustodian() {
+        return custodian;
+    }
+
+    public void setCustodian(String custodian) {
+        this.custodian = custodian;
+    }
+
+//    @Column(name = "transit_user_id")
+//    public String getTransitUserId() {
+//        return transitUserId;
+//    }
+//
+//    public void setTransitUserId(String transitUserId) {
+//        this.transitUserId = transitUserId;
+//    }
 }

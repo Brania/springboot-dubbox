@@ -11,7 +11,6 @@ package cn.zhangxd.platform.admin.web.service.impl;
 import cn.zhangxd.platform.admin.web.domain.AdClass;
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Major;
-import cn.zhangxd.platform.admin.web.enums.SexEnum;
 import cn.zhangxd.platform.admin.web.repository.AdClassRepository;
 import cn.zhangxd.platform.admin.web.repository.DepartRepository;
 import cn.zhangxd.platform.admin.web.repository.MajorRepository;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -33,7 +31,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -70,9 +67,9 @@ public class DictServiceImpl implements DictService {
 
     @Override
     public Depart persistDepart(Depart depart) {
-        if(null != depart.getId()){
+        if (null != depart.getId()) {
             // 记录修改时间
-        }else{
+        } else {
             depart = createDepart(depart.getName());
         }
         return departRepository.save(depart);
@@ -100,20 +97,16 @@ public class DictServiceImpl implements DictService {
 
         PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy(), paging.getOrderType());
 
-        return departRepository.findAll(new Specification<Depart>() {
-            @Override
-            public Predicate toPredicate(Root<Depart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                Predicate predicate = null;
-                if (null != searchParams.get("departName") && String.valueOf(searchParams.get("departName")).length() > 0) {
-                    StringJoiner sj = new StringJoiner("");
-                    sj.add("%").add(String.valueOf(searchParams.get("departName")).trim()).add("%");
-                    predicate = criteriaBuilder.like(root.get("name"), sj.toString());
-                }
-
-                return predicate;
+        return departRepository.findAll((Root<Depart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            Predicate predicate = null;
+            if (null != searchParams.get("departName") && String.valueOf(searchParams.get("departName")).length() > 0) {
+                StringJoiner sj = new StringJoiner("");
+                sj.add("%").add(String.valueOf(searchParams.get("departName")).trim()).add("%");
+                predicate = criteriaBuilder.like(root.get("name"), sj.toString());
             }
-        }, pageRequest);
 
+            return predicate;
+        }, pageRequest);
     }
 
 

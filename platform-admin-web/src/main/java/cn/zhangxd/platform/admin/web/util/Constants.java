@@ -42,5 +42,11 @@ public class Constants {
 
     public static final String TRANSMIT_TYPE_PREFIX = "_";
 
+    /**
+     * 数据来源：区分导入数据和新增数据
+     */
+    public static final String IMPORT_SOURCE = "IMP";
+    public static final String ADD_SOURCE = "ADD";
+
 
 }

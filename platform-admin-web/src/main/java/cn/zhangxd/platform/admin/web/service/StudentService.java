@@ -38,6 +38,8 @@ public interface StudentService {
 
     Student findOne(Long id);
 
+    Boolean deleteById(Long id);
+
     /**
      * 分页查询学生列表
      *
@@ -46,6 +48,14 @@ public interface StudentService {
      * @return
      */
     Page<Student> getStudentPages(final Map<String, Object> searchParams, Paging paging);
+
+    /**
+     * 根据多条件查询单个学生实体
+     *
+     * @param searchParam
+     * @return
+     */
+    Student getStudentInfo(String searchParam);
 
     /**
      * 导入学生名单

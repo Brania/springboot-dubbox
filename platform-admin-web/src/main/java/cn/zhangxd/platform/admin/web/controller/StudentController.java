@@ -14,7 +14,9 @@ import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -60,11 +62,35 @@ public class StudentController {
         return studentService.findOne(id);
     }
 
+    @GetMapping(value = "/{id}/delete")
+    public Map<String, Object> delete(@PathVariable Long id) {
+
+        Map<String, Object> results = Maps.newHashMap();
+        results.put("success", studentService.deleteById(id));
+        return results;
+    }
+
 
     @PostMapping(value = "/persist")
     public Student saveOrUpdate(@Valid @RequestBody Student student) {
         return studentService.save(student);
     }
+
+    /**
+     * 考生号、姓名、身份证查询单个学生实体
+     *
+     * @param searchParam
+     * @return
+     */
+    @GetMapping(value = "/transmit/search")
+    public Student search(@RequestParam(value = "searchParam", defaultValue = "") String searchParam) {
+        Student student = null;
+        if (StringUtils.isNotBlank(searchParam)) {
+            student = studentService.getStudentInfo(searchParam);
+        }
+        return student;
+    }
+
 
     /**
      * 执行导入学生数据

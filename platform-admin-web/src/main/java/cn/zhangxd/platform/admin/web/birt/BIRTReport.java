@@ -8,8 +8,6 @@
 
 package cn.zhangxd.platform.admin.web.birt;
 
-import cn.zhangxd.platform.admin.web.service.StudentService;
-
 /**
  * Created with IntelliJ IDEA
  * User: ch-hui

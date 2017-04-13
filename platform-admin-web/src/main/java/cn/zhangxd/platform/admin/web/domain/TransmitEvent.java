@@ -9,6 +9,7 @@
 package cn.zhangxd.platform.admin.web.domain;
 
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
 
 import javax.persistence.Entity;
@@ -52,6 +53,7 @@ public class TransmitEvent extends IdEntity {
     }
 
     @OneToMany(mappedBy = "transmitEvent")
+    @JsonManagedReference
     public Set<TransmitEventType> getEventTypes() {
         return eventTypes;
     }

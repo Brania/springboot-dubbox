@@ -12,6 +12,7 @@ import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
 import cn.zhangxd.platform.admin.web.enums.SexEnum;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.google.common.collect.Sets;
 
 import javax.persistence.*;
@@ -292,6 +293,7 @@ public class Student extends IdEntity {
     }
 
     @OneToMany(mappedBy = "student")
+    @JsonBackReference
     public Set<TransmitRecord> getRecords() {
         return records;
     }

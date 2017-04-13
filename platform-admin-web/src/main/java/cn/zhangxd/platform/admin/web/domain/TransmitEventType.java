@@ -8,12 +8,11 @@
 
 package cn.zhangxd.platform.admin.web.domain;
 
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created with IntelliJ IDEA
@@ -32,6 +31,8 @@ public class TransmitEventType extends IdEntity {
     private String name;
     private TransmitEvent transmitEvent;
     private Boolean enabled;
+    private Integer sort;
+    private TransmitEnum nextStatus;
 
 
     public String getName() {
@@ -43,6 +44,7 @@ public class TransmitEventType extends IdEntity {
     }
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     public TransmitEvent getTransmitEvent() {
         return transmitEvent;
@@ -59,5 +61,23 @@ public class TransmitEventType extends IdEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "next_status")
+    public TransmitEnum getNextStatus() {
+        return nextStatus;
+    }
+
+    public void setNextStatus(TransmitEnum nextStatus) {
+        this.nextStatus = nextStatus;
     }
 }

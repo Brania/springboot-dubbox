@@ -8,7 +8,9 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
+import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
+import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,17 @@ public class TransmitController {
     @PostMapping(value = "/{id}/delete/{level}")
     public Map<String, Object> delete(@PathVariable Long id, @PathVariable Integer level) {
         return transmitEventService.deleteById(id, level);
+    }
+
+    /**
+     * 执行转接业务操作
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/handle")
+    public Map<String, Object> handleTransmitRecord(@RequestBody TransmitRecordRequest request) {
+        return transmitEventService.handleTransmitEvent(request);
     }
 
     /**

@@ -11,6 +11,7 @@ package cn.zhangxd.platform.admin.web.service;
 import cn.zhangxd.platform.admin.web.domain.TransmitEvent;
 import cn.zhangxd.platform.admin.web.domain.TransmitEventType;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
+import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,8 @@ public interface TransmitEventService {
     TransmitEventTreeNode persist(TransmitEventTreeNode transmitEventTreeNode);
 
     Map<String, Object> deleteById(Long id, Integer level);
+
+    Map<String, Object> handleTransmitEvent(TransmitRecordRequest recordRequest);
 
 
 }

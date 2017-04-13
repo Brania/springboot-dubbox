@@ -58,6 +58,13 @@ public interface StudentService {
     Student getStudentInfo(String searchParam);
 
     /**
+     * 根据查询条件批量转接办理（暂时仅支持学院）
+     * @param searchParams
+     * @return
+     */
+    List<Student> findStudentBySearchParam(Map<String, Object> searchParams);
+
+    /**
      * 导入学生名单
      *
      * @param list

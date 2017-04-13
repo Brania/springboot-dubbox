@@ -20,7 +20,7 @@ package cn.zhangxd.platform.admin.web.enums;
  */
 public enum TransmitEnum {
 
-    TRANSIENT("未接收"), ACCEPTED("已接收"), WAITING("待接收"), DETACHED("已转出");
+    TRANSIENT("待接收"), ACCEPTED("已接收"), WAITING("转出待接收"), DETACHED("毕业转出");
 
     private String name;
 

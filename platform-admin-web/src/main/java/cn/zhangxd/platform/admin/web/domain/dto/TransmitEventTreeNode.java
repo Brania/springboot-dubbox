@@ -40,6 +40,15 @@ public class TransmitEventTreeNode implements Serializable {
     private Boolean enabled;
 
     private String id;
+    /**
+     * 转接状态（针对类型EventType）
+     */
+    private String status;
+    /**
+     * 排序（针对类型EventType）
+     */
+    private Integer sort;
+
 
     private List<TransmitEventTreeNode> children = new ArrayList<>();
 

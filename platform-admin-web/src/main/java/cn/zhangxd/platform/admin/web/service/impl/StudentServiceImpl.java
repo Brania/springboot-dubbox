@@ -74,6 +74,13 @@ public class StudentServiceImpl implements StudentService {
         return this.studentRepository.findAll();
     }
 
+
+    @Override
+    public List<Student> findStudentBySearchParam(Map<String, Object> searchParams) {
+        String departName = String.valueOf(searchParams.get("depart"));
+        return studentRepository.findStudentListBySearch(departName);
+    }
+
     /**
      * TODO : 增加删除校验条件
      *

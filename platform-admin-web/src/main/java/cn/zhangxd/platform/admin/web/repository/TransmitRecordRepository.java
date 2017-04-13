@@ -8,7 +8,7 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
-import cn.zhangxd.platform.admin.web.domain.Depart;
+import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -16,17 +16,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Created with IntelliJ IDEA
  * User: ch-hui
  * Date: ${Date}
- * Time: 上午11:53
+ * Time: 下午11:03
  * <p>
  * "潜居抱道，已待其时" -《素书》
  * <p>
  * Description:
  */
-public interface DepartRepository extends PagingAndSortingRepository<Depart, Long>, JpaSpecificationExecutor<Depart> {
-
-    Depart findByName(String name);
-
-    Depart findByCode(String code);
-
-
+public interface TransmitRecordRepository extends PagingAndSortingRepository<TransmitRecord, Long>, JpaSpecificationExecutor<TransmitRecord> {
 }

@@ -9,6 +9,8 @@
 package cn.zhangxd.platform.admin.web.domain;
 
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -46,14 +48,22 @@ public class TransmitRecord extends IdEntity {
      * 档案主体
      */
     private Student student;
+
     /**
-     * 转接操作人
+     * 转接操作人ID
      */
     private String opUserId;
+
+    /**
+     * 转接操作人登录账号
+     */
+    private String opUserName;
+
     /**
      * 转接保管人
      */
     private String custodian;
+
     /**
      * 转接操作时间
      */
@@ -90,6 +100,7 @@ public class TransmitRecord extends IdEntity {
     }
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     public Student getStudent() {
         return student;
@@ -108,7 +119,17 @@ public class TransmitRecord extends IdEntity {
         this.opUserId = opUserId;
     }
 
+    @Column(name = "op_user_name")
+    public String getOpUserName() {
+        return opUserName;
+    }
+
+    public void setOpUserName(String opUserName) {
+        this.opUserName = opUserName;
+    }
+
     @Column(name = "fluct_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime getLocalDateTime() {
         return localDateTime;
     }
@@ -126,12 +147,4 @@ public class TransmitRecord extends IdEntity {
         this.custodian = custodian;
     }
 
-//    @Column(name = "transit_user_id")
-//    public String getTransitUserId() {
-//        return transitUserId;
-//    }
-//
-//    public void setTransitUserId(String transitUserId) {
-//        this.transitUserId = transitUserId;
-//    }
 }

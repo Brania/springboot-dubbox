@@ -8,12 +8,15 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
+import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +27,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA
@@ -119,5 +124,28 @@ public class StudentController {
             log.error("执行导入学生名单失败：{}", e.getMessage());
         }
         return logImpExcel;
+    }
+
+
+    @GetMapping(value = "/attach/find/{sid}")
+    public List<ArchiveItem> queryArchiveAttachByStudent(@PathVariable Long sid) {
+
+        List<ArchiveItem> list = Lists.newArrayList();
+        Student student = studentService.findOne(sid);
+        if (null != student) {
+            List<StudentRelArchiveItem> sra = studentService.findArchiveItemByStudent(student);
+            list = sra.stream().map(s -> s.getItem()).collect(Collectors.toList());
+        }
+        return list;
+    }
+
+    @GetMapping(value = "/attach/{sid}/delete/{id}")
+    public Map<String, Object> deleteArchiveAttachById(@PathVariable Long sid, @PathVariable Long id) {
+        Map<String, Object> results = Maps.newHashMap();
+        Student student = studentService.findOne(sid);
+        if (null != student) {
+            results = studentService.deleteStudentAttachById(student, id);
+        }
+        return results;
     }
 }

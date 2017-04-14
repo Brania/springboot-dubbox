@@ -41,6 +41,7 @@ public class Constants {
     public static final String DEFAULT_SORT_TYPE = "DESC";
 
     public static final String TRANSMIT_TYPE_PREFIX = "_";
+    public static final String DOT = ",";
 
     /**
      * 数据来源：区分导入数据和新增数据

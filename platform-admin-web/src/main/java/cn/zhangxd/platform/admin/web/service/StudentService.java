@@ -10,6 +10,7 @@ package cn.zhangxd.platform.admin.web.service;
 
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.common.api.Paging;
@@ -59,6 +60,7 @@ public interface StudentService {
 
     /**
      * 根据查询条件批量转接办理（暂时仅支持学院）
+     *
      * @param searchParams
      * @return
      */
@@ -74,6 +76,22 @@ public interface StudentService {
 
 
     Long countByDepart(Depart depart);
+
+    /**
+     * 查找学生档案项目列表
+     *
+     * @param student
+     * @return
+     */
+    List<StudentRelArchiveItem> findArchiveItemByStudent(Student student);
+
+    /**
+     * 删除学生档案项目
+     * @param student
+     * @param itemId
+     * @return
+     */
+    Map<String, Object> deleteStudentAttachById(Student student, Long itemId);
 
 
 }

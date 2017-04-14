@@ -8,24 +8,19 @@
 
 package cn.zhangxd.platform.admin.web.service.impl;
 
-import cn.zhangxd.platform.admin.web.domain.AdClass;
-import cn.zhangxd.platform.admin.web.domain.Depart;
-import cn.zhangxd.platform.admin.web.domain.Major;
-import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.*;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
 import cn.zhangxd.platform.admin.web.enums.SexEnum;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
-import cn.zhangxd.platform.admin.web.repository.AdClassRepository;
-import cn.zhangxd.platform.admin.web.repository.DepartRepository;
-import cn.zhangxd.platform.admin.web.repository.MajorRepository;
-import cn.zhangxd.platform.admin.web.repository.StudentRepository;
+import cn.zhangxd.platform.admin.web.repository.*;
 import cn.zhangxd.platform.admin.web.service.DictService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import cn.zhangxd.platform.common.api.Paging;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +63,31 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private DictService dictService;
+
+    @Autowired
+    private StudentRelArchiveItemRepository studentRelArchiveItemRepository;
+
+    @Autowired
+    private ArchiveItemRepository archiveItemRepository;
+
+
+    @Override
+    public Map<String, Object> deleteStudentAttachById(Student student, Long itemId) {
+
+        Map<String, Object> results = Maps.newHashMap();
+        Boolean success = Boolean.FALSE;
+        Long count = studentRelArchiveItemRepository.deleteByStudentAndItem(student, archiveItemRepository.findOne(itemId));
+        if (count > 0) {
+            success = Boolean.TRUE;
+        }
+        results.put("success", success);
+        return results;
+    }
+
+    @Override
+    public List<StudentRelArchiveItem> findArchiveItemByStudent(Student student) {
+        return studentRelArchiveItemRepository.findByStudentOrderByItemSortAsc(student);
+    }
 
     @Override
     public Iterable<Student> findAll() {

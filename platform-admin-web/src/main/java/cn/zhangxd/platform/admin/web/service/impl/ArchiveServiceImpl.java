@@ -10,6 +10,7 @@ package cn.zhangxd.platform.admin.web.service.impl;
 
 import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
 import cn.zhangxd.platform.admin.web.repository.ArchiveItemRepository;
 import cn.zhangxd.platform.admin.web.repository.StudentRelArchiveItemRepository;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -57,7 +59,32 @@ public class ArchiveServiceImpl implements ArchiveService {
 
     @Override
     public Map<String, Object> attachStuArchive(Stream<String> students, Long archiveId) {
-        return null;
+
+        Map<String, Object> results = Maps.newHashMap();
+
+        Boolean success = Boolean.FALSE;
+        try {
+            ArchiveItem archiveItem = archiveItemRepository.findOne(archiveId);
+            if (null != archiveItem) {
+                students.forEach(s -> {
+                    Student student = studentService.findOne(Long.parseLong(s));
+                    StudentRelArchiveItem sra = this.studentRelArchiveItemRepository.findByStudentAndItem(student, archiveItem);
+                    if (sra == null) {
+                        sra = new StudentRelArchiveItem();
+                    }
+                    sra.setItem(archiveItem);
+                    sra.setStudent(student);
+                    sra.setCreateTime(new Date());
+                    studentRelArchiveItemRepository.save(sra);
+                });
+                success = Boolean.TRUE;
+            }
+        } catch (Exception e) {
+            log.error("保存学生档案项目失败：{}", e.getMessage());
+        }
+
+        results.put("success", success);
+        return results;
     }
 
     @Override

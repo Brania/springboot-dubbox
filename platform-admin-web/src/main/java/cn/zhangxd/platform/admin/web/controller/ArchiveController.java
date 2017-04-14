@@ -14,8 +14,10 @@ import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import javafx.scene.control.Pagination;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Created with IntelliJ IDEA
@@ -75,6 +78,28 @@ public class ArchiveController {
                                        @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                                        @RequestParam Map<String, Object> searchParams) {
         return archiveService.reportPageList(searchParams, PaginationUtil.generate(page, pageSize));
+    }
+
+    /**
+     * 学生添加档案项目
+     *
+     * @param id
+     * @param params
+     * @return
+     */
+    @PostMapping(value = "/attach/{id}/add")
+    public Map<String, Object> attachArchive(@PathVariable Long id, @RequestBody Map<String, Object> params) {
+        Map<String, Object> results = Maps.newHashMap();
+        String stuIds = String.valueOf(params.get("stuIds"));
+        List<String> stuList = Lists.newArrayList();
+        if (StringUtils.isNotBlank(stuIds)) {
+            StringTokenizer stringTokenizer = new StringTokenizer(stuIds, Constants.DOT);
+            while (stringTokenizer.hasMoreElements()) {
+                stuList.add(stringTokenizer.nextToken());
+            }
+            results = archiveService.attachStuArchive(stuList.stream(), id);
+        }
+        return results;
     }
 
 

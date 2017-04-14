@@ -8,10 +8,13 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
+import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
@@ -27,4 +30,10 @@ public interface StudentRelArchiveItemRepository extends PagingAndSortingReposit
 
 
     Long countByStudent(Student student);
+
+    List<StudentRelArchiveItem> findByStudentOrderByItemSortAsc(Student student);
+
+    StudentRelArchiveItem findByStudentAndItem(Student student, ArchiveItem item);
+
+    Long deleteByStudentAndItem(Student student, ArchiveItem item);
 }

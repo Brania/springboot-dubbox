@@ -12,6 +12,8 @@ import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA
  * User: ch-hui
@@ -26,4 +28,5 @@ public interface ArchiveItemRepository extends PagingAndSortingRepository<Archiv
 
 
     Long countByForcedAndEnabled(Boolean forced, Boolean enabled);
+
 }

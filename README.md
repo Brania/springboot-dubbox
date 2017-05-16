@@ -1,3 +1,7 @@
+
+# 南京晓庄学院档案管理系统项目
+
+
 # springboot-dubbox
 基于spring-boot dubbox搭建的java分布式系统
 - 前后端分离
@@ -27,3 +31,4 @@
 - 在pom.xml中配置zookeeper连接地址
 - 启动SysProviderApplication后分别启动ClientMobileApplication和WebAdminApplication
 - BIRT报表展示
+

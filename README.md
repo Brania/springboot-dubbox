@@ -1,7 +1,3 @@
-
-# 南京晓庄学院档案管理系统项目
-
-
 # springboot-dubbox
 基于spring-boot dubbox搭建的java分布式系统
 - 前后端分离

@@ -12,6 +12,7 @@ import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,13 @@ public interface StudentService {
 
 
     Student findOne(Long id);
+
+    /**
+     * 包含转接记录的学生详情
+     * @param id
+     * @return
+     */
+    StudentDetailDto findStudentDetail(Long id);
 
     Boolean deleteById(Long id);
 

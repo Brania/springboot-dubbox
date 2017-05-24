@@ -116,15 +116,17 @@ public class TransmitEventServiceImpl implements TransmitEventService {
 
 
     private TransmitRecord generate(TransmitRecordRequest recordRequest, Student student, TransmitEventType transmitEventType, AuthUser authUser) {
+        Date currentTime = new Date();
         TransmitRecord transmitRecord = new TransmitRecord();
         transmitRecord.setCustodian(recordRequest.getCustodian());
         transmitRecord.setDepart(departRepository.findByCode(recordRequest.getToDepart()));
         transmitRecord.setOpUserId(authUser.getId());
         transmitRecord.setOpUserName(authUser.getLoginName());
-        transmitRecord.setCreateTime(new Date());
+        transmitRecord.setCreateTime(currentTime);
         transmitRecord.setStudent(student);
         transmitRecord.setRemarks(recordRequest.getRemarks());
         transmitRecord.setTransmitEventType(transmitEventType);
+        transmitRecord.setFluctTime(currentTime);
         return transmitRecord;
     }
 

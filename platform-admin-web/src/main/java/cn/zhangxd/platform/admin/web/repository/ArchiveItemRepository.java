@@ -8,8 +8,10 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
+import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
 import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
@@ -28,5 +30,10 @@ public interface ArchiveItemRepository extends PagingAndSortingRepository<Archiv
 
 
     Long countByForcedAndEnabled(Boolean forced, Boolean enabled);
+
+    Long countByClassify(ArchiveClassify archiveClassify);
+
+    @Query("select item from ArchiveItem item order by item.classify.id, item.sort asc")
+    List<ArchiveItem> listAll();
 
 }

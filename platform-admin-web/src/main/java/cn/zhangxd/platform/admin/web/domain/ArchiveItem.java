@@ -11,6 +11,8 @@ package cn.zhangxd.platform.admin.web.domain;
 import cn.zhangxd.platform.admin.web.util.IdEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 
@@ -38,6 +40,8 @@ public class ArchiveItem extends IdEntity {
      * 是否必备
      */
     private Boolean forced;
+
+    private ArchiveClassify classify;
 
     @Digits(integer = 3, fraction = 0)
     private Integer sort;
@@ -81,5 +85,15 @@ public class ArchiveItem extends IdEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "classify_id", referencedColumnName = "id")
+    public ArchiveClassify getClassify() {
+        return classify;
+    }
+
+    public void setClassify(ArchiveClassify classify) {
+        this.classify = classify;
     }
 }

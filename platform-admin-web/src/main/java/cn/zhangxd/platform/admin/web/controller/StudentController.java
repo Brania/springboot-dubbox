@@ -12,6 +12,7 @@ import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
 import cn.zhangxd.platform.admin.web.util.Constants;
@@ -65,6 +66,11 @@ public class StudentController {
     @GetMapping(value = "/{id}/detail")
     public Student findById(@PathVariable Long id) {
         return studentService.findOne(id);
+    }
+
+    @GetMapping(value = "/{id}/detailView")
+    public StudentDetailDto findDetailById(@PathVariable Long id) {
+        return studentService.findStudentDetail(id);
     }
 
     @GetMapping(value = "/{id}/delete")

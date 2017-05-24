@@ -10,7 +10,9 @@ package cn.zhangxd.platform.admin.web.service.impl;
 
 import cn.zhangxd.platform.admin.web.domain.*;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
+import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
 import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
 import cn.zhangxd.platform.admin.web.enums.SexEnum;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
@@ -34,6 +36,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA
@@ -70,6 +73,49 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private ArchiveItemRepository archiveItemRepository;
 
+    @Autowired
+    private TransmitRecordRepository transmitRecordRepository;
+
+
+    @Override
+    public StudentDetailDto findStudentDetail(Long id) {
+
+        StudentDetailDto dto = new StudentDetailDto();
+
+        Student student = studentRepository.findOne(id);
+        if (null != student) {
+
+            dto.setStudentNo(student.getStudentNo());
+            dto.setAdClass(student.getAdClass());
+            dto.setAdmissionNo(student.getAdmissionNo());
+            dto.setBackupPhone(student.getBackupPhone());
+            dto.setDepart(student.getDepart());
+            dto.setName(student.getName());
+            dto.setSex(student.getSex());
+            dto.setEntranceYear(student.getEntranceYear());
+            dto.setExamineeNo(student.getExamineeNo());
+            dto.setFamilyAddress(student.getFamilyAddress());
+            dto.setIdCard(student.getIdCard());
+            dto.setLinkPerson(student.getLinkPerson());
+            dto.setNationality(student.getNationality());
+            dto.setMajor(student.getMajor());
+            dto.setPostCode(student.getPostCode());
+            dto.setStatus(student.getStatus());
+            dto.setPrimaryPhone(student.getPrimaryPhone());
+
+
+            dto.setRecords(transmitRecordRepository.findByStudentOrderByFluctTimeDesc(student).stream().map(rec -> {
+                TransmitRecordDto transmitRecordDto = new TransmitRecordDto();
+                transmitRecordDto.setEventName(rec.getTransmitEventType().getTransmitEvent().getName());
+                transmitRecordDto.setEventTypeName(rec.getTransmitEventType().getName());
+                transmitRecordDto.setOperTime(rec.getFluctTime());
+                transmitRecordDto.setTransmitForm("");
+                transmitRecordDto.setTransmitTo(rec.getDepart().getName());
+                return transmitRecordDto;
+            }).collect(Collectors.toList()));
+        }
+        return dto;
+    }
 
     @Override
     public Map<String, Object> deleteStudentAttachById(Student student, Long itemId) {
@@ -237,6 +283,10 @@ public class StudentServiceImpl implements StudentService {
 
             if (null != searchParams.get("depart") && String.valueOf(searchParams.get("depart")).length() > 0) {
                 predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), String.valueOf(searchParams.get("depart"))));
+            }
+
+            if (null != searchParams.get("entranceYear") && String.valueOf(searchParams.get("entranceYear")).length() > 0) {
+                predicates.add(criteriaBuilder.equal(root.get("entranceYear"), Integer.parseInt(String.valueOf(searchParams.get("entranceYear")))));
             }
 
             if (null != searchParams.get("sno") && String.valueOf(searchParams.get("sno")).length() > 0) {

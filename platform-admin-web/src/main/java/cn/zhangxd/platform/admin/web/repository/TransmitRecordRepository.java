@@ -8,9 +8,12 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
+import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
@@ -23,4 +26,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Description:
  */
 public interface TransmitRecordRepository extends PagingAndSortingRepository<TransmitRecord, Long>, JpaSpecificationExecutor<TransmitRecord> {
+
+    List<TransmitRecord> findByStudentOrderByFluctTimeDesc(Student student);
+
 }

@@ -8,8 +8,11 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
+import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
 import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
 import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
@@ -48,22 +51,28 @@ public class ArchiveController {
     private ArchiveService archiveService;
 
     @GetMapping(value = "/list")
-    public List<ArchiveItem> list() {
+    public List<ArchiveItemDto> list() {
         Sort sort = new Sort(Sort.Direction.ASC, "sort");
-        List<ArchiveItem> list = Lists.newArrayList();
-        for (Iterator<ArchiveItem> iterator = archiveService.findAll(sort).iterator(); iterator.hasNext(); ) {
+        List<ArchiveItemDto> list = Lists.newArrayList();
+        for (Iterator<ArchiveItemDto> iterator = archiveService.findAll(sort).iterator(); iterator.hasNext(); ) {
             list.add(iterator.next());
         }
         return list;
     }
 
+    @GetMapping(value = "/list/classify")
+    public List<ArchiveClassifyDto> listView() {
+        Sort sort = new Sort(Sort.Direction.ASC, "createTime");
+        return archiveService.findAllClassify(sort);
+    }
+
     @PostMapping(value = "/persist")
-    public ArchiveItem saveOrUpdate(@Valid @RequestBody ArchiveItem archiveItem) {
-        return archiveService.save(archiveItem);
+    public ArchiveItemDto saveOrUpdate(@Valid @RequestBody ArchiveItemDto dto) {
+        return archiveService.save(dto);
     }
 
     @GetMapping(value = "/{id}/detail")
-    public ArchiveItem getArchiveById(@PathVariable Long id) {
+    public ArchiveItemDto getArchiveById(@PathVariable Long id) {
         return archiveService.findById(id);
     }
 
@@ -100,6 +109,17 @@ public class ArchiveController {
             results = archiveService.attachStuArchive(stuList.stream(), id);
         }
         return results;
+    }
+
+
+    @PostMapping(value = "/classify/persist")
+    public ArchiveClassify saveOrUpdate(@Valid @RequestBody ArchiveClassify archiveClassify) {
+        return archiveService.save(archiveClassify);
+    }
+
+    @GetMapping(value = "/classify/{id}/detail")
+    public ArchiveClassify getClassifyById(@PathVariable Long id) {
+        return archiveService.findClassifyById(id);
     }
 
 

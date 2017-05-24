@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA
@@ -67,7 +68,8 @@ public class TransmitRecord extends IdEntity {
     /**
      * 转接操作时间
      */
-    private LocalDateTime localDateTime = LocalDateTime.now();
+    //private LocalDateTime localDateTime = LocalDateTime.now();
+    private Date fluctTime;
 
 
     @ManyToOne
@@ -128,14 +130,23 @@ public class TransmitRecord extends IdEntity {
         this.opUserName = opUserName;
     }
 
+//    @Column(name = "fluct_time")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    public LocalDateTime getLocalDateTime() {
+//        return localDateTime;
+//    }
+//
+//    public void setLocalDateTime(LocalDateTime localDateTime) {
+//        this.localDateTime = localDateTime;
+//    }
+
     @Column(name = "fluct_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public Date getFluctTime() {
+        return fluctTime;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setFluctTime(Date fluctTime) {
+        this.fluctTime = fluctTime;
     }
 
     @Column(name = "custodian")

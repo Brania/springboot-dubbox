@@ -18,7 +18,6 @@ import com.google.common.collect.Sets;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA
@@ -307,8 +306,8 @@ public class Student extends IdEntity {
      *
      * @return
      */
-    public TransmitRecord findLastestRecord() {
-        Stream<TransmitRecord> stream = records.stream().sorted((v1, v2) -> v2.getLocalDateTime().isAfter(v1.getLocalDateTime()) ? 0 : 1);
-        return stream.findFirst().get();
-    }
+//    public TransmitRecord findLastestRecord() {
+//        Stream<TransmitRecord> stream = records.stream().sorted((v1, v2) -> v2.getLocalDateTime().isAfter(v1.getLocalDateTime()) ? 0 : 1);
+//        return stream.findFirst().get();
+//    }
 }

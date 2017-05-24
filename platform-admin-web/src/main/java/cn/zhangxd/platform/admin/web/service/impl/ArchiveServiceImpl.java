@@ -8,15 +8,20 @@
 
 package cn.zhangxd.platform.admin.web.service.impl;
 
+import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
 import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
+import cn.zhangxd.platform.admin.web.repository.ArchiveClassifyRepository;
 import cn.zhangxd.platform.admin.web.repository.ArchiveItemRepository;
 import cn.zhangxd.platform.admin.web.repository.StudentRelArchiveItemRepository;
 import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.common.api.Paging;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +30,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -46,6 +54,9 @@ public class ArchiveServiceImpl implements ArchiveService {
     private ArchiveItemRepository archiveItemRepository;
 
     @Autowired
+    private ArchiveClassifyRepository archiveClassifyRepository;
+
+    @Autowired
     private StudentService studentService;
 
     @Autowired
@@ -53,8 +64,21 @@ public class ArchiveServiceImpl implements ArchiveService {
 
 
     @Override
-    public ArchiveItem findById(Long id) {
-        return archiveItemRepository.findOne(id);
+    public ArchiveClassify save(ArchiveClassify archiveClassify) {
+        if (null != archiveClassify.getId()) {
+            archiveClassify.setCreateTime(new Date());
+        }
+        return archiveClassifyRepository.save(archiveClassify);
+    }
+
+    @Override
+    public ArchiveClassify findClassifyById(Long id) {
+        return archiveClassifyRepository.findOne(id);
+    }
+
+    @Override
+    public ArchiveItemDto findById(Long id) {
+        return generate(archiveItemRepository.findOne(id));
     }
 
     @Override
@@ -118,14 +142,16 @@ public class ArchiveServiceImpl implements ArchiveService {
     }
 
     @Override
-    public ArchiveItem save(ArchiveItem archiveItem) {
-
-        if (null != archiveItem.getId()) {
+    public ArchiveItemDto save(ArchiveItemDto dto) {
+        ArchiveItem archiveItem;
+        if (null != dto.getId()) {
             // 记录修改时间
+            archiveItem = archiveItemRepository.findOne(dto.getId());
+            archiveItem.setClassify(archiveClassifyRepository.findOne(dto.getClassifyId()));
         } else {
-            archiveItem = generate(archiveItem);
+            archiveItem = create(dto);
         }
-        return archiveItemRepository.save(archiveItem);
+        return generate(archiveItemRepository.save(archiveItem));
     }
 
     @Override
@@ -144,20 +170,65 @@ public class ArchiveServiceImpl implements ArchiveService {
     }
 
     @Override
-    public Iterable<ArchiveItem> findAll(Sort sort) {
+    public List<ArchiveItemDto> findAll(Sort sort) {
+        List<ArchiveItemDto> list = Lists.newArrayList();
+        Long defaultValue = 0l;
+        for (ArchiveItem archiveItem : archiveItemRepository.listAll()) {
+            ArchiveItemDto archiveItemDto = generate(archiveItem);
+            if (archiveItemDto.getClassifyId().compareTo(defaultValue) != 0) {
+                archiveItemDto.setRowSpan(archiveItemRepository.countByClassify(archiveItem.getClassify()).intValue());
+            }
+            defaultValue = archiveItemDto.getClassifyId();
+            list.add(archiveItemDto);
+        }
 
-        return archiveItemRepository.findAll(sort);
+        return list;
     }
 
 
-    private ArchiveItem generate(ArchiveItem archiveItem) {
+    private ArchiveItemDto generate(ArchiveItem archiveItem) {
+        ArchiveItemDto dto = new ArchiveItemDto();
+        dto.setId(archiveItem.getId());
+
+        dto.setClassifyId(archiveItem.getClassify().getId());
+        dto.setClassifyName(archiveItem.getClassify().getName());
+        dto.setEnabled(archiveItem.getEnabled());
+        dto.setForced(archiveItem.getForced());
+        dto.setName(archiveItem.getName());
+        dto.setRemarks(archiveItem.getRemarks());
+        dto.setSort(archiveItem.getSort());
+
+        return dto;
+    }
+
+
+    @Override
+    public List<ArchiveClassifyDto> findAllClassify(Sort sort) {
+
+        List<ArchiveClassifyDto> list = Lists.newArrayList();
+        archiveClassifyRepository.findAll(sort).forEach(archiveClassify -> {
+            ArchiveClassifyDto dto = new ArchiveClassifyDto();
+
+            dto.setId(archiveClassify.getId());
+            dto.setName(archiveClassify.getName());
+            dto.setItems(archiveClassify.getItems().stream().map(classify -> generate(classify)).collect(Collectors.toList()));
+            list.add(dto);
+        });
+
+
+        return list;
+    }
+
+    private ArchiveItem create(ArchiveItemDto dto) {
 
         ArchiveItem item = new ArchiveItem();
-        item.setEnabled(archiveItem.getEnabled());
-        item.setForced(archiveItem.getForced());
-        item.setName(archiveItem.getName());
-        item.setRemarks(archiveItem.getRemarks());
-        item.setSort(archiveItem.getSort());
+        item.setEnabled(dto.getEnabled());
+        item.setForced(dto.getForced());
+        item.setName(dto.getName());
+        item.setRemarks(dto.getRemarks());
+        item.setSort(dto.getSort());
+        item.setCreateTime(new Date());
+        item.setClassify(archiveClassifyRepository.findOne(dto.getClassifyId()));
         return item;
     }
 }

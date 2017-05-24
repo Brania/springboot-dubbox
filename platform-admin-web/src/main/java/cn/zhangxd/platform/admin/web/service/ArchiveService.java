@@ -8,12 +8,16 @@
 
 package cn.zhangxd.platform.admin.web.service;
 
+import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
 import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -35,17 +39,23 @@ public interface ArchiveService {
      * @param sort
      * @return
      */
-    Iterable<ArchiveItem> findAll(Sort sort);
+    List<ArchiveItemDto> findAll(Sort sort);
+
+    List<ArchiveClassifyDto> findAllClassify(Sort sort);
 
     /**
      * 保存或修改档案项目
      *
-     * @param archiveItem
+     * @param dto
      * @return
      */
-    ArchiveItem save(ArchiveItem archiveItem);
+    ArchiveItemDto save(ArchiveItemDto dto);
 
-    ArchiveItem findById(Long id);
+    ArchiveClassify save(ArchiveClassify archiveClassify);
+
+    ArchiveClassify findClassifyById(Long id);
+
+    ArchiveItemDto findById(Long id);
 
     /**
      * 删除档案项目
@@ -75,6 +85,7 @@ public interface ArchiveService {
 
     /**
      * 分页显示档案内容管理或报表打印学生列表
+     *
      * @param searchParams
      * @param paging
      * @return

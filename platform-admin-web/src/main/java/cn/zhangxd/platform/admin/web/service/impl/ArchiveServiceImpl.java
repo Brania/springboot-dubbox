@@ -30,7 +30,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,8 +63,26 @@ public class ArchiveServiceImpl implements ArchiveService {
 
 
     @Override
+    public Map<String, Object> deleteClassify(Long id) {
+
+        Boolean success = Boolean.FALSE;
+        Map<String, Object> results = Maps.newHashMap();
+        try {
+            ArchiveClassify classify = archiveClassifyRepository.findOne(id);
+
+            archiveClassifyRepository.delete(classify);
+            success = Boolean.TRUE;
+        } catch (Exception e) {
+            results.put("message", e.getMessage());
+            log.error("删除档案分类失败：{}", e.getMessage());
+        }
+        results.put("success", success);
+        return results;
+    }
+
+    @Override
     public ArchiveClassify save(ArchiveClassify archiveClassify) {
-        if (null != archiveClassify.getId()) {
+        if (archiveClassify.getId() == null) {
             archiveClassify.setCreateTime(new Date());
         }
         return archiveClassifyRepository.save(archiveClassify);
@@ -147,7 +164,11 @@ public class ArchiveServiceImpl implements ArchiveService {
         if (null != dto.getId()) {
             // 记录修改时间
             archiveItem = archiveItemRepository.findOne(dto.getId());
+            archiveItem.setName(dto.getName());
+            archiveItem.setSort(dto.getSort());
             archiveItem.setClassify(archiveClassifyRepository.findOne(dto.getClassifyId()));
+            archiveItem.setForced(dto.getForced());
+            archiveItem.setEnabled(dto.getEnabled());
         } else {
             archiveItem = create(dto);
         }

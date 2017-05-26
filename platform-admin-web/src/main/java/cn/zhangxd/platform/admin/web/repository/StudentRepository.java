@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,6 +30,9 @@ import java.util.List;
 public interface StudentRepository extends PagingAndSortingRepository<Student, Long>, JpaSpecificationExecutor<Student> {
 
     Student findByExamineeNo(String examineeNo);
+
+
+    List<Student> findByIdIn(Collection<Long> ids);
 
     /**
      * 统计院系学生人数

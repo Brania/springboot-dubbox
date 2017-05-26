@@ -9,7 +9,6 @@
 package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
-import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
@@ -18,7 +17,6 @@ import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import javafx.scene.control.Pagination;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +118,11 @@ public class ArchiveController {
     @GetMapping(value = "/classify/{id}/detail")
     public ArchiveClassify getClassifyById(@PathVariable Long id) {
         return archiveService.findClassifyById(id);
+    }
+
+    @PostMapping(value = "/classify/{id}/delete")
+    public Map<String, Object> deleteClassifyById(@PathVariable Long id) {
+        return archiveService.deleteClassify(id);
     }
 
 

@@ -36,4 +36,6 @@ public interface ArchiveItemRepository extends PagingAndSortingRepository<Archiv
     @Query("select item from ArchiveItem item order by item.classify.id, item.sort asc")
     List<ArchiveItem> listAll();
 
+    Long deleteByClassify(ArchiveClassify archiveClassify);
+
 }

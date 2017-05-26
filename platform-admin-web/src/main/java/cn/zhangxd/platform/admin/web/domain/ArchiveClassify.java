@@ -11,10 +11,7 @@ package cn.zhangxd.platform.admin.web.domain;
 import cn.zhangxd.platform.admin.web.util.IdEntity;
 import com.google.common.collect.Lists;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -45,7 +42,7 @@ public class ArchiveClassify extends IdEntity {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "classify")
+    @OneToMany(mappedBy = "classify", cascade = CascadeType.REMOVE)
     public List<ArchiveItem> getItems() {
         return items;
     }

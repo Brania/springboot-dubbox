@@ -50,4 +50,10 @@ public class Constants {
     public static final String ADD_SOURCE = "ADD";
 
 
+    /**
+     * 报表单列::双列
+     */
+    public static final String DRT = "double";
+
+
 }

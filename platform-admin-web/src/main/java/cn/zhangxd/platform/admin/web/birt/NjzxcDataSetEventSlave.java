@@ -31,17 +31,15 @@ import java.util.List;
  * Created with IntelliJ IDEA
  * User: ch-hui
  * Date: ${Date}
- * Time: 上午12:00
+ * Time: 下午11:27
  * <p>
  * "潜居抱道，已待其时" -《素书》
  * <p>
  * Description:
  */
-
 @Component
 @Slf4j
-public class NjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
-
+public class NjzxcDataSetEventSlave extends ScriptedDataSetEventAdapter {
 
     private Iterator<Student> stuIter;
 
@@ -52,9 +50,9 @@ public class NjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
     public boolean fetch(IDataSetInstance dataSet, IUpdatableDataSetRow row) throws ScriptException {
         if (stuIter.hasNext()) {
             Student student = stuIter.next();
-            row.setColumnValue("examinee_no", student.getExamineeNo());
-            row.setColumnValue("admission_no", student.getAdmissionNo());
-            row.setColumnValue("student_no", student.getStudentNo());
+            row.setColumnValue("eno", student.getExamineeNo());
+            row.setColumnValue("ano", student.getAdmissionNo());
+            row.setColumnValue("sno", student.getStudentNo());
             row.setColumnValue("name", student.getName());
             row.setColumnValue("depart", student.getDepart().getName());
             return true;
@@ -71,17 +69,16 @@ public class NjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
 
         NjzxcRequest njzxcRequest = JSON.parseObject(String.valueOf(reportContext.getParameterValue("ReportParamJson")), NjzxcRequest.class);
         if (StringUtils.isNotBlank(njzxcRequest.getStudents())) {
-
             List<Long> checkIds = Lists.newArrayList();
             for (String stuId : njzxcRequest.getStudents().split(Constants.DOT)) {
                 checkIds.add(Long.parseLong(stuId));
             }
             if (Constants.DRT.equals(njzxcRequest.getReportType())) {
                 // 双列显示
-                //stuIter = studentService.reportChooseStudent(checkIds).stream().filter(student -> student.getId().intValue() % 2 == 1).collect(Collectors.toList()).iterator();
+                //stuIter = studentService.reportChooseStudent(checkIds).stream().filter(student -> student.getId().intValue() % 2 == 0).collect(Collectors.toList()).iterator();
                 int columnCount = 1;
                 for (Student student : studentService.reportChooseStudent(checkIds)) {
-                    if (columnCount % 2 == 1) {
+                    if (columnCount % 2 == 0) {
                         studentCollection.add(student);
                     }
                     columnCount++;
@@ -93,10 +90,10 @@ public class NjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
             }
         } else {
             if (Constants.DRT.equals(njzxcRequest.getReportType())) {
-                //stuIter = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams()).stream().filter(student -> student.getId().intValue() % 2 == 1).collect(Collectors.toList()).iterator();
+                //stuIter = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams()).stream().filter(student -> student.getId().intValue() % 2 == 0).collect(Collectors.toList()).iterator();
                 int columnCount = 1;
                 for (Student student : studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams())) {
-                    if (columnCount % 2 == 1) {
+                    if (columnCount % 2 == 0) {
                         studentCollection.add(student);
                     }
                     columnCount++;
@@ -106,8 +103,7 @@ public class NjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
                 stuIter = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams()).iterator();
             }
         }
-        // 设置报表参数
-        // reportContext.setPageVariable("printers", "晓庄学院校印刷厂");
-    }
 
+
+    }
 }

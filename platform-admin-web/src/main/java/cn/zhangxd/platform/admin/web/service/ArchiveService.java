@@ -9,14 +9,12 @@
 package cn.zhangxd.platform.admin.web.service;
 
 import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
-import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -54,6 +52,8 @@ public interface ArchiveService {
     ArchiveClassify save(ArchiveClassify archiveClassify);
 
     ArchiveClassify findClassifyById(Long id);
+
+    Map<String, Object> deleteClassify(Long id);
 
     ArchiveItemDto findById(Long id);
 

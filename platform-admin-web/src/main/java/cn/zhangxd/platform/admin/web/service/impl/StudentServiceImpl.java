@@ -22,6 +22,7 @@ import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import cn.zhangxd.platform.common.api.Paging;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -76,6 +77,46 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private TransmitRecordRepository transmitRecordRepository;
 
+
+    @Override
+    public List<Student> reportStudentBySearchMap(Map<String, String> searchParams) {
+        return studentRepository.findAll((Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+
+            List<Predicate> predicates = Lists.newArrayList();
+            List<Predicate> orPredicate = new ArrayList<>();
+
+
+            if (StringUtils.isNotBlank(searchParams.get("depart"))) {
+                predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), searchParams.get("depart")));
+            }
+            if (StringUtils.isNotBlank(searchParams.get("entranceYear"))) {
+                predicates.add(criteriaBuilder.equal(root.get("entranceYear"), Integer.parseInt(searchParams.get("entranceYear"))));
+            }
+
+            if (StringUtils.isNotBlank(searchParams.get("gender"))) {
+                predicates.add(criteriaBuilder.equal(root.get("sex"), SexEnum.valueOf(searchParams.get("gender"))));
+            }
+
+            String studentNo = searchParams.get("sno");
+            if (StringUtils.isNotBlank(studentNo)) {
+                StringJoiner joiner = new StringJoiner("");
+                joiner.add("%").add(String.valueOf(studentNo)).add("%");
+
+                orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), studentNo));
+                orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), studentNo));
+                orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));
+                predicates.add(criteriaBuilder.or(orPredicate.toArray(new Predicate[]{})));
+
+            }
+
+            return predicates.size() > 0 ? PaginationUtil.buildQueryPredicate(predicates, criteriaBuilder) : null;
+        });
+    }
+
+    @Override
+    public List<Student> reportChooseStudent(Collection<Long> ids) {
+        return studentRepository.findByIdIn(ids);
+    }
 
     @Override
     public StudentDetailDto findStudentDetail(Long id) {
@@ -292,7 +333,7 @@ public class StudentServiceImpl implements StudentService {
             if (null != searchParams.get("sno") && String.valueOf(searchParams.get("sno")).length() > 0) {
                 StringJoiner joiner = new StringJoiner("");
                 joiner.add("%").add(String.valueOf(searchParams.get("sno"))).add("%");
-
+                // 带分页条件查询
                 orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), String.valueOf(searchParams.get("sno"))));
                 orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), String.valueOf(searchParams.get("sno"))));
                 orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));

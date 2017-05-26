@@ -17,6 +17,7 @@ import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,22 @@ public interface StudentService {
 
     Iterable<Student> findAll();
 
+    /**
+     * 指定勾选记录导出学生条码
+     *
+     * @param ids
+     * @return
+     */
+    List<Student> reportChooseStudent(Collection<Long> ids);
+
+    /**
+     * 按照查询条件导出学生条件
+     *
+     * @param searchParams
+     * @return
+     */
+    List<Student> reportStudentBySearchMap(Map<String, String> searchParams);
+
 
     Student save(Student student);
 
@@ -42,6 +59,7 @@ public interface StudentService {
 
     /**
      * 包含转接记录的学生详情
+     *
      * @param id
      * @return
      */
@@ -95,6 +113,7 @@ public interface StudentService {
 
     /**
      * 删除学生档案项目
+     *
      * @param student
      * @param itemId
      * @return

@@ -11,6 +11,7 @@ package cn.zhangxd.platform.admin.web.domain.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA
@@ -49,6 +50,15 @@ public class ArchiveItemDto implements Serializable {
     private String classifyName;
 
     private Integer rowSpan = 0;
+
+    /**
+     * 档案是否存在标识::相对学生
+     */
+    private Boolean fileExist = Boolean.FALSE;
+    /**
+     * 档案提交时间
+     */
+    private Date createTime;
 
 
 }

@@ -87,6 +87,7 @@ public class StudentServiceImpl implements StudentService {
 
 
             if (StringUtils.isNotBlank(searchParams.get("depart"))) {
+
                 predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), searchParams.get("depart")));
             }
             if (StringUtils.isNotBlank(searchParams.get("entranceYear"))) {
@@ -294,12 +295,16 @@ public class StudentServiceImpl implements StudentService {
                 return student;
             } else {
                 Iterable<Student> students = this.studentRepository.findByNameLike(searchParam);
+
                 if (students.iterator().hasNext()) {
                     return students.iterator().next();
+                } else {
+                    students = this.studentRepository.findByStudentNoLike(searchParam);
+                    return students.iterator().hasNext() ? students.iterator().next() : null;
                 }
             }
         }
-        return null;
+//        return null;
     }
 
     @Override
@@ -307,7 +312,6 @@ public class StudentServiceImpl implements StudentService {
 
 
         String[] sortParams = PaginationUtil.buildSortableParam(String.valueOf(searchParams.get("orderBy")));
-
         paging.setOrderBy(sortParams[0]);
         paging.setOrderType(sortParams[1]);
 
@@ -355,8 +359,12 @@ public class StudentServiceImpl implements StudentService {
             Date createOrUpdateTime = new Date();
 
             list.forEach(s -> {
-
-                Student student = studentRepository.findByExamineeNo(s.getKsh());
+                Student student;
+                if (StringUtils.isNotBlank(s.getKsh())) {
+                    student = studentRepository.findByExamineeNo(s.getKsh());
+                } else {
+                    student = studentRepository.findByStudentNo(s.getXh());
+                }
                 if (null != student) {
                     student.setUpdateTime(createOrUpdateTime);
                 } else {

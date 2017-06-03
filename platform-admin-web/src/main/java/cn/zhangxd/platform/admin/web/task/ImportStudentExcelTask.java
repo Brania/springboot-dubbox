@@ -58,16 +58,21 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
             if (sheet != null) {
                 // 汇总数据
                 List<StudentXlsDto> datas = new ArrayList<>();
-                for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+                log.info("计算行->getPhysicalNumberOfRows = {}", sheet.getPhysicalNumberOfRows());
+                for (int i = sheet.getFirstRowNum() + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                     Row row = sheet.getRow(i);
                     StudentXlsDto dto = new StudentXlsDto();
 
-                    for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
+                    log.info("计算每一行列的数据->PhysicalNumberOfCells:{}", row.getPhysicalNumberOfCells());
+
+                    //for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
+                    // getFirstCellNum不等于0
+                    for (int j = row.getFirstCellNum(); j <= row.getLastCellNum(); j++) {
                         Cell cell = row.getCell(j);
                         if (cell != null) {
                             String cellStr = ExcelHandleUtil.getStringCellValue(cell);
                             // 跳过行数据为空的记录
-                            if(j == 0 && StringUtils.isBlank(cellStr)){
+                            if (j == 0 && StringUtils.isBlank(cellStr)) {
                                 continue;
                             }
                             switch (j) {
@@ -136,11 +141,11 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
                                     dto.setLxdh2(cellStr);
                                     break;
                             }
-                            datas.add(dto);
                         } else {
-                            break;
+                           continue;
                         }
                     }
+                    datas.add(dto);
                 }
 
                 studentService.importStudent(datas);

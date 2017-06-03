@@ -1,10 +1,13 @@
 package cn.zhangxd.platform.admin.web.security.model;
 
+import cn.zhangxd.platform.system.api.entity.AcKeyMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import cn.zhangxd.platform.common.web.security.model.AbstractAuthUser;
+import com.google.common.collect.Lists;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Security User
@@ -41,6 +44,11 @@ public class AuthUser extends AbstractAuthUser {
      * 手机
      */
     private String mobile;
+
+    /**
+     * 访问决策
+     */
+    private List<AcKeyMap> accessPolicy = Lists.newArrayList();
     /**
      * 权限
      */
@@ -135,4 +143,12 @@ public class AuthUser extends AbstractAuthUser {
         return enabled;
     }
 
+
+    public List<AcKeyMap> getAccessPolicy() {
+        return accessPolicy;
+    }
+
+    public void setAccessPolicy(List<AcKeyMap> accessPolicy) {
+        this.accessPolicy = accessPolicy;
+    }
 }

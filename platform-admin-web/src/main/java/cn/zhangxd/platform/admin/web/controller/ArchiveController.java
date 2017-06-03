@@ -81,7 +81,7 @@ public class ArchiveController {
 
 
     @GetMapping(value = "/report/list")
-    public Page<ArchiveDto> reportList(@RequestParam(value = "page", defaultValue = "1") int page,
+    public Page<ArchiveDto> reportList(@RequestParam(value = "pageNum", defaultValue = "1") int page,
                                        @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                                        @RequestParam Map<String, Object> searchParams) {
         return archiveService.reportPageList(searchParams, PaginationUtil.generate(page, pageSize));

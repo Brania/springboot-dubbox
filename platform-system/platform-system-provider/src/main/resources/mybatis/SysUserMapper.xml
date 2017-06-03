@@ -18,10 +18,24 @@
         FROM sys_user a
     </sql>
 
+    <sql id="selectAccessColumns">
+        SELECT
+          ac.ac_depart_code as code, ac.ac_depart_name as name
+        FROM sys_user a
+    </sql>
+
+
     <!-- 根据编号获得用户 -->
     <select id="get" resultType="cn.zhangxd.platform.system.api.entity.SysUser">
         <include refid="selectColumns"/>
         WHERE a.id = #{id}
+    </select>
+
+
+    <select id="getUserAccessPolicy" resultType="cn.zhangxd.platform.system.api.entity.AcKeyMap">
+        <include refid="selectAccessColumns"/>
+        join sys_user_access ac on a.id = ac.user_id
+        where a.id = #{userId}
     </select>
 
     <!-- 根据登录名查询用户 -->
@@ -132,6 +146,19 @@
         DELETE FROM sys_user_role
         WHERE user_id = #{id}
     </delete>
+
+
+    <delete id="deleteUserAccessPolicy">
+         DELETE FROM sys_user_access
+         WHERE user_id = #{id}
+    </delete>
+
+    <insert id="insertUserAccessPolicy">
+        INSERT INTO sys_user_access(user_id, ac_depart_code, ac_depart_name)
+        <foreach collection="departs" item="depart" separator=" union all ">
+            SELECT #{id}, #{depart.code}, #{depart.name} FROM dual
+        </foreach>
+    </insert>
 
     <!-- 插入用户和角色关联表数据 -->
     <insert id="insertUserRole">

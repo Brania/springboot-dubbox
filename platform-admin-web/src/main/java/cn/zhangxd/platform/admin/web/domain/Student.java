@@ -68,9 +68,13 @@ public class Student extends IdEntity {
      */
     private Major major;
     /**
-     * 院系
+     * 院系（正式）
      */
     private Depart depart;
+    /**
+     * 异动院系（转出写入:转入覆盖正式院系）
+     */
+    private Depart rollDepart;
     /**
      * 班级
      */
@@ -198,6 +202,15 @@ public class Student extends IdEntity {
         this.depart = depart;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "roll_depart_id", referencedColumnName = "id")
+    public Depart getRollDepart() {
+        return rollDepart;
+    }
+
+    public void setRollDepart(Depart rollDepart) {
+        this.rollDepart = rollDepart;
+    }
 
     @Column(name = "entrance_year")
     public Integer getEntranceYear() {

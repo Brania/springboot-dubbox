@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 系统管理，安全相关实体的管理类,包括用户、角色、菜单.
@@ -56,6 +57,7 @@ public class SystemService implements ISystemService {
 
         String userId = user.getId();
         user.setRoles(sysRoleMapper.findListByUserId(userId));
+        user.setDeparts(sysUserMapper.getUserAccessPolicy(userId));
 
         List<SysMenu> menuList;
         //超级管理员
@@ -73,7 +75,8 @@ public class SystemService implements ISystemService {
     public PageInfo<SysUser> findUserPage(Paging page, SysUser user) {
         // 执行分页查询
         PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.getOrderBy());
-        List<SysUser> list = sysUserMapper.findList(user);
+        List<SysUser> list = sysUserMapper.findList(user).stream().map(sysUser -> getUserById(sysUser.getId())).collect(Collectors.toList());
+
         return new PageInfo<>(list);
     }
 
@@ -83,6 +86,11 @@ public class SystemService implements ISystemService {
         if (user != null) {
             user.setRoles(sysRoleMapper.findListByUserId(userId));
         }
+
+        if (user != null) {
+            user.setDeparts(sysUserMapper.getUserAccessPolicy(userId));
+        }
+
         return sysUserMapper.get(userId);
     }
 
@@ -96,6 +104,7 @@ public class SystemService implements ISystemService {
             // 更新用户数据
             user.preUpdate();
             sysUserMapper.update(user);
+            sysUserMapper.deleteUserAccessPolicy(user);
             sysUserMapper.deleteUserRole(user);
         }
 
@@ -104,6 +113,11 @@ public class SystemService implements ISystemService {
             sysUserMapper.insertUserRole(user);
         }
 
+        // 更新用户与管理院系关联
+        if (user.getDeparts() != null && !user.getDeparts().isEmpty()) {
+            sysUserMapper.insertUserAccessPolicy(user);
+
+        }
         return user;
     }
 
@@ -159,15 +173,15 @@ public class SystemService implements ISystemService {
      */
     private void sortList(List<SysMenu> list, List<SysMenu> sourceList, String parentId) {
         sourceList.stream()
-            .filter(menu -> menu.getParentId() != null && menu.getParentId().equals(parentId))
-            .forEach(menu -> {
-                list.add(menu);
-                // 判断是否还有子节点, 有则继续获取子节点
-                sourceList.stream()
-                    .filter(child -> child.getParentId() != null && child.getParentId().equals(menu.getId()))
-                    .peek(child -> sortList(list, sourceList, menu.getId()))
-                    .findFirst();
-            });
+                .filter(menu -> menu.getParentId() != null && menu.getParentId().equals(parentId))
+                .forEach(menu -> {
+                    list.add(menu);
+                    // 判断是否还有子节点, 有则继续获取子节点
+                    sourceList.stream()
+                            .filter(child -> child.getParentId() != null && child.getParentId().equals(menu.getId()))
+                            .peek(child -> sortList(list, sourceList, menu.getId()))
+                            .findFirst();
+                });
     }
 
     /**

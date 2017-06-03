@@ -31,6 +31,8 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     Student findByExamineeNo(String examineeNo);
 
+    Student findByStudentNo(String sno);
+
 
     List<Student> findByIdIn(Collection<Long> ids);
 
@@ -45,6 +47,8 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
     Student findByIdCard(String idCard);
 
     Iterable<Student> findByNameLike(String name);
+
+    Iterable<Student> findByStudentNoLike(String sno);
 
     @Query("select s from Student s where s.depart.code = ?1")
     List<Student> findStudentListBySearch(String departName);

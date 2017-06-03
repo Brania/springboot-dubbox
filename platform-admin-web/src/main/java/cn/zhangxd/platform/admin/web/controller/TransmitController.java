@@ -8,7 +8,6 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
-import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;

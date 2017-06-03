@@ -35,6 +35,7 @@ public final class AuthUserFactory {
         authUser.setMobile(user.getMobile());
         authUser.setPassword(user.getPassword());
         authUser.setEnabled(user.getEnabled());
+        authUser.setAccessPolicy(user.getDeparts());
         authUser.setAuthorities(mapToGrantedAuthorities(user.getRoles(), user.getMenus()));
         return authUser;
     }

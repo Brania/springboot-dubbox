@@ -62,6 +62,12 @@ public class TransmitEventServiceImpl implements TransmitEventService {
     @Autowired
     private StudentService studentService;
 
+    /**
+     * 核心业务处理::转接办理
+     *
+     * @param recordRequest
+     * @return
+     */
     @Transactional
     @Override
     public Map<String, Object> handleTransmitEvent(TransmitRecordRequest recordRequest) {
@@ -82,11 +88,26 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                 }
                 // 不允许修改毕业转出学生档案状态
                 if (!student.getStatus().equals(TransmitEnum.DETACHED)) {
+                    // 入学报到
                     if (student.getStatus().equals(TransmitEnum.TRANSIENT)) {
-                        student.setStatus(TransmitEnum.ACCEPTED);
+                        if (transmitEventType.getNextStatus().equals(TransmitEnum.ACCEPTED)) {
+                            student.setStatus(TransmitEnum.ACCEPTED);
+                        } else {
+                            // 非法操作待接收学生
+                            success = Boolean.FALSE;
+                        }
                     } else {
+                        // 在校学习::转专业
+                        if (student.getStatus().equals(TransmitEnum.WAITING) && transmitEventType.getNextStatus().equals(TransmitEnum.ACCEPTED)) {
+                            student.setDepart(student.getRollDepart());
+                        }
+                        if (student.getStatus().equals(TransmitEnum.ACCEPTED)) {
+                            student.setRollDepart(departRepository.findByCode(recordRequest.getToDepart()));
+                        }
                         student.setStatus(transmitEventType.getNextStatus());
                     }
+
+
                 }
             } else {
                 // 批量处理
@@ -98,9 +119,20 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                     if (student.getStatus().equals(TransmitEnum.DETACHED)) {
                         break;
                     }
+                    // 入学报到
                     if (student.getStatus().equals(TransmitEnum.TRANSIENT)) {
-                        student.setStatus(TransmitEnum.ACCEPTED);
+                        if (transmitEventType.getNextStatus().equals(TransmitEnum.ACCEPTED)) {
+                            student.setStatus(TransmitEnum.ACCEPTED);
+                        }
+                        // 存在非法操作待接收学生记录丢弃
                     } else {
+                        // 在校学习::转专业
+                        if (student.getStatus().equals(TransmitEnum.WAITING) && transmitEventType.getNextStatus().equals(TransmitEnum.ACCEPTED)) {
+                            student.setDepart(student.getRollDepart());
+                        }
+                        if (student.getStatus().equals(TransmitEnum.ACCEPTED)) {
+                            student.setRollDepart(departRepository.findByCode(recordRequest.getToDepart()));
+                        }
                         student.setStatus(transmitEventType.getNextStatus());
                     }
                 }

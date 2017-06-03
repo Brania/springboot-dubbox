@@ -12,7 +12,9 @@ import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
+import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
 import cn.zhangxd.platform.admin.web.util.Constants;
@@ -20,14 +22,27 @@ import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,8 +69,11 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private ArchiveService archiveService;
+
     @GetMapping(value = "/list")
-    public Page<Student> list(@RequestParam(value = "page", defaultValue = "1") int page,
+    public Page<Student> list(@RequestParam(value = "pageNum", defaultValue = "1") int page,
                               @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                               @RequestParam Map<String, Object> searchParams) {
 
@@ -102,6 +120,44 @@ public class StudentController {
         return student;
     }
 
+    @GetMapping(value = "/download")
+    public ResponseEntity<byte[]> downloadXls(HttpServletRequest request) {
+
+        byte[] res = new byte[0];
+        try {
+            InputStream in = this.getClass().getResourceAsStream("/import.xlsx");
+            if (null != in) {
+                res = IOUtils.toByteArray(in);
+            }
+        } catch (IOException e) {
+            log.error("读取文件失败：{}", e.getMessage());
+        }
+
+
+        String fileName = "导入学生名单模版.xlsx";
+        String header = request.getHeader("User-Agent").toUpperCase();
+        HttpStatus status = HttpStatus.CREATED;
+        try {
+            if (header.contains("MSIE") || header.contains("TRIDENT") || header.contains("EDGE")) {
+                fileName = URLEncoder.encode(fileName, "UTF-8");
+                fileName = fileName.replace("+", "%20");    // IE下载文件名空格变+号问题
+                status = HttpStatus.OK;
+            } else {
+                fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.error("下载文件响应失败：{}", e.getMessage());
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentLength(res.length);
+//        log.info("Print File Size={}", res.length);
+
+        return new ResponseEntity<>(res, headers, status);
+    }
+
 
     /**
      * 执行导入学生数据
@@ -132,17 +188,31 @@ public class StudentController {
         return logImpExcel;
     }
 
-
+    /**
+     * 查询学生已添加档案列表
+     *
+     * @param sid
+     * @return
+     */
     @GetMapping(value = "/attach/find/{sid}")
-    public List<ArchiveItem> queryArchiveAttachByStudent(@PathVariable Long sid) {
+    public List<ArchiveItemDto> queryArchiveAttachByStudent(@PathVariable Long sid) {
 
-        List<ArchiveItem> list = Lists.newArrayList();
+        List<ArchiveItemDto> items = archiveService.findAll(new Sort(Sort.Direction.DESC, "sort"));
+
         Student student = studentService.findOne(sid);
         if (null != student) {
             List<StudentRelArchiveItem> sra = studentService.findArchiveItemByStudent(student);
-            list = sra.stream().map(s -> s.getItem()).collect(Collectors.toList());
+            items = items.stream().map(archiveItemDto -> {
+                for (StudentRelArchiveItem studentRelArchiveItem : sra) {
+                    if (studentRelArchiveItem.getItem().getId().compareTo(archiveItemDto.getId()) == 0) {
+                        archiveItemDto.setFileExist(Boolean.TRUE);
+                        archiveItemDto.setCreateTime(studentRelArchiveItem.getCreateTime());
+                    }
+                }
+                return archiveItemDto;
+            }).collect(Collectors.toList());
         }
-        return list;
+        return items;
     }
 
     @GetMapping(value = "/attach/{sid}/delete/{id}")

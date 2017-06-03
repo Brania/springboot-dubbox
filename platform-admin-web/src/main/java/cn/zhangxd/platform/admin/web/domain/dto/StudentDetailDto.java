@@ -104,4 +104,5 @@ public class StudentDetailDto implements Serializable {
     private TransmitEnum status;
 
     private List<TransmitRecordDto> records = Lists.newArrayList();
+
 }

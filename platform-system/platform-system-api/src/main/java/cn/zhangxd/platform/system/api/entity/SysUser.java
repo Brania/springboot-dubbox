@@ -59,6 +59,10 @@ public class SysUser extends DataEntity {
      */
     private List<SysRole> roles = new ArrayList<>();
     /**
+     * 管理院系列表（普通用户角色）
+     */
+    private List<AcKeyMap> departs = new ArrayList<>();
+    /**
      * 菜单列表
      */
     private List<SysMenu> menus = new ArrayList<>();
@@ -158,5 +162,13 @@ public class SysUser extends DataEntity {
 
     public void setMenus(List<SysMenu> menus) {
         this.menus = menus;
+    }
+
+    public List<AcKeyMap> getDeparts() {
+        return departs;
+    }
+
+    public void setDeparts(List<AcKeyMap> departs) {
+        this.departs = departs;
     }
 }

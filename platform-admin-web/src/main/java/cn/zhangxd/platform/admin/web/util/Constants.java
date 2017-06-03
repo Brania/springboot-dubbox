@@ -36,9 +36,11 @@ public class Constants {
      */
     public static final String ADCLASS_CODE_PREFIX = "C";
 
-
-    public static final String DEFAULT_SORT_BY = "createTime";
-    public static final String DEFAULT_SORT_TYPE = "DESC";
+    /**
+     * 默认排序规则::注意跨数据库问题
+     */
+    public static final String DEFAULT_SORT_BY = "id";
+    public static final String DEFAULT_SORT_TYPE = "ASC";
 
     public static final String TRANSMIT_TYPE_PREFIX = "_";
     public static final String DOT = ",";

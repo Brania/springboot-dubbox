@@ -50,7 +50,9 @@ public class TransmitRecordDto implements Serializable {
     /**
      * 转接内容
      */
-    private List<String> contexts = Lists.newArrayList();
+    //private List<String> contexts = Lists.newArrayList();
+
+    private String contexts;
 
 
 }

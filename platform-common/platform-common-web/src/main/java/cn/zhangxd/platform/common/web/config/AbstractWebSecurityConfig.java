@@ -44,8 +44,7 @@ public class AbstractWebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(this.userDetailsService)
-                .passwordEncoder(this.passwordEncoder())
-        ;
+                .passwordEncoder(this.passwordEncoder());
     }
 
     @Bean

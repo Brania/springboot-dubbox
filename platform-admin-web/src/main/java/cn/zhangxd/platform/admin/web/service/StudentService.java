@@ -11,9 +11,11 @@ package cn.zhangxd.platform.admin.web.service;
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
+import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
 
@@ -119,6 +121,41 @@ public interface StudentService {
      * @return
      */
     Map<String, Object> deleteStudentAttachById(Student student, Long itemId);
+
+    /**
+     * TODO:添加年份
+     *
+     * @param status
+     * @return
+     */
+    List<Student> findByStatusIn(List<TransmitEnum> status);
+
+    /**
+     * 按照院系统计档案数
+     *
+     * @param depart
+     * @return
+     */
+    Long countArchiveByDepart(Depart depart);
+
+    /**
+     * 统计全部档案数::TODO 添加年份
+     *
+     * @return
+     */
+    Long countTotalArchive();
+
+
+    List<Student> findByDepartAndStatusIn(Depart depart, List<TransmitEnum> status);
+
+    List<Student> findByRollDepartAndStatus(Depart depart, TransmitEnum status);
+
+    /**
+     * 统计各院系不同状态的档案数量 TODO 添加年份
+     *
+     * @return
+     */
+    List<ArchiveStat> statisticsStudentsGroupByDepart();
 
 
 }

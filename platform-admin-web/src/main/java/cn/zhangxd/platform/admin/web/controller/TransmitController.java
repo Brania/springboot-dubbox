@@ -8,10 +8,17 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
+import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
+import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
+import cn.zhangxd.platform.common.web.util.WebUtils;
+import cn.zhangxd.platform.system.api.entity.AcKeyMap;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,6 +77,45 @@ public class TransmitController {
     @PostMapping(value = "/handle")
     public Map<String, Object> handleTransmitRecord(@RequestBody TransmitRecordRequest request) {
         return transmitEventService.handleTransmitEvent(request);
+    }
+
+    /**
+     * ##快捷办理转接业务##
+     * 同意办理逻辑::转接类型NextStatus区分新生转入、转专业转入类型
+     * 保存转接记录，修改Student中Depart字段。
+     * 拒绝办理逻辑::置空Student中的RollDepart字段，插入转接记录并标注拒绝
+     *
+     * @return
+     */
+    @PostMapping(value = "/audit/handle")
+    public Map<String, Object> dashboardHandleTransmitRecord(@RequestBody Map<String, Object> requestMap) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+
+        String searchParam = String.valueOf(requestMap.get("searchParam"));
+        String auditStatus = String.valueOf(requestMap.get("status"));
+        if (StringUtils.isNotBlank(searchParam) && StringUtils.isNotBlank(auditStatus)) {
+            Boolean flag = Boolean.TRUE;
+            TransmitRecordRequest request = new TransmitRecordRequest();
+            AuthUser authUser = WebUtils.getCurrentUser();
+            request.setCustodian(authUser.getUsername());
+            List<AcKeyMap> acKeyMaps = authUser.getAccessPolicy();
+            if (acKeyMaps.size() > 0) {
+                request.setToDepart(acKeyMaps.get(0).getCode());
+            }
+            request.setSingle(Boolean.TRUE);
+            request.setSearchParam(searchParam);
+            // 同意、拒绝
+            if ("passed".equals(auditStatus)) {
+                request.setRemarks("同意转入。");
+            } else {
+                flag = Boolean.FALSE;
+                request.setRemarks("不同意转入。");
+            }
+            resultMap = transmitEventService.handleAuditTransmitEvent(request, flag);
+        }else{
+            requestMap.put("success", Boolean.FALSE);
+        }
+        return resultMap;
     }
 
     /**

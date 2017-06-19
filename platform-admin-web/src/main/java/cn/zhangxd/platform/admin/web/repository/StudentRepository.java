@@ -10,12 +10,15 @@ package cn.zhangxd.platform.admin.web.repository;
 
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA
@@ -33,8 +36,13 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     Student findByStudentNo(String sno);
 
-
     List<Student> findByIdIn(Collection<Long> ids);
+
+    List<Student> findByStatusIn(Collection<TransmitEnum> status);
+
+    List<Student> findByDepartAndStatusIn(Depart depart, Collection<TransmitEnum> status);
+
+    List<Student> findByRollDepartAndStatus(Depart depart, TransmitEnum status);
 
     /**
      * 统计院系学生人数
@@ -52,4 +60,12 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     @Query("select s from Student s where s.depart.code = ?1")
     List<Student> findStudentListBySearch(String departName);
+
+    @Query("select s.depart.name as dname,count(s.id) as totalAmount from Student s group by s.depart.name")
+    List<Map<String, Object>> statStudentsGroupByDepart();
+
+
 }
+
+
+

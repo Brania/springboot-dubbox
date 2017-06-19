@@ -8,7 +8,9 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
+import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.TransmitEventType;
 import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -28,5 +30,10 @@ import java.util.List;
 public interface TransmitRecordRepository extends PagingAndSortingRepository<TransmitRecord, Long>, JpaSpecificationExecutor<TransmitRecord> {
 
     List<TransmitRecord> findByStudentOrderByFluctTimeDesc(Student student);
+
+    Long countByTransmitEventTypeAndDepart(TransmitEventType transmitEventType, Depart depart);
+
+    Long countByTransmitEventType(TransmitEventType transmitEventType);
+
 
 }

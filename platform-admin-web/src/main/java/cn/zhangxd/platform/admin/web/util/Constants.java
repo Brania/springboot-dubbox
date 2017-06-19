@@ -8,6 +8,8 @@
 
 package cn.zhangxd.platform.admin.web.util;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created with IntelliJ IDEA
  * User: ch-hui
@@ -56,6 +58,11 @@ public class Constants {
      * 报表单列::双列
      */
     public static final String DRT = "double";
+
+
+    public static final SimpleDateFormat SF_YEAR = new SimpleDateFormat("yyyy");
+    public static final SimpleDateFormat SF_MONTH = new SimpleDateFormat("MM");
+    public static final SimpleDateFormat SF_DAY = new SimpleDateFormat("dd");
 
 
 }

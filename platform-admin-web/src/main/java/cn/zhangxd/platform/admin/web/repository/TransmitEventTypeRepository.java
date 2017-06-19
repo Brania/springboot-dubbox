@@ -9,8 +9,11 @@
 package cn.zhangxd.platform.admin.web.repository;
 
 import cn.zhangxd.platform.admin.web.domain.TransmitEventType;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
@@ -23,4 +26,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Description:
  */
 public interface TransmitEventTypeRepository extends PagingAndSortingRepository<TransmitEventType, Long>, JpaSpecificationExecutor<TransmitEventType> {
+
+    List<TransmitEventType> findByNextStatus(TransmitEnum status);
+
 }

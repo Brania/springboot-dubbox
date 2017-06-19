@@ -106,6 +106,9 @@ public class NjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
                 stuIter = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams()).iterator();
             }
         }
+
+
+        log.info("打印学生个数={}", studentCollection.size());
         // 设置报表参数
         // reportContext.setPageVariable("printers", "晓庄学院校印刷厂");
     }

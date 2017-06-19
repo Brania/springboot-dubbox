@@ -14,11 +14,14 @@ import cn.zhangxd.platform.admin.web.domain.Major;
 import cn.zhangxd.platform.admin.web.repository.AdClassRepository;
 import cn.zhangxd.platform.admin.web.repository.DepartRepository;
 import cn.zhangxd.platform.admin.web.repository.MajorRepository;
+import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.admin.web.service.DictService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import cn.zhangxd.platform.admin.web.util.sequence.Sequence;
 import cn.zhangxd.platform.common.api.Paging;
+import cn.zhangxd.platform.common.web.util.WebUtils;
+import cn.zhangxd.platform.system.api.entity.AcKeyMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -59,6 +63,17 @@ public class DictServiceImpl implements DictService {
 
     Sequence sequence = new Sequence(0, 0);
 
+
+    @Override
+    public Depart findCurrentUserDepart() {
+        AuthUser authUser = WebUtils.getCurrentUser();
+        List<AcKeyMap> acKeyMaps = authUser.getAccessPolicy();
+        Depart depart = null;
+        if (acKeyMaps.size() > 0) {
+            depart = departRepository.findByCode(acKeyMaps.get(0).getCode());
+        }
+        return depart;
+    }
 
     @Override
     public Depart findDepartById(Long id) {

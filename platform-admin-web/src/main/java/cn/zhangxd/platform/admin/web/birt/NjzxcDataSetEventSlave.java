@@ -50,9 +50,9 @@ public class NjzxcDataSetEventSlave extends ScriptedDataSetEventAdapter {
     public boolean fetch(IDataSetInstance dataSet, IUpdatableDataSetRow row) throws ScriptException {
         if (stuIter.hasNext()) {
             Student student = stuIter.next();
-            row.setColumnValue("eno", student.getExamineeNo());
-            row.setColumnValue("ano", student.getAdmissionNo());
-            row.setColumnValue("sno", student.getStudentNo());
+            row.setColumnValue("examinee_no", student.getExamineeNo());
+            row.setColumnValue("admission_no", student.getAdmissionNo());
+            row.setColumnValue("student_no", student.getStudentNo());
             row.setColumnValue("name", student.getName());
             row.setColumnValue("depart", student.getDepart().getName());
             return true;
@@ -103,6 +103,8 @@ public class NjzxcDataSetEventSlave extends ScriptedDataSetEventAdapter {
                 stuIter = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams()).iterator();
             }
         }
+
+        log.info("DRT打印学生个数={}", studentCollection.size());
 
 
     }

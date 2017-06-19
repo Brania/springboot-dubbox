@@ -45,6 +45,8 @@ public class TransmitRecord extends IdEntity {
      */
     private Depart depart;
 
+    private Depart fromDepart;
+
     /**
      * 档案主体
      */
@@ -99,6 +101,16 @@ public class TransmitRecord extends IdEntity {
 
     public void setDepart(Depart depart) {
         this.depart = depart;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "from_depart_id", referencedColumnName = "id")
+    public Depart getFromDepart() {
+        return fromDepart;
+    }
+
+    public void setFromDepart(Depart fromDepart) {
+        this.fromDepart = fromDepart;
     }
 
     @ManyToOne

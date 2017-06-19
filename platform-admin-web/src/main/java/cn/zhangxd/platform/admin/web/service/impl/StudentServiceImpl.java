@@ -9,6 +9,7 @@
 package cn.zhangxd.platform.admin.web.service.impl;
 
 import cn.zhangxd.platform.admin.web.domain.*;
+import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
@@ -79,6 +80,49 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Long countArchiveByDepart(Depart depart) {
+        return studentRepository.countByDepart(depart);
+    }
+
+    @Override
+    public Long countTotalArchive() {
+        return studentRepository.count();
+    }
+
+    @Override
+    public List<ArchiveStat> statisticsStudentsGroupByDepart() {
+        List<ArchiveStat> archiveStats = Lists.newArrayList();
+
+        List<Map<String, Object>> groupList = studentRepository.statStudentsGroupByDepart();
+
+        if (null != groupList && groupList.size() > 0) {
+            archiveStats = groupList.stream().map(groupMap -> {
+                ArchiveStat archiveStat = new ArchiveStat();
+                archiveStat.setDname(String.valueOf(groupMap.get("dname")));
+                archiveStat.setTotalAmount(Integer.parseInt(String.valueOf(groupMap.get("totalAmount"))));
+                return archiveStat;
+            }).collect(Collectors.toList());
+        }
+
+        return archiveStats;
+    }
+
+    @Override
+    public List<Student> findByRollDepartAndStatus(Depart depart, TransmitEnum status) {
+        return studentRepository.findByRollDepartAndStatus(depart, status);
+    }
+
+    @Override
+    public List<Student> findByStatusIn(List<TransmitEnum> status) {
+        return studentRepository.findByStatusIn(status);
+    }
+
+    @Override
+    public List<Student> findByDepartAndStatusIn(Depart depart, List<TransmitEnum> status) {
+        return studentRepository.findByDepartAndStatusIn(depart, status);
+    }
+
+    @Override
     public List<Student> reportStudentBySearchMap(Map<String, String> searchParams) {
         return studentRepository.findAll((Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
 
@@ -146,12 +190,16 @@ public class StudentServiceImpl implements StudentService {
             dto.setPrimaryPhone(student.getPrimaryPhone());
 
 
+
             dto.setRecords(transmitRecordRepository.findByStudentOrderByFluctTimeDesc(student).stream().map(rec -> {
                 TransmitRecordDto transmitRecordDto = new TransmitRecordDto();
                 transmitRecordDto.setEventName(rec.getTransmitEventType().getTransmitEvent().getName());
                 transmitRecordDto.setEventTypeName(rec.getTransmitEventType().getName());
                 transmitRecordDto.setOperTime(rec.getFluctTime());
-                transmitRecordDto.setTransmitForm("");
+                transmitRecordDto.setRemarks(rec.getRemarks());
+                if (null != rec.getFromDepart()) {
+                    transmitRecordDto.setTransmitForm(rec.getFromDepart().getName());
+                }
                 transmitRecordDto.setTransmitTo(rec.getDepart().getName());
                 return transmitRecordDto;
             }).collect(Collectors.toList()));

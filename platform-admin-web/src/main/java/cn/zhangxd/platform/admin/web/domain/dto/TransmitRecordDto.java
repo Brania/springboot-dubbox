@@ -47,6 +47,8 @@ public class TransmitRecordDto implements Serializable {
 
     private String transmitTo;
 
+    private String remarks;
+
     /**
      * 转接内容
      */

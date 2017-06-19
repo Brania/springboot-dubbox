@@ -11,6 +11,7 @@ package cn.zhangxd.platform.admin.web.service;
 import cn.zhangxd.platform.admin.web.domain.AdClass;
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Major;
+import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.common.api.Paging;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -40,6 +41,8 @@ public interface DictService {
     Page<Depart> getDepartPages(final Map<String, Object> searchParams, Paging paging);
 
     Depart findDepartById(Long id);
+
+    Depart findCurrentUserDepart();
 
     Depart persistDepart(Depart depart);
 

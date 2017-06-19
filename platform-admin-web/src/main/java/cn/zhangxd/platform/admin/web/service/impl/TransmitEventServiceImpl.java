@@ -8,10 +8,7 @@
 
 package cn.zhangxd.platform.admin.web.service.impl;
 
-import cn.zhangxd.platform.admin.web.domain.Student;
-import cn.zhangxd.platform.admin.web.domain.TransmitEvent;
-import cn.zhangxd.platform.admin.web.domain.TransmitEventType;
-import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
+import cn.zhangxd.platform.admin.web.domain.*;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
@@ -20,10 +17,13 @@ import cn.zhangxd.platform.admin.web.repository.TransmitEventRepository;
 import cn.zhangxd.platform.admin.web.repository.TransmitEventTypeRepository;
 import cn.zhangxd.platform.admin.web.repository.TransmitRecordRepository;
 import cn.zhangxd.platform.admin.web.security.model.AuthUser;
+import cn.zhangxd.platform.admin.web.service.DictService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
 import cn.zhangxd.platform.admin.web.util.Constants;
+import cn.zhangxd.platform.admin.web.util.SecurityUtils;
 import cn.zhangxd.platform.common.web.util.WebUtils;
+import cn.zhangxd.platform.system.api.entity.AcKeyMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +35,7 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA
@@ -61,6 +62,119 @@ public class TransmitEventServiceImpl implements TransmitEventService {
     private DepartRepository departRepository;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private DictService dictService;
+
+
+    @Override
+    public Integer countArchiveRollOutAmountByDepart(Depart depart) {
+
+        List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.WAITING);
+        Integer departRollOutAmount = 0;
+        if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
+            departRollOutAmount = transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
+        }
+        return departRollOutAmount;
+    }
+
+    @Override
+    public Integer countArchiveReceiveAmountByDepart(Depart depart) {
+        List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.RECEIVED);
+        Integer departReceivedAmount = 0;
+        if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
+            departReceivedAmount = transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
+        }
+        return departReceivedAmount;
+    }
+
+    @Override
+    public Integer countArchiveRollOutAmount() {
+
+        Integer rollOutAmount = 0;
+
+        Depart depart = dictService.findCurrentUserDepart();
+
+        List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.WAITING);
+        if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
+            rollOutAmount = SecurityUtils.hasAdminRole() ? transmitRecordRepository.countByTransmitEventType(transmitEventTypes.get(0)).intValue() : transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
+        }
+        return rollOutAmount;
+    }
+
+    @Override
+    public Integer countArchiveReceiveAmount() {
+
+
+        Integer receiveAmount = 0;
+
+        Depart depart = dictService.findCurrentUserDepart();
+
+        List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.RECEIVED);
+        if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
+            receiveAmount = SecurityUtils.hasAdminRole() ? transmitRecordRepository.countByTransmitEventType(transmitEventTypes.get(0)).intValue() : transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
+        }
+
+        return receiveAmount;
+    }
+
+    /**
+     * 按照招就处或管理院系统计待接收档案数
+     * 统计业务::待接收::新生待接收::转专业待接收
+     *
+     * @return
+     */
+    @Override
+    public Integer countArchiveToReceiveAmount() {
+
+        List<TransmitEnum> list = Lists.newArrayList();
+        list.add(TransmitEnum.TRANSIENT);
+        list.add(TransmitEnum.WAITING);
+        Integer amount = 0;
+        if (SecurityUtils.hasAdminRole()) {
+            amount = studentService.findByStatusIn(list).size();
+        } else {
+
+            Depart depart = dictService.findCurrentUserDepart();
+            if (null != depart) {
+                amount = studentService.findByDepartAndStatusIn(depart, list).size();
+            }
+        }
+        return amount;
+    }
+
+
+    @Override
+    @Transactional
+    public Map<String, Object> handleAuditTransmitEvent(TransmitRecordRequest recordRequest, Boolean flag) {
+
+        Boolean success = Boolean.TRUE;
+        Map<String, Object> results = Maps.newHashMap();
+
+        try {
+            List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.RECEIVED);
+            if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
+                TransmitEventType receivedEventType = transmitEventTypes.get(0);
+                Student student = studentService.getStudentInfo(recordRequest.getSearchParam());
+                if (null != student) {
+                    if (flag) {
+                        student.setDepart(student.getRollDepart());
+                        student.setStatus(TransmitEnum.RECEIVED);
+                    } else {
+                        student.setRollDepart(null);
+                    }
+                    AuthUser user = WebUtils.getCurrentUser();
+                    TransmitRecord transmitRecord = this.generate(recordRequest, student, receivedEventType, user);
+                    transmitRecordRepository.save(transmitRecord);
+                    studentService.save(student);
+                }
+            }
+        } catch (Exception e) {
+            success = Boolean.FALSE;
+            log.error("拒绝接收档案操作失败::学生={}，错误信息={}", recordRequest.getSearchParam(), e.getMessage());
+        }
+        results.put("success", success);
+        return results;
+    }
 
     /**
      * 核心业务处理::转接办理
@@ -98,16 +212,16 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                         }
                     } else {
                         // 在校学习::转专业
-                        if (student.getStatus().equals(TransmitEnum.WAITING) && transmitEventType.getNextStatus().equals(TransmitEnum.ACCEPTED)) {
+                        if (student.getStatus().equals(TransmitEnum.WAITING) && transmitEventType.getNextStatus().equals(TransmitEnum.RECEIVED)) {
+                            // 认为是转入操作
                             student.setDepart(student.getRollDepart());
                         }
                         if (student.getStatus().equals(TransmitEnum.ACCEPTED)) {
+                            // 认为是转出操作
                             student.setRollDepart(departRepository.findByCode(recordRequest.getToDepart()));
                         }
                         student.setStatus(transmitEventType.getNextStatus());
                     }
-
-
                 }
             } else {
                 // 批量处理
@@ -127,7 +241,7 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                         // 存在非法操作待接收学生记录丢弃
                     } else {
                         // 在校学习::转专业
-                        if (student.getStatus().equals(TransmitEnum.WAITING) && transmitEventType.getNextStatus().equals(TransmitEnum.ACCEPTED)) {
+                        if (student.getStatus().equals(TransmitEnum.WAITING) && transmitEventType.getNextStatus().equals(TransmitEnum.RECEIVED)) {
                             student.setDepart(student.getRollDepart());
                         }
                         if (student.getStatus().equals(TransmitEnum.ACCEPTED)) {
@@ -152,6 +266,10 @@ public class TransmitEventServiceImpl implements TransmitEventService {
         TransmitRecord transmitRecord = new TransmitRecord();
         transmitRecord.setCustodian(recordRequest.getCustodian());
         transmitRecord.setDepart(departRepository.findByCode(recordRequest.getToDepart()));
+        List<AcKeyMap> acKeyMaps = authUser.getAccessPolicy();
+        if (acKeyMaps.size() > 0) {
+            transmitRecord.setFromDepart(departRepository.findByCode(acKeyMaps.get(0).getCode()));
+        }
         transmitRecord.setOpUserId(authUser.getId());
         transmitRecord.setOpUserName(authUser.getLoginName());
         transmitRecord.setCreateTime(currentTime);
@@ -262,6 +380,9 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                 transmitEventType.setName(types.getName());
                 transmitEventType.setEnabled(types.getEnabled());
                 transmitEventType.setParentId(String.valueOf(transmitEvent.getId()));
+                transmitEventType.setStatus(types.getNextStatus().name());
+                transmitEventType.setSort(types.getSort());
+
                 nodes.add(transmitEventType);
                 transmitEvent.getChildren().add(transmitEventType);
             });

@@ -8,6 +8,7 @@
 
 package cn.zhangxd.platform.admin.web.service;
 
+import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 
@@ -36,6 +37,40 @@ public interface TransmitEventService {
     Map<String, Object> deleteById(Long id, Integer level);
 
     Map<String, Object> handleTransmitEvent(TransmitRecordRequest recordRequest);
+
+    /**
+     * 转专业::同意转入Boolean.TRUE| 转专业::拒绝转入Boolean.FALSE
+     *
+     * @param recordRequest
+     * @return
+     */
+    Map<String, Object> handleAuditTransmitEvent(TransmitRecordRequest recordRequest, Boolean flag);
+
+
+    /**
+     * 统计待接收档案数
+     *
+     * @return
+     */
+    Integer countArchiveToReceiveAmount();
+
+    /**
+     * 统计转专业转出档案数
+     *
+     * @return
+     */
+    Integer countArchiveRollOutAmount();
+
+    /**
+     * 统计转专业转入档案数
+     *
+     * @return
+     */
+    Integer countArchiveReceiveAmount();
+
+    Integer countArchiveRollOutAmountByDepart(Depart depart);
+
+    Integer countArchiveReceiveAmountByDepart(Depart depart);
 
 
 }

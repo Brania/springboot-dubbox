@@ -8,7 +8,6 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
-import cn.zhangxd.platform.admin.web.domain.ArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
@@ -18,8 +17,8 @@ import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
 import cn.zhangxd.platform.admin.web.util.Constants;
+import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -32,20 +31,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA
@@ -202,15 +198,7 @@ public class StudentController {
         Student student = studentService.findOne(sid);
         if (null != student) {
             List<StudentRelArchiveItem> sra = studentService.findArchiveItemByStudent(student);
-            items = items.stream().map(archiveItemDto -> {
-                for (StudentRelArchiveItem studentRelArchiveItem : sra) {
-                    if (studentRelArchiveItem.getItem().getId().compareTo(archiveItemDto.getId()) == 0) {
-                        archiveItemDto.setFileExist(Boolean.TRUE);
-                        archiveItemDto.setCreateTime(studentRelArchiveItem.getCreateTime());
-                    }
-                }
-                return archiveItemDto;
-            }).collect(Collectors.toList());
+            items = Generator.generate(items, sra);
         }
         return items;
     }

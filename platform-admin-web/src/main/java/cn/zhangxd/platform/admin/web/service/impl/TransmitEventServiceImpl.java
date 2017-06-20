@@ -161,11 +161,12 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                         student.setStatus(TransmitEnum.RECEIVED);
                     } else {
                         student.setRollDepart(null);
+                        student.setStatus(TransmitEnum.ACCEPTED);
                     }
+                    log.info("Student Status={}", student.getStatus().name());
                     AuthUser user = WebUtils.getCurrentUser();
                     TransmitRecord transmitRecord = this.generate(recordRequest, student, receivedEventType, user);
                     transmitRecordRepository.save(transmitRecord);
-                    studentService.save(student);
                 }
             }
         } catch (Exception e) {

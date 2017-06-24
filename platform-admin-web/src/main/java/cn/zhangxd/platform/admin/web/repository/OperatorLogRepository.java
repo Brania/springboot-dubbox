@@ -8,18 +8,18 @@
 
 package cn.zhangxd.platform.admin.web.repository;
 
-import cn.zhangxd.platform.admin.web.domain.LoginLog;
+import cn.zhangxd.platform.admin.web.domain.OperatorLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * Created with IntelliJ IDEA
  * User: ch-hui
  * Date: ${Date}
- * Time: 下午8:42
+ * Time: 上午9:36
  * <p>
  * "潜居抱道，已待其时" -《素书》
  * <p>
  * Description:
  */
-public interface LoginLogRepository extends JpaRepository<LoginLog, Long> {
+public interface OperatorLogRepository extends JpaRepository<OperatorLog, Long> {
 }

@@ -13,6 +13,7 @@ import cn.zhangxd.platform.common.web.util.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,5 +39,26 @@ public class SecurityUtils {
         AuthUser authUser = WebUtils.getCurrentUser();
         List<GrantedAuthority> grantedAuthorityList = authUser.getAuthorities().stream().filter(granted -> "ROLE_ADMIN".equals(String.valueOf(granted))).collect(Collectors.toList());
         return grantedAuthorityList.size() > 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+
+    public static String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("X-Real-IP");
+        if (null != ip && !"".equals(ip.trim())
+                && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeader("X-Forwarded-For");
+        if (null != ip && !"".equals(ip.trim())
+                && !"unknown".equalsIgnoreCase(ip)) {
+            // 多次反向代理后会有多个IP值，第一个为真实IP。
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        }
+        return request.getRemoteAddr();
     }
 }

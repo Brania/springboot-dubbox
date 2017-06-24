@@ -2,7 +2,6 @@ package cn.zhangxd.platform.admin.web.common.config;
 
 import cn.zhangxd.platform.common.web.config.AbstractWebSecurityConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**

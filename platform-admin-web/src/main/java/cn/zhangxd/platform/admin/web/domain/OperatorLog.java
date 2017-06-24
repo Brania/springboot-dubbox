@@ -13,30 +13,29 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA
  * User: ch-hui
  * Date: ${Date}
- * Time: 下午8:40
+ * Time: 上午9:33
  * <p>
  * "潜居抱道，已待其时" -《素书》
  * <p>
- * Description: 登录日志
+ * Description:
  */
 @Entity
-@Table(name = "xz_login_log")
+@Table(name = "xz_operator_log")
 @Data
-public class LoginLog extends IdEntity {
+public class OperatorLog extends IdEntity {
 
-    private String userId;
+    private String userName;
 
-    private String loginInfo;
+    private String optInfo;
 
-    private Date loginTime;
-
-    private String loginIp;
-
-
+    private String optIp;
+    /**
+     * 日志类型：系统登录、转接办理
+     */
+    private String optType;
 }

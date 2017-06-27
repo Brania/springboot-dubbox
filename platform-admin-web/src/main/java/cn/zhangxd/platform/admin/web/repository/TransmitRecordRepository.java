@@ -34,6 +34,4 @@ public interface TransmitRecordRepository extends PagingAndSortingRepository<Tra
     Long countByTransmitEventTypeAndDepart(TransmitEventType transmitEventType, Depart depart);
 
     Long countByTransmitEventType(TransmitEventType transmitEventType);
-
-
 }

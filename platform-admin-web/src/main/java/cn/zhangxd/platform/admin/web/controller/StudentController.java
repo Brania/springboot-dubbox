@@ -89,9 +89,13 @@ public class StudentController {
 
     @GetMapping(value = "/{id}/delete")
     public Map<String, Object> delete(@PathVariable Long id) {
-
         Map<String, Object> results = Maps.newHashMap();
-        results.put("success", studentService.deleteById(id));
+        if (studentService.countStudentTransmitTimes(id) > 0) {
+            results.put("success", Boolean.FALSE);
+            results.put("message", "删除失败，原因：不允许删除已存在转接记录的档案数据！");
+        } else {
+            results.put("success", studentService.deleteById(id));
+        }
         return results;
     }
 

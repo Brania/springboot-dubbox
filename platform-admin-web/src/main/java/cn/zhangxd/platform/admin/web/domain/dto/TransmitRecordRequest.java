@@ -25,6 +25,11 @@ import java.io.Serializable;
 @Data
 public class TransmitRecordRequest implements Serializable{
     private static final long serialVersionUID = 3147168976513148596L;
+
+    /**
+     * 转接记录ID（防止产生重复转接记录）
+     */
+    private Long recId;
     /**
      * 保管人
      */

@@ -192,14 +192,20 @@ public class TransmitEventServiceImpl implements TransmitEventService {
         Map<String, Object> results = Maps.newHashMap();
 
         try {
-
             TransmitEventType transmitEventType = transmitEventTypeRepository.findOne(Long.parseLong(recordRequest.getEventTypeId()));
             if (recordRequest.getSingle()) {
                 // 单个处理
                 Student student = studentService.getStudentInfo(recordRequest.getSearchParam());
                 if (null != student) {
-                    TransmitRecord transmitRecord = this.generate(recordRequest, student, transmitEventType, user);
-                    transmitRecordRepository.save(transmitRecord);
+                    TransmitRecord transmitRecord;
+                    // 防止重复提交转接数据
+                    if (null != recordRequest.getRecId()) {
+                        transmitRecord = transmitRecordRepository.findOne(recordRequest.getRecId());
+                    } else {
+                        transmitRecord = this.generate(recordRequest, student, transmitEventType, user);
+                    }
+                    transmitRecord = transmitRecordRepository.save(transmitRecord);
+                    results.put("recId", transmitRecord.getId());
                 }
                 // 不允许修改毕业转出学生档案状态
                 if (!student.getStatus().equals(TransmitEnum.DETACHED)) {

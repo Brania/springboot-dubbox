@@ -157,5 +157,12 @@ public interface StudentService {
      */
     List<ArchiveStat> statisticsStudentsGroupByDepart();
 
+    /**
+     * 查询学生档案转接次数
+     * @param id
+     * @return
+     */
+    Integer countStudentTransmitTimes(Long id);
+
 
 }

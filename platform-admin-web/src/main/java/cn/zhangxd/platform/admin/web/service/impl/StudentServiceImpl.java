@@ -80,6 +80,16 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Integer countStudentTransmitTimes(Long id) {
+        Integer times = 0;
+        Student student = studentRepository.findOne(id);
+        if (null != student) {
+            times = transmitRecordRepository.findByStudentOrderByFluctTimeDesc(student).size();
+        }
+        return times;
+    }
+
+    @Override
     public Long countArchiveByDepart(Depart depart) {
         return studentRepository.countByDepart(depart);
     }
@@ -188,7 +198,6 @@ public class StudentServiceImpl implements StudentService {
             dto.setPostCode(student.getPostCode());
             dto.setStatus(student.getStatus());
             dto.setPrimaryPhone(student.getPrimaryPhone());
-
 
 
             dto.setRecords(transmitRecordRepository.findByStudentOrderByFluctTimeDesc(student).stream().map(rec -> {
@@ -407,18 +416,16 @@ public class StudentServiceImpl implements StudentService {
             Date createOrUpdateTime = new Date();
 
             list.forEach(s -> {
-                Student student;
+                Student student = new Student();
                 if (StringUtils.isNotBlank(s.getKsh())) {
                     student = studentRepository.findByExamineeNo(s.getKsh());
-                } else {
+                }
+
+                if (StringUtils.isNotBlank(s.getXh())) {
                     student = studentRepository.findByStudentNo(s.getXh());
                 }
-                if (null != student) {
-                    student.setUpdateTime(createOrUpdateTime);
-                } else {
-                    student = new Student();
-                    student.setCreateTime(createOrUpdateTime);
-                }
+
+                student.setUpdateTime(createOrUpdateTime);
                 student.setSources(Constants.IMPORT_SOURCE);
                 student.setStatus(TransmitEnum.TRANSIENT);
 

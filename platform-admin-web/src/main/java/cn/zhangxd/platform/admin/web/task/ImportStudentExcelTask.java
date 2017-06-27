@@ -58,12 +58,12 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
             if (sheet != null) {
                 // 汇总数据
                 List<StudentXlsDto> datas = new ArrayList<>();
-                log.info("计算行->getPhysicalNumberOfRows = {}", sheet.getPhysicalNumberOfRows());
+                //log.info("计算行->getPhysicalNumberOfRows = {}", sheet.getPhysicalNumberOfRows());
                 for (int i = sheet.getFirstRowNum() + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                     Row row = sheet.getRow(i);
                     StudentXlsDto dto = new StudentXlsDto();
 
-                    log.info("计算每一行列的数据->PhysicalNumberOfCells:{}", row.getPhysicalNumberOfCells());
+                    //log.info("计算每一行列的数据->PhysicalNumberOfCells:{}", row.getPhysicalNumberOfCells());
 
                     //for (int j = 0; j < row.getPhysicalNumberOfCells(); j++) {
                     // getFirstCellNum不等于0

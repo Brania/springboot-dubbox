@@ -9,15 +9,20 @@
 package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.birt.BIRTReport;
+import cn.zhangxd.platform.admin.web.birt.NjzxcRequest;
 import cn.zhangxd.platform.admin.web.birt.ReportRequest;
 import cn.zhangxd.platform.admin.web.birt.ReportRunner;
+import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.ExcelComponent;
 import cn.zhangxd.platform.admin.web.util.Generator;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -35,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA
@@ -54,6 +60,10 @@ public class ReportController {
     @Autowired
     private ReportRunner reportRunner;
 
+    @Autowired
+    private StudentService studentService;
+
+    private static final String[] COLUMNS = {"ksh", "lqh", "xh", "xm", "xb", "mz", "sfzh", "zy", "yx", "bj", "lqnf", "txdz", "yzbm", "lxr", "lxdh1", "lxdh2", "dah", "sydq", "daqx", "jsdw", "ydh"};
 
     /**
      * 导出学生档案Excel表格
@@ -64,7 +74,18 @@ public class ReportController {
     @PostMapping(value = "/xls")
     public ResponseEntity<byte[]> exportArchiveExcel(@RequestBody ReportRequest reportRequest,
                                                      HttpServletRequest request) throws IOException {
-        log.info("开始导出学生档案Excel表格..........");
+        List<Student> students;
+
+        NjzxcRequest njzxcRequest = JSON.parseObject(reportRequest.getReportParameters(), NjzxcRequest.class);
+        if (StringUtils.isNotBlank(njzxcRequest.getStudents())) {
+            List<Long> checkIds = Lists.newArrayList();
+            for (String stuId : njzxcRequest.getStudents().split(Constants.DOT)) {
+                checkIds.add(Long.parseLong(stuId));
+            }
+            students = studentService.reportChooseStudent(checkIds);
+        } else {
+            students = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams());
+        }
 
 
         Resource templateResource = new ClassPathResource("template.xls");
@@ -75,39 +96,67 @@ public class ReportController {
         File target = outResource.getFile();
 
 
+        List<Map<String, Object>> listData = students.stream().map(student -> {
+            Map<String, Object> stuMap = Maps.newHashMap();
+            stuMap.put(COLUMNS[0], student.getExamineeNo());
+            stuMap.put(COLUMNS[1], student.getAdmissionNo());
+            stuMap.put(COLUMNS[2], student.getStudentNo());
+            stuMap.put(COLUMNS[3], student.getName());
+
+            String sex = "";
+            if (null != student.getSex()) {
+                sex = student.getSex().getName();
+            }
+            stuMap.put(COLUMNS[4], sex);
+
+            String nationality = "";
+            if (null != student.getNationality()) {
+                nationality = student.getNationality().getName();
+            }
+            stuMap.put(COLUMNS[5], nationality);
+
+            stuMap.put(COLUMNS[6], student.getIdCard());
+
+            String major = "";
+            if (null != student.getMajor()) {
+                major = student.getMajor().getName();
+            }
+            stuMap.put(COLUMNS[7], major);
+
+            String depart = "";
+            if (null != student.getDepart()) {
+                depart = student.getDepart().getName();
+            }
+            stuMap.put(COLUMNS[8], depart);
+
+            String clazz = "";
+            if (null != student.getAdClass()) {
+                clazz = student.getAdClass().getName();
+            }
+            stuMap.put(COLUMNS[9], clazz);
+
+            stuMap.put(COLUMNS[10], student.getEntranceYear());
+            stuMap.put(COLUMNS[11], student.getFamilyAddress());
+            stuMap.put(COLUMNS[12], student.getPostCode());
+            stuMap.put(COLUMNS[13], student.getLinkPerson());
+            stuMap.put(COLUMNS[14], student.getPrimaryPhone());
+            stuMap.put(COLUMNS[15], student.getBackupPhone());
+            stuMap.put(COLUMNS[16], student.getArchiveNo());
+            stuMap.put(COLUMNS[17], student.getSourceRegion());
+            stuMap.put(COLUMNS[18], student.getArchiveGonePlace());
+            stuMap.put(COLUMNS[19], student.getReceiveUnit());
+            stuMap.put(COLUMNS[20], student.getTrackNo());
+            return stuMap;
+        }).collect(Collectors.toList());
+
         // 准备离散数据
         Map<String, Object> discreteData = Maps.newHashMap();
-        discreteData.put("sumOfDog", 100);
-        discreteData.put("sumOfCat", 130);
-        // 准备列表数据
-        List<Map<String, Object>> listData = Lists.newArrayList();
-        Map<String, Object> map1 = Maps.newHashMap();
-        map1.put("province", "广东省1");
-        map1.put("county", "广州市1");
-        map1.put("numOfDog", 30);
-        map1.put("numOfCat", 40);
-        listData.add(map1);
-        Map<String, Object> map2 = Maps.newHashMap();
-        map2.put("province", "广东省2");
-        map2.put("county", "肇庆市2");
-        map2.put("numOfDog", 50);
-        map2.put("numOfCat", 60);
-        listData.add(map2);
-        Map<String, Object> map3 = Maps.newHashMap();
-        map3.put("province", "江苏省3");
-        map3.put("county", "东台市3");
-        map3.put("numOfDog", 20);
-        map3.put("numOfCat", 30);
-        listData.add(map3);
-
-        String[] columns = new String[]{"province", "county", "numOfDog",
-                "numOfCat"};
 
         Boolean isSuccess = Boolean.FALSE;
         byte[] res = new byte[0];
         try {
             isSuccess = ExcelComponent.generateSingleSheetExcelFile(
-                    template, target, discreteData, listData, columns, "list0");
+                    template, target, discreteData, listData, COLUMNS, "list0");
             if (isSuccess) {
 
                 InputStream in = this.getClass().getResourceAsStream("/out.xls");
@@ -116,7 +165,7 @@ public class ReportController {
                 }
 
             } else {
-
+                log.error("Excel组件导出文件失败，请求数据 = {}", reportRequest.getReportParameters());
             }
         } catch (Exception e) {
             log.error("导出学生档案Excel表格出现异常：{}", e.getMessage());
@@ -141,7 +190,6 @@ public class ReportController {
         headers.setContentLength(res.length);
 
         return new ResponseEntity<>(res, headers, status);
-
     }
 
     /**

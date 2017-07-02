@@ -125,7 +125,7 @@ public class StudentController {
 
         byte[] res = new byte[0];
         try {
-            InputStream in = this.getClass().getResourceAsStream("/import.xlsx");
+            InputStream in = this.getClass().getResourceAsStream("/out.xls");
             if (null != in) {
                 res = IOUtils.toByteArray(in);
             }
@@ -134,7 +134,7 @@ public class StudentController {
         }
 
 
-        String fileName = "导入学生名单模版.xlsx";
+        String fileName = "out.xls";
         String header = request.getHeader("User-Agent").toUpperCase();
         HttpStatus status = HttpStatus.CREATED;
         try {

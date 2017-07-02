@@ -199,6 +199,12 @@ public class StudentServiceImpl implements StudentService {
             dto.setStatus(student.getStatus());
             dto.setPrimaryPhone(student.getPrimaryPhone());
 
+            dto.setTrackNo(student.getTrackNo());
+            dto.setArchiveNo(student.getArchiveNo());
+            dto.setArchiveGonePlace(student.getArchiveGonePlace());
+            dto.setSourceRegion(student.getSourceRegion());
+            dto.setReceiveUnit(student.getReceiveUnit());
+
 
             dto.setRecords(transmitRecordRepository.findByStudentOrderByFluctTimeDesc(student).stream().map(rec -> {
                 TransmitRecordDto transmitRecordDto = new TransmitRecordDto();
@@ -273,21 +279,25 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public Student save(Student student) {
 
-        Date createOrUpdateTime = new Date();
 
+        Student saveOrUpdateStudent;
+
+        Date createOrUpdateTime = new Date();
         if (null != student.getId()) {
-            student.setUpdateTime(createOrUpdateTime);
+            saveOrUpdateStudent = studentRepository.findOne(student.getId());
+            saveOrUpdateStudent.setUpdateTime(createOrUpdateTime);
         } else {
-            student.setCreateTime(createOrUpdateTime);
+            saveOrUpdateStudent = new Student();
+            saveOrUpdateStudent.setCreateTime(createOrUpdateTime);
         }
         // TODO : 重构Student实体，对允许为空属性使用Optional容器包裹
-        student.setExamineeNo(student.getExamineeNo());
-        student.setAdmissionNo(student.getAdmissionNo());
-        student.setStudentNo(student.getStudentNo());
-        student.setName(student.getName());
-        student.setSex(student.getSex());
-        student.setNationality(student.getNationality());
-        student.setIdCard(student.getIdCard());
+        saveOrUpdateStudent.setExamineeNo(student.getExamineeNo());
+        saveOrUpdateStudent.setAdmissionNo(student.getAdmissionNo());
+        saveOrUpdateStudent.setStudentNo(student.getStudentNo());
+        saveOrUpdateStudent.setName(student.getName());
+        saveOrUpdateStudent.setSex(student.getSex());
+        saveOrUpdateStudent.setNationality(student.getNationality());
+        saveOrUpdateStudent.setIdCard(student.getIdCard());
 
         // 专业
         if (null != student.getMajor()) {
@@ -296,7 +306,7 @@ public class StudentServiceImpl implements StudentService {
             if (major == null) {
                 major = dictService.createMajor(majorName);
             }
-            student.setMajor(major);
+            saveOrUpdateStudent.setMajor(major);
         }
 
 
@@ -309,29 +319,34 @@ public class StudentServiceImpl implements StudentService {
                 depart = dictService.createDepart(departName);
 
             }
-            student.setDepart(depart);
+            saveOrUpdateStudent.setDepart(depart);
         }
 
-
         // 班级
-        if (null != student.getAdClass()) {
+        if (null != student.getAdClass() && StringUtils.isNotEmpty(student.getAdClass().getName())) {
             String adClassName = student.getAdClass().getName().trim();
             AdClass adClass = this.adClassRepository.findByName(adClassName);
             if (adClass == null) {
                 adClass = dictService.createAdClass(adClassName);
             }
-            student.setAdClass(adClass);
+            saveOrUpdateStudent.setAdClass(adClass);
         }
-        student.setAdClass(student.getAdClass());
-        student.setEntranceYear(student.getEntranceYear());
-        student.setFamilyAddress(student.getFamilyAddress());
-        student.setPostCode(student.getPostCode());
-        student.setLinkPerson(student.getLinkPerson());
-        student.setPrimaryPhone(student.getPrimaryPhone());
-        student.setBackupPhone(student.getBackupPhone());
-        student.setSources(Constants.ADD_SOURCE);
-        student.setStatus(TransmitEnum.TRANSIENT);
-        return studentRepository.save(student);
+
+        saveOrUpdateStudent.setTrackNo(student.getTrackNo());
+        saveOrUpdateStudent.setArchiveGonePlace(student.getArchiveGonePlace());
+        saveOrUpdateStudent.setArchiveNo(student.getArchiveNo());
+        saveOrUpdateStudent.setSourceRegion(student.getSourceRegion());
+        saveOrUpdateStudent.setReceiveUnit(student.getReceiveUnit());
+
+        saveOrUpdateStudent.setEntranceYear(student.getEntranceYear());
+        saveOrUpdateStudent.setFamilyAddress(student.getFamilyAddress());
+        saveOrUpdateStudent.setPostCode(student.getPostCode());
+        saveOrUpdateStudent.setLinkPerson(student.getLinkPerson());
+        saveOrUpdateStudent.setPrimaryPhone(student.getPrimaryPhone());
+        saveOrUpdateStudent.setBackupPhone(student.getBackupPhone());
+        saveOrUpdateStudent.setSources(Constants.ADD_SOURCE);
+        saveOrUpdateStudent.setStatus(TransmitEnum.TRANSIENT);
+        return studentRepository.save(saveOrUpdateStudent);
     }
 
     @Override
@@ -426,8 +441,11 @@ public class StudentServiceImpl implements StudentService {
                 }
 
                 student.setUpdateTime(createOrUpdateTime);
-                student.setSources(Constants.IMPORT_SOURCE);
-                student.setStatus(TransmitEnum.TRANSIENT);
+
+                if (student.getId() == null) {
+                    student.setStatus(TransmitEnum.TRANSIENT);
+                    student.setSources(Constants.IMPORT_SOURCE);
+                }
 
                 if (StringUtils.isNotBlank(s.getKsh())) {
                     student.setExamineeNo(s.getKsh());
@@ -506,6 +524,27 @@ public class StudentServiceImpl implements StudentService {
 
                 if (StringUtils.isNotBlank(s.getLxdh2())) {
                     student.setBackupPhone(s.getLxdh2());
+                }
+
+                // 离校档案补充属性
+
+                if (StringUtils.isNotBlank(s.getDah())) {
+                    student.setArchiveNo(s.getDah());
+                }
+
+                if (StringUtils.isNotBlank(s.getSydq())) {
+                    student.setSourceRegion(s.getSydq());
+                }
+
+                if (StringUtils.isNotBlank(s.getDaqx())) {
+                    student.setArchiveGonePlace(s.getDaqx());
+                }
+                if (StringUtils.isNotBlank(s.getJsdw())) {
+                    student.setReceiveUnit(s.getJsdw());
+                }
+
+                if (StringUtils.isNotBlank(s.getYdh())) {
+                    student.setTrackNo(s.getYdh());
                 }
 
                 studentRepository.save(student);

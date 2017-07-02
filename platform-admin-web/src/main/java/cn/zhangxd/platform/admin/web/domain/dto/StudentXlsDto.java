@@ -46,5 +46,11 @@ public class StudentXlsDto implements Serializable {
     private String lxdh1;
     private String lxdh2;
 
+    private String dah;
+    private String sydq;
+    private String daqx;
+    private String jsdw;
+    private String ydh;
+
 
 }

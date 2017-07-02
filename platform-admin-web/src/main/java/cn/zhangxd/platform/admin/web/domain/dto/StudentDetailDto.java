@@ -105,4 +105,25 @@ public class StudentDetailDto implements Serializable {
 
     private List<TransmitRecordDto> records = Lists.newArrayList();
 
+    /**
+     * 档案号-add
+     */
+    private String archiveNo;
+    /**
+     * 生源地区-add
+     */
+    private String sourceRegion;
+    /**
+     * 档案去向-add
+     */
+    private String archiveGonePlace;
+    /**
+     * 档案接收单位-add
+     */
+    private String receiveUnit;
+    /**
+     * 运单号-add
+     */
+    private String trackNo;
+
 }

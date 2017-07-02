@@ -10,7 +10,10 @@ package cn.zhangxd.platform.admin.web.util;
 
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
+import org.springframework.http.HttpStatus;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,23 @@ import java.util.stream.Collectors;
  * Description:
  */
 public class Generator {
+
+
+    public static String encodeFileName(String header, String fileName) throws UnsupportedEncodingException {
+
+        if (header.contains("MSIE") || header.contains("TRIDENT") || header.contains("EDGE")) {
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = fileName.replace("+", "%20");    // IE下载文件名空格变+号问题
+
+        } else {
+            fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+        }
+
+        System.out.println("----------------->> fileName="+ fileName);
+
+        return fileName;
+
+    }
 
 
     public static List<ArchiveItemDto> generate(List<ArchiveItemDto> items, List<StudentRelArchiveItem> sra) {

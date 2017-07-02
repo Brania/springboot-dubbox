@@ -59,7 +59,7 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
                 // 汇总数据
                 List<StudentXlsDto> datas = new ArrayList<>();
                 //log.info("计算行->getPhysicalNumberOfRows = {}", sheet.getPhysicalNumberOfRows());
-                for (int i = sheet.getFirstRowNum() + 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+                for (int i = sheet.getFirstRowNum() + 2; i < sheet.getPhysicalNumberOfRows(); i++) {
                     Row row = sheet.getRow(i);
                     StudentXlsDto dto = new StudentXlsDto();
 
@@ -140,16 +140,34 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
                                 case 15:
                                     dto.setLxdh2(cellStr);
                                     break;
+                                // 档案号
+                                case 16:
+                                    dto.setDah(cellStr);
+                                    break;
+                                //生源地区
+                                case 17:
+                                    dto.setSydq(cellStr);
+                                    break;
+                                // 档案去向
+                                case 18:
+                                    dto.setDaqx(cellStr);
+                                    break;
+                                // 档案接收单位
+                                case 19:
+                                    dto.setJsdw(cellStr);
+                                    break;
+                                // 运单号
+                                case 20:
+                                    dto.setYdh(cellStr);
+                                    break;
                             }
                         } else {
-                           continue;
+                            continue;
                         }
                     }
                     datas.add(dto);
                 }
-
                 studentService.importStudent(datas);
-
             }
         } catch (Exception e) {
             e.printStackTrace();

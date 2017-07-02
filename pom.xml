@@ -25,21 +25,25 @@
         <relativePath/>
     </parent>
 
+
+
+
+
     <repositories>
         <repository>
             <id>nexus</id>
             <name>nexus</name>
-            <url>http://115.28.32.143:8081/repository/maven-public/</url>
+            <url>http://maven.aliyun.com/nexus/content/groups/public//</url>
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>nexus</id>
-            <name>nexus</name>
-            <url>http://115.28.32.143:8081/repository/maven-public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <!--<pluginRepositories>-->
+        <!--<pluginRepository>-->
+            <!--<id>nexus</id>-->
+            <!--<name>nexus</name>-->
+            <!--<url>http://115.28.32.143:8081/repository/maven-public/</url>-->
+        <!--</pluginRepository>-->
+    <!--</pluginRepositories>-->
 
     <properties>
         <java.version>1.8</java.version>
@@ -67,7 +71,7 @@
         <thumbnailator.version>0.4.8</thumbnailator.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <webmagic.version>0.6.1</webmagic.version>
-        <poi.version>3.11</poi.version>
+        <poi.version>3.14</poi.version>
     </properties>
 
     <dependencyManagement>

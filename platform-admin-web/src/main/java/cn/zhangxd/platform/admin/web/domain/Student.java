@@ -84,7 +84,7 @@ public class Student extends IdEntity {
      */
     private Integer entranceYear;
     /**
-     * 家庭地址
+     * 家庭地址->档案邮寄通信地址
      */
     private String familyAddress;
     /**
@@ -92,22 +92,44 @@ public class Student extends IdEntity {
      */
     private String postCode;
     /**
-     * 联系人
+     * 联系人->收件人
      */
     private String linkPerson;
     /**
-     * 联系电话
+     * 联系电话->收件人联系电话1
      */
     private String primaryPhone;
     /**
-     * 备用联系电话
+     * 备用联系电话->收件人联系电话2
      */
     private String backupPhone;
     /**
      * 数据来源：IMPORT/ADD
      */
     private String sources;
-    //private Date createTime;
+
+    /**
+     * 档案号-add
+     */
+    private String archiveNo;
+    /**
+     * 生源地区-add
+     */
+    private String sourceRegion;
+    /**
+     * 档案去向-add
+     */
+    private String archiveGonePlace;
+    /**
+     * 档案接收单位-add
+     */
+    private String receiveUnit;
+    /**
+     * 运单号-add
+     */
+    private String trackNo;
+
+
     /**
      * 更新时间
      */
@@ -314,11 +336,58 @@ public class Student extends IdEntity {
         this.records = records;
     }
 
-    /**
-     * 转接记录按照时间降序排序,第一条记录作为状态值
-     *
-     * @return
-     */
+
+    @Column(name = "archive_no")
+    public String getArchiveNo() {
+        return archiveNo;
+    }
+
+    public void setArchiveNo(String archiveNo) {
+        this.archiveNo = archiveNo;
+    }
+
+    @Column(name = "source_region")
+    public String getSourceRegion() {
+        return sourceRegion;
+    }
+
+    public void setSourceRegion(String sourceRegion) {
+        this.sourceRegion = sourceRegion;
+    }
+
+    @Column(name = "archive_gone_place")
+    public String getArchiveGonePlace() {
+        return archiveGonePlace;
+    }
+
+    public void setArchiveGonePlace(String archiveGonePlace) {
+        this.archiveGonePlace = archiveGonePlace;
+    }
+
+    @Column(name = "receive_unit")
+    public String getReceiveUnit() {
+        return receiveUnit;
+    }
+
+    public void setReceiveUnit(String receiveUnit) {
+        this.receiveUnit = receiveUnit;
+    }
+
+    @Column(name = "track_no")
+    public String getTrackNo() {
+        return trackNo;
+    }
+
+    public void setTrackNo(String trackNo) {
+        this.trackNo = trackNo;
+    }
+
+
+/**
+ * 转接记录按照时间降序排序,第一条记录作为状态值
+ *
+ * @return
+ */
 //    public TransmitRecord findLastestRecord() {
 //        Stream<TransmitRecord> stream = records.stream().sorted((v1, v2) -> v2.getLocalDateTime().isAfter(v1.getLocalDateTime()) ? 0 : 1);
 //        return stream.findFirst().get();

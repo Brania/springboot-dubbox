@@ -68,5 +68,7 @@ public class Constants {
     public static final String LOG_TYPE_LOGIN = "系统登录";
     public static final String LOG_TYPE_TRANSMIT = "转接办理";
 
+    public static final String NJXZC_CODE = "11460";
+
 
 }

@@ -432,17 +432,18 @@ public class StudentServiceImpl implements StudentService {
 
             list.forEach(s -> {
                 Student student = new Student();
-                if (StringUtils.isNotBlank(s.getKsh())) {
+                if (StringUtils.isNotBlank(s.getKsh()) && studentRepository.countByExamineeNo(s.getKsh()) > 0) {
                     student = studentRepository.findByExamineeNo(s.getKsh());
                 }
 
-                if (StringUtils.isNotBlank(s.getXh())) {
+                if (StringUtils.isNotBlank(s.getXh()) && studentRepository.countByStudentNo(s.getXh()) > 0) {
                     student = studentRepository.findByStudentNo(s.getXh());
                 }
 
                 student.setUpdateTime(createOrUpdateTime);
 
                 if (student.getId() == null) {
+                    student.setCreateTime(createOrUpdateTime);
                     student.setStatus(TransmitEnum.TRANSIENT);
                     student.setSources(Constants.IMPORT_SOURCE);
                 }

@@ -33,10 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -93,6 +90,9 @@ public class ReportController {
 
         File template = templateResource.getFile();
         File target = outResource.getFile();
+
+//        File template = new File("/mnt/excel/template.xls");
+//        File target = new File("/mnt/excel/out.xls");
 
 
         List<Map<String, Object>> listData = students.stream().map(student -> {
@@ -159,6 +159,7 @@ public class ReportController {
             if (isSuccess) {
 
                 InputStream in = this.getClass().getResourceAsStream("/out.xls");
+//                InputStream in = new FileInputStream("/mnt/excel/out.xls");
                 if (null != in) {
                     res = IOUtils.toByteArray(in);
                 }

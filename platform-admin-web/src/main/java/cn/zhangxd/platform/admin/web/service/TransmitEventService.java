@@ -9,8 +9,12 @@
 package cn.zhangxd.platform.admin.web.service;
 
 import cn.zhangxd.platform.admin.web.domain.Depart;
+import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
+import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
+import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
 
 import java.util.List;
 import java.util.Map;
@@ -71,6 +75,15 @@ public interface TransmitEventService {
     Integer countArchiveRollOutAmountByDepart(Depart depart);
 
     Integer countArchiveReceiveAmountByDepart(Depart depart);
+
+    /**
+     * 查询学生档案
+     *
+     * @param student
+     * @param event
+     * @return
+     */
+    List<TransmitRecordDto> findByEventTypeAndStudent(TransmitEventEnum event, Student student);
 
 
 }

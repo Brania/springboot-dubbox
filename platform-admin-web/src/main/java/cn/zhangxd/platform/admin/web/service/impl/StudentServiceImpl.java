@@ -356,6 +356,19 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Student getStudentArchiveByKeywords(String keywords) {
+
+        Student student = this.studentRepository.findByExamineeNo(keywords);
+
+        if (null != student) {
+            return student;
+        } else {
+            student = this.studentRepository.findByStudentNo(keywords);
+        }
+        return student;
+    }
+
+    @Override
     public Student getStudentInfo(String searchParam) {
 
         Student student = this.studentRepository.findByExamineeNo(searchParam);

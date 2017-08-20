@@ -9,11 +9,17 @@
 package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.domain.ArchiveClassify;
+import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
+import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
 import cn.zhangxd.platform.admin.web.service.ArchiveService;
+import cn.zhangxd.platform.admin.web.service.StudentService;
+import cn.zhangxd.platform.admin.web.service.TransmitEventService;
 import cn.zhangxd.platform.admin.web.util.Constants;
+import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -47,6 +53,10 @@ public class ArchiveController {
 
     @Autowired
     private ArchiveService archiveService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private TransmitEventService transmitEventService;
 
     @GetMapping(value = "/list")
     public List<ArchiveItemDto> list() {
@@ -123,6 +133,39 @@ public class ArchiveController {
     @PostMapping(value = "/classify/{id}/delete")
     public Map<String, Object> deleteClassifyById(@PathVariable Long id) {
         return archiveService.deleteClassify(id);
+    }
+
+    /**
+     * 通过学号、考生号查询学生档案
+     *
+     * @param keywords
+     * @return
+     */
+    @GetMapping(value = "/search/{keywords}")
+    public Map<String, Object> searchStudentArchive(@PathVariable String keywords) {
+
+        Map<String, Object> results = Maps.newHashMap();
+
+        Student student = studentService.getStudentArchiveByKeywords(keywords);
+        if (null != student) {
+            results.put("success", Boolean.TRUE);
+
+            // 基本信息
+            results.put("student", student);
+            // 到校转接记录
+            results.put("newRecords", transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.NEW, student));
+            // 校内转接记录
+            results.put("persistRecords", transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.PERSIST, student));
+            // 离校转接记录
+            results.put("detachedRecords", transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.DETACHED, student));
+            // 档案内容
+            List<ArchiveItemDto> items = archiveService.findAll(new Sort(Sort.Direction.DESC, "sort"));
+            List<StudentRelArchiveItem> sra = studentService.findArchiveItemByStudent(student);
+            results.put("archives", Generator.generate(items, sra));
+        } else {
+            results.put("success", Boolean.FALSE);
+        }
+        return results;
     }
 
 

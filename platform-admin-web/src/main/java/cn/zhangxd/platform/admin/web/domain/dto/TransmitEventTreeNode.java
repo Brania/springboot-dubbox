@@ -40,12 +40,18 @@ public class TransmitEventTreeNode implements Serializable {
     private Boolean enabled;
 
     private String id;
+
     /**
-     * 转接状态（针对类型EventType）
+     * 转接事由类型::针对事由{@link cn.zhangxd.platform.admin.web.domain.TransmitEvent}
+     */
+    private String event;
+
+    /**
+     * 转接状态::针对事由操作类型{@link cn.zhangxd.platform.admin.web.domain.TransmitEventType}
      */
     private String status;
     /**
-     * 排序（针对类型EventType）
+     * 排序::同上
      */
     private Integer sort;
 

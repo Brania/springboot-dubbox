@@ -87,6 +87,13 @@ public interface StudentService {
     Student getStudentInfo(String searchParam);
 
     /**
+     * 查询学生档案
+     * @param keywords
+     * @return
+     */
+    Student getStudentArchiveByKeywords(String keywords);
+
+    /**
      * 根据查询条件批量转接办理（暂时仅支持学院）
      *
      * @param searchParams

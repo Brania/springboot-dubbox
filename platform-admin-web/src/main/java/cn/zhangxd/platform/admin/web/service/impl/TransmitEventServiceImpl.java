@@ -10,8 +10,10 @@ package cn.zhangxd.platform.admin.web.service.impl;
 
 import cn.zhangxd.platform.admin.web.domain.*;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
+import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
+import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
 import cn.zhangxd.platform.admin.web.repository.DepartRepository;
 import cn.zhangxd.platform.admin.web.repository.TransmitEventRepository;
 import cn.zhangxd.platform.admin.web.repository.TransmitEventTypeRepository;
@@ -21,6 +23,7 @@ import cn.zhangxd.platform.admin.web.service.DictService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
 import cn.zhangxd.platform.admin.web.util.Constants;
+import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.SecurityUtils;
 import cn.zhangxd.platform.common.web.util.WebUtils;
 import cn.zhangxd.platform.system.api.entity.AcKeyMap;
@@ -36,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA
@@ -65,6 +69,14 @@ public class TransmitEventServiceImpl implements TransmitEventService {
     @Autowired
     private DictService dictService;
 
+
+    @Override
+    public List<TransmitRecordDto> findByEventTypeAndStudent(TransmitEventEnum event, Student student) {
+
+        List<TransmitEvent> events = transmitEventRepository.findByEvent(event);
+        List<TransmitEventType> eventTypes = transmitEventTypeRepository.findByTransmitEventIn(events);
+        return transmitRecordRepository.findByStudentAndTransmitEventTypeInOrderByFluctTimeDesc(student, eventTypes).stream().map(record -> Generator.generate(record)).collect(Collectors.toList());
+    }
 
     @Override
     public Integer countArchiveRollOutAmountByDepart(Depart depart) {
@@ -334,9 +346,9 @@ public class TransmitEventServiceImpl implements TransmitEventService {
             } else {
                 transmitEvent = new TransmitEvent();
             }
-
             transmitEvent.setName(transmitEventTreeNode.getName());
             transmitEvent.setCreateTime(new Date());
+            transmitEvent.setEvent(TransmitEventEnum.valueOf(transmitEventTreeNode.getEvent()));
             transmitEvent.setEnabled(transmitEventTreeNode.getEnabled());
             this.transmitEventRepository.save(transmitEvent);
         }
@@ -362,6 +374,7 @@ public class TransmitEventServiceImpl implements TransmitEventService {
             TransmitEvent transmitEvent = this.transmitEventRepository.findOne(id);
             transmitEventTreeNode.setId(String.valueOf(transmitEvent.getId()));
             transmitEventTreeNode.setName(transmitEvent.getName());
+            transmitEventTreeNode.setEvent(transmitEvent.getEvent().name());
             transmitEventTreeNode.setEnabled(transmitEvent.getEnabled());
         }
         return transmitEventTreeNode;

@@ -8,13 +8,12 @@
 
 package cn.zhangxd.platform.admin.web.domain;
 
+import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
 import cn.zhangxd.platform.admin.web.util.IdEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.collect.Sets;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 /**
@@ -34,6 +33,7 @@ public class TransmitEvent extends IdEntity {
     private String name;
     private Boolean enabled;
     private Set<TransmitEventType> eventTypes = Sets.newHashSet();
+    private TransmitEventEnum event;
 
 
     public String getName() {
@@ -50,6 +50,16 @@ public class TransmitEvent extends IdEntity {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "event")
+    public TransmitEventEnum getEvent() {
+        return event;
+    }
+
+    public void setEvent(TransmitEventEnum event) {
+        this.event = event;
     }
 
     @OneToMany(mappedBy = "transmitEvent")

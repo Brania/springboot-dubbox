@@ -16,7 +16,7 @@ package cn.zhangxd.platform.admin.web.enums;
  * <p>
  * "潜居抱道，已待其时" -《素书》
  * <p>
- * 档案转接状态定义
+ * 档案转接状态定义::作用于转接操作类型
  */
 public enum TransmitEnum {
     /**

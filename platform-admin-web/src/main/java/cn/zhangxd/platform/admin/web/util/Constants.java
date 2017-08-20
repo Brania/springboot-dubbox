@@ -45,6 +45,7 @@ public class Constants {
     public static final String DEFAULT_SORT_TYPE = "ASC";
 
     public static final String TRANSMIT_TYPE_PREFIX = "_";
+    public static final String TRANSMIT_EMPTY = "-";
     public static final String DOT = ",";
 
     /**

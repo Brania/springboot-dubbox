@@ -8,10 +8,8 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
-import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
-import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
 import cn.zhangxd.platform.common.web.util.WebUtils;

@@ -8,12 +8,10 @@
 
 package cn.zhangxd.platform.admin.web.domain.dto;
 
-import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
@@ -30,6 +28,8 @@ public class TransmitRecordDto implements Serializable {
 
     private static final long serialVersionUID = -9000661225447336101L;
 
+    private Long id;
+
     /**
      * 转接类型名称::转入::转出
      */
@@ -43,16 +43,16 @@ public class TransmitRecordDto implements Serializable {
      */
     private Date operTime;
 
+    /**
+     * 经办人
+     */
+    private String operUser;
+
     private String transmitForm;
 
     private String transmitTo;
 
     private String remarks;
-
-    /**
-     * 转接内容
-     */
-    //private List<String> contexts = Lists.newArrayList();
 
     private String contexts;
 

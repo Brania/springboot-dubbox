@@ -14,13 +14,16 @@ import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveClassifyDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
+import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
 import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
 import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
+import cn.zhangxd.platform.admin.web.util.CacheUtils;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +31,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA
@@ -57,6 +59,9 @@ public class ArchiveController {
     private StudentService studentService;
     @Autowired
     private TransmitEventService transmitEventService;
+    @Autowired
+    private CacheUtils cacheUtils;
+
 
     @GetMapping(value = "/list")
     public List<ArchiveItemDto> list() {
@@ -136,6 +141,16 @@ public class ArchiveController {
     }
 
     /**
+     * 档案查询人次
+     *
+     * @return
+     */
+    @GetMapping(value = "/fetch/times")
+    public ResponseEntity<String> getArchiveQueryTimes() {
+        return ResponseEntity.ok(String.valueOf(cacheUtils.getQueryRecordSize()));
+    }
+
+    /**
      * 通过学号、考生号查询学生档案
      *
      * @param keywords
@@ -144,27 +159,90 @@ public class ArchiveController {
     @GetMapping(value = "/search/{keywords}")
     public Map<String, Object> searchStudentArchive(@PathVariable String keywords) {
 
+
+        StopWatch stopWatch = new StopWatch(ArchiveController.class.getName());
+        stopWatch.start(Constants.ARCHIVE_QUERY_METHOD);
+
         Map<String, Object> results = Maps.newHashMap();
+
 
         Student student = studentService.getStudentArchiveByKeywords(keywords);
         if (null != student) {
+
+            String sid = String.valueOf(student.getId());
+
+            String nKey = String.format(Constants.STU_ARCHI_NEW_REC, sid);
+            String pKey = String.format(Constants.STU_ARCHI_PERSIS_REC, sid);
+            String dKey = String.format(Constants.STU_ARCHI_DETACHED_REC, sid);
+            String aKey = String.format(Constants.STU_ARCHIVE_ITEMS, sid);
+
             results.put("success", Boolean.TRUE);
 
             // 基本信息
             results.put("student", student);
             // 到校转接记录
-            results.put("newRecords", transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.NEW, student));
+            if (cacheUtils.exists(nKey)) {
+                log.info("学生={}档案查询;;;;;;加载缓存数据.", student.getName());
+                results.put("newRecords", cacheUtils.findValues(nKey, TransmitRecordDto.class));
+            } else {
+                List<TransmitRecordDto> newRecDtos = transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.NEW, student);
+                cacheUtils.saveValues(nKey, JSON.toJSONString(newRecDtos), Constants.DAY);
+                results.put("newRecords", newRecDtos);
+            }
+
             // 校内转接记录
-            results.put("persistRecords", transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.PERSIST, student));
+            if (cacheUtils.exists(pKey)) {
+                results.put("persistRecords", cacheUtils.findValues(pKey, TransmitRecordDto.class));
+            } else {
+                List<TransmitRecordDto> perRecDtos = transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.PERSIST, student);
+                cacheUtils.saveValues(pKey, JSON.toJSONString(perRecDtos), Constants.DAY);
+                results.put("persistRecords", perRecDtos);
+            }
+
             // 离校转接记录
-            results.put("detachedRecords", transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.DETACHED, student));
+            if (cacheUtils.exists(dKey)) {
+                results.put("detachedRecords", cacheUtils.findValues(dKey, TransmitRecordDto.class));
+            } else {
+                List<TransmitRecordDto> detRecDtos = transmitEventService.findByEventTypeAndStudent(TransmitEventEnum.DETACHED, student);
+                cacheUtils.saveValues(dKey, JSON.toJSONString(detRecDtos), Constants.DAY);
+                results.put("detachedRecords", detRecDtos);
+            }
+
             // 档案内容
-            List<ArchiveItemDto> items = archiveService.findAll(new Sort(Sort.Direction.DESC, "sort"));
-            List<StudentRelArchiveItem> sra = studentService.findArchiveItemByStudent(student);
-            results.put("archives", Generator.generate(items, sra));
+            if (cacheUtils.exists(aKey)) {
+                results.put("archives", cacheUtils.findValues(aKey, ArchiveItemDto.class));
+            } else {
+                List<ArchiveItemDto> items = archiveService.findAll(new Sort(Sort.Direction.DESC, "sort"));
+                List<StudentRelArchiveItem> sra = studentService.findArchiveItemByStudent(student);
+                List<ArchiveItemDto> archiveItemDtos = Generator.generate(items, sra);
+                results.put("archives", archiveItemDtos);
+                cacheUtils.saveValues(aKey, JSON.toJSONString(archiveItemDtos), Constants.DAY);
+            }
+            // 记录档案查询次数
+            if (cacheUtils.firstOps(sid)) {
+                cacheUtils.pushRecord(sid);
+            }
+            // 档案查询状态转换
+            String transStatus;
+
+            switch (student.getStatus()) {
+                case TRANSIENT:
+                    transStatus = TransmitEventEnum.NEW.getName();
+                    break;
+                case DETACHED:
+                    transStatus = TransmitEventEnum.DETACHED.getName();
+                    break;
+                default:
+                    transStatus = TransmitEventEnum.PERSIST.getName();
+                    break;
+            }
+            results.put("transStatus", transStatus);
+            results.put("transTimes", studentService.countStudentTransmitTimes(student.getId()));
         } else {
             results.put("success", Boolean.FALSE);
         }
+        stopWatch.stop();
+        log.info(String.format("学生 [ %s ] 档案查询 耗时 [ %f ]", keywords, stopWatch.getTotalTimeSeconds()));
         return results;
     }
 

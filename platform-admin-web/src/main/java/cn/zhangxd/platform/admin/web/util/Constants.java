@@ -71,5 +71,19 @@ public class Constants {
 
     public static final String NJXZC_CODE = "11460";
 
+    public static final String STU_ARCHI_NEW_REC = "%s_archive_new_rec";
+    public static final String STU_ARCHI_PERSIS_REC = "%s_archive_persis_rec";
+    public static final String STU_ARCHI_DETACHED_REC = "%s_archive_detached_rec";
+    public static final String STU_ARCHIVE_ITEMS = "%s_archive_items";
+
+    public static final String ARCHIVE_QUERY_METHOD = "searchStudentArchive";
+    /**
+     * 档案接口查询记录
+     */
+    public static final String STU_ARCHI_REC_LIST = "student_records_list";
+
+
+    public static final long DAY = 1000 * 60 * 60 * 12;
+
 
 }

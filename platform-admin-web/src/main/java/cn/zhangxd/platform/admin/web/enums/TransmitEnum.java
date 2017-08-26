@@ -28,7 +28,7 @@ public enum TransmitEnum {
 
     private String name;
 
-    private TransmitEnum(String name) {
+    TransmitEnum(String name) {
         this.name = name;
     }
 

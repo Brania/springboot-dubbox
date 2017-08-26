@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.google.common.collect.Sets;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -309,6 +310,7 @@ public class Student extends IdEntity {
 
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "档案状态不能为空")
     @Column(name = "status")
     public TransmitEnum getStatus() {
         return status;

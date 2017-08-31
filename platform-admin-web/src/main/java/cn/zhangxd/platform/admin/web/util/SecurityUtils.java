@@ -8,12 +8,15 @@
 
 package cn.zhangxd.platform.admin.web.util;
 
+import cn.zhangxd.platform.admin.web.domain.common.License;
 import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.common.web.util.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,22 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class SecurityUtils {
+
+    /**
+     * 计算系统在线运行天数
+     *
+     * @return
+     */
+    public static License calculateLicense() {
+        License license = new License();
+        Long onlineDays = ChronoUnit.DAYS.between(license.getBuyTime(), LocalDate.now());
+        license.setOnlineDays(onlineDays);
+        license.setLimitDays(license.getLicenseDays() - onlineDays);
+        if (onlineDays + license.getWarnDays() > license.getLimitDays()) {
+            license.setWarning(Boolean.TRUE);
+        }
+        return license;
+    }
 
     /**
      * 判断当前登录者身份是否为管理员

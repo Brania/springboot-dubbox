@@ -47,7 +47,7 @@ public class License implements Serializable {
     /**
      * 剩余不足天数开始告警
      */
-    private Integer warnDays = 10;
+    private Integer warnDays = 15;
 
     private LocalDate buyTime = LocalDate.of(2017, Month.AUGUST, 30);
     /**

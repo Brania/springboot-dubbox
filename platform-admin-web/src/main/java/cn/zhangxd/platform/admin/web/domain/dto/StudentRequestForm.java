@@ -1,7 +1,11 @@
 /*
  * Author:  ch-hui
  *
- * Copyright (c) 2017 Nanjing Hodoo Information Technology Co.,Ltd. All rights reserved.
+ * Copyright (c) 2017 . All rights reserved.
+ *          刀光剑影不是我门派，
+ *          天空海阔自有我风采。
+ *          双手一推非黑也非白，
+ *          不好也不坏，没有胜又何来败。
  *
  * Email:   ch000.hui@gmail.com
  */
@@ -10,27 +14,23 @@ package cn.zhangxd.platform.admin.web.domain.dto;
 
 import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
 import cn.zhangxd.platform.admin.web.enums.SexEnum;
-import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
-import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * Created with IntelliJ IDEA
- * User: ch-hui
- * Date: ${Date}
- * Time: 下午8:24
- * <p>
- * "潜居抱道，已待其时" -《素书》
- * <p>
- * Description:
+ * 表单提交保存学生
+ *
+ * @author 陈辉[of2547]
+ *         company qianmi.com
+ *         Date    2017/9/4
  */
 @Data
-public class StudentDetailDto implements Serializable {
+public class StudentRequestForm implements Serializable {
 
-    private static final long serialVersionUID = 1437301548785209490L;
+    private static final long serialVersionUID = -4563203193749159846L;
+
+    private Long id;
 
     /**
      * 考生号
@@ -44,7 +44,6 @@ public class StudentDetailDto implements Serializable {
      * 学号
      */
     private String studentNo;
-
     /**
      * 姓名
      */
@@ -62,15 +61,15 @@ public class StudentDetailDto implements Serializable {
      */
     private String idCard;
     /**
-     * 专业
+     * 专业名称
      */
     private String major;
     /**
-     * 院系
+     * 院系名称
      */
     private String depart;
     /**
-     * 班级
+     * 班级名称
      */
     private String adClass;
     /**
@@ -78,7 +77,7 @@ public class StudentDetailDto implements Serializable {
      */
     private Integer entranceYear;
     /**
-     * 家庭地址
+     * 家庭地址->档案邮寄通信地址
      */
     private String familyAddress;
     /**
@@ -86,22 +85,21 @@ public class StudentDetailDto implements Serializable {
      */
     private String postCode;
     /**
-     * 联系人
+     * 联系人->收件人
      */
     private String linkPerson;
     /**
-     * 联系电话
+     * 联系电话->收件人联系电话1
      */
     private String primaryPhone;
     /**
-     * 备用联系电话
+     * 备用联系电话->收件人联系电话2
      */
     private String backupPhone;
-
-    private TransmitEnum status;
-
-    private List<TransmitRecordDto> records = Lists.newArrayList();
-
+    /**
+     * 数据来源：IMPORT/ADD
+     */
+    private String sources;
     /**
      * 档案号-add
      */
@@ -122,5 +120,4 @@ public class StudentDetailDto implements Serializable {
      * 运单号-add
      */
     private String trackNo;
-
 }

@@ -14,6 +14,7 @@ import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentRequestForm;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.common.api.Paging;
@@ -54,7 +55,7 @@ public interface StudentService {
     List<Student> reportStudentBySearchMap(Map<String, String> searchParams);
 
 
-    Student save(Student student);
+    Student save(StudentRequestForm student);
 
 
     Student findOne(Long id);

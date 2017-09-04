@@ -12,6 +12,7 @@ import cn.zhangxd.platform.admin.web.domain.*;
 import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentRequestForm;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentXlsDto;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
 import cn.zhangxd.platform.admin.web.enums.NationalityEnum;
@@ -182,10 +183,16 @@ public class StudentServiceImpl implements StudentService {
         if (null != student) {
 
             dto.setStudentNo(student.getStudentNo());
-            dto.setAdClass(student.getAdClass());
+            if (null != student.getAdClass()) {
+                dto.setAdClass(student.getAdClass().getName());
+            }
+
             dto.setAdmissionNo(student.getAdmissionNo());
             dto.setBackupPhone(student.getBackupPhone());
-            dto.setDepart(student.getDepart());
+            if (null != student.getDepart()) {
+                dto.setDepart(student.getDepart().getName());
+            }
+
             dto.setName(student.getName());
             dto.setSex(student.getSex());
             dto.setEntranceYear(student.getEntranceYear());
@@ -194,7 +201,10 @@ public class StudentServiceImpl implements StudentService {
             dto.setIdCard(student.getIdCard());
             dto.setLinkPerson(student.getLinkPerson());
             dto.setNationality(student.getNationality());
-            dto.setMajor(student.getMajor());
+            if (null != student.getMajor()) {
+                dto.setMajor(student.getMajor().getName());
+            }
+
             dto.setPostCode(student.getPostCode());
             dto.setStatus(student.getStatus());
             dto.setPrimaryPhone(student.getPrimaryPhone());
@@ -277,7 +287,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public Student save(Student student) {
+    public Student save(StudentRequestForm student) {
 
 
         Student saveOrUpdateStudent;
@@ -300,8 +310,8 @@ public class StudentServiceImpl implements StudentService {
         saveOrUpdateStudent.setIdCard(student.getIdCard());
 
         // 专业
-        if (null != student.getMajor()) {
-            String majorName = student.getMajor().getName().trim();
+        if (StringUtils.isNotBlank(student.getMajor())) {
+            String majorName = student.getMajor().trim();
             Major major = this.majorRepository.findByName(majorName);
             if (major == null) {
                 major = dictService.createMajor(majorName);
@@ -311,8 +321,8 @@ public class StudentServiceImpl implements StudentService {
 
 
         // 院系必填
-        if (null != student.getDepart()) {
-            String departName = student.getDepart().getName().trim();
+        if (StringUtils.isNotBlank(student.getDepart())) {
+            String departName = student.getDepart().trim();
 
             Depart depart = this.departRepository.findByName(departName);
             if (depart == null) {
@@ -323,8 +333,8 @@ public class StudentServiceImpl implements StudentService {
         }
 
         // 班级
-        if (null != student.getAdClass() && StringUtils.isNotEmpty(student.getAdClass().getName())) {
-            String adClassName = student.getAdClass().getName().trim();
+        if (StringUtils.isNotBlank(student.getAdClass())) {
+            String adClassName = student.getAdClass().trim();
             AdClass adClass = this.adClassRepository.findByName(adClassName);
             if (adClass == null) {
                 adClass = dictService.createAdClass(adClassName);

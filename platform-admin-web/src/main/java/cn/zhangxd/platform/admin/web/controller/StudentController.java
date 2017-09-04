@@ -13,6 +13,7 @@ import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
 import cn.zhangxd.platform.admin.web.domain.dto.StudentDetailDto;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentRequestForm;
 import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
@@ -101,7 +102,7 @@ public class StudentController {
 
 
     @PostMapping(value = "/persist")
-    public Student saveOrUpdate(@Valid @RequestBody Student student) {
+    public Student saveOrUpdate(@Valid @RequestBody StudentRequestForm student) {
         return studentService.save(student);
     }
 

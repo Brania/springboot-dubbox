@@ -29,6 +29,8 @@ public class NjzxcRequest implements Serializable {
 
     // 报表类型::单列::双列
     private String reportType;
+    // 报表数据::0入学::1毕业
+    private String eventType;
 
     private String students;
 

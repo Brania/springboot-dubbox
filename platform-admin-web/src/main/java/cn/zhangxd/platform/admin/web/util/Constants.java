@@ -59,6 +59,7 @@ public class Constants {
      * 报表单列::双列
      */
     public static final String DRT = "double";
+    public static final String LEAVE_EVENT = "1";
 
 
     public static final SimpleDateFormat SF_YEAR = new SimpleDateFormat("yyyy");

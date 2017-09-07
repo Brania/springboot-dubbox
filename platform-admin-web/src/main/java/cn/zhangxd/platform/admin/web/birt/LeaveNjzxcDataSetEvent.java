@@ -9,6 +9,7 @@
 package cn.zhangxd.platform.admin.web.birt;
 
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.service.impl.StudentServiceImpl;
 import cn.zhangxd.platform.admin.web.util.Constants;
@@ -45,6 +46,9 @@ public class LeaveNjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
 
     private Calendar calendar = Calendar.getInstance();
 
+    // 默认离校报表数据源
+    private String eventType;
+
 
     @Override
     public boolean fetch(IDataSetInstance dataSet, IUpdatableDataSetRow row) throws ScriptException {
@@ -73,7 +77,12 @@ public class LeaveNjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
             } else {
                 row.setColumnValue("adclass", "");
             }
-            row.setColumnValue("barcode", calendar.get(Calendar.YEAR) + Constants.NJXZC_CODE + student.getStudentNo());
+            String entranceYear = String.valueOf(student.getEntranceYear());
+            if (StringUtils.equals(Constants.LEAVE_EVENT, eventType)) {
+                // 打印毕业报表取毕业年份
+                entranceYear = String.valueOf(calendar.get(Calendar.YEAR));
+            }
+            row.setColumnValue("barcode", entranceYear + Constants.NJXZC_CODE + student.getStudentNo());
             return true;
         }
         return false;
@@ -94,5 +103,7 @@ public class LeaveNjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
         } else {
             stuIter = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams()).iterator();
         }
+
+        eventType = njzxcRequest.getEventType();
     }
 }

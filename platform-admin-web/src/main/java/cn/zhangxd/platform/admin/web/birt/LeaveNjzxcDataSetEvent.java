@@ -46,7 +46,6 @@ public class LeaveNjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
     private Calendar calendar = Calendar.getInstance();
 
 
-
     @Override
     public boolean fetch(IDataSetInstance dataSet, IUpdatableDataSetRow row) throws ScriptException {
 
@@ -54,13 +53,13 @@ public class LeaveNjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
         if (stuIter.hasNext()) {
             Student student = stuIter.next();
             String depart = "";
-            if(null != student.getDepart()){
+            if (null != student.getDepart()) {
                 depart = student.getDepart().getName();
             }
             row.setColumnValue("depart", depart);
             row.setColumnValue("student_no", student.getStudentNo());
             String major = "";
-            if(null != student.getMajor()){
+            if (null != student.getMajor()) {
                 major = student.getMajor().getName();
             }
             row.setColumnValue("major", major);
@@ -69,7 +68,11 @@ public class LeaveNjzxcDataSetEvent extends ScriptedDataSetEventAdapter {
             row.setColumnValue("archive_no", student.getArchiveNo());
             row.setColumnValue("student_name", student.getName());
             row.setColumnValue("track_no", student.getTrackNo());
-
+            if (null != student.getAdClass()) {
+                row.setColumnValue("adclass", student.getAdClass().getName());
+            } else {
+                row.setColumnValue("adclass", "");
+            }
             row.setColumnValue("barcode", calendar.get(Calendar.YEAR) + Constants.NJXZC_CODE + student.getStudentNo());
             return true;
         }

@@ -71,6 +71,7 @@ public class Constants {
     public static final String LOG_TYPE_TRANSMIT = "转接办理";
 
     public static final String NJXZC_CODE = "11460";
+    public static final Integer NJXZC_BARCODE_RULES = 8;
 
     public static final String STU_ARCHI_NEW_REC = "%s_archive_new_rec";
     public static final String STU_ARCHI_PERSIS_REC = "%s_archive_persis_rec";

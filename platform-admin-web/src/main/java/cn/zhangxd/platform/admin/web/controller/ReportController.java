@@ -12,6 +12,7 @@ import cn.zhangxd.platform.admin.web.birt.BIRTReport;
 import cn.zhangxd.platform.admin.web.birt.NjzxcRequest;
 import cn.zhangxd.platform.admin.web.birt.ReportRequest;
 import cn.zhangxd.platform.admin.web.birt.ReportRunner;
+import cn.zhangxd.platform.admin.web.common.StudentComparator;
 import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,6 +85,8 @@ public class ReportController {
             students = studentService.reportStudentBySearchMap(njzxcRequest.getSearchParams());
         }
 
+        // 新增导出排序规则
+        Collections.sort(students, new StudentComparator());
 
         Resource templateResource = new ClassPathResource("template.xls");
         Resource outResource = new ClassPathResource("out.xls");

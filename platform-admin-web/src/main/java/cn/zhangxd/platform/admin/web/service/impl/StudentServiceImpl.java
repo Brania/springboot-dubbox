@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import strman.Strman;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -375,7 +376,27 @@ public class StudentServiceImpl implements StudentService {
         } else {
             student = this.studentRepository.findByStudentNo(keywords);
         }
+
+        // 兼容条码枪自动查询
+        if (student == null) {
+            student = this.getStudentInfoBarcode(keywords);
+        }
+
         return student;
+    }
+
+    /**
+     * 晓庄条码规则:
+     * 在校生含新生:: 入学年份 + 学校代码 + 学号
+     *
+     * @param searchParam
+     * @return
+     */
+    @Override
+    public Student getStudentInfoBarcode(String searchParam) {
+        String studentNo = Strman.last(searchParam, Constants.NJXZC_BARCODE_RULES);
+        log.info("扫描学号 = {} ", studentNo);
+        return studentRepository.findByStudentNo(studentNo);
     }
 
     @Override
@@ -399,20 +420,21 @@ public class StudentServiceImpl implements StudentService {
                 }
             }
         }
-//        return null;
     }
 
     @Override
     public Page<Student> getStudentPages(Map<String, Object> searchParams, Paging paging) {
 
 
-        String[] sortParams = PaginationUtil.buildSortableParam(String.valueOf(searchParams.get("orderBy")));
-        paging.setOrderBy(sortParams[0]);
-        paging.setOrderType(sortParams[1]);
+//        String[] sortParams = PaginationUtil.buildSortableParam(String.valueOf(searchParams.get("orderBy")));
+//        paging.setOrderBy(sortParams[0]);
+//        paging.setOrderType(sortParams[1]);
 
 
-        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy(), paging.getOrderType());
+//        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy(), paging.getOrderType());
 
+        // 限定查询排序规则
+        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize());
         return studentRepository.findAll((Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             List<Predicate> orPredicate = new ArrayList<>();

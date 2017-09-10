@@ -9,6 +9,7 @@
 package cn.zhangxd.platform.admin.web.util;
 
 import cn.zhangxd.platform.common.api.Paging;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -56,6 +57,25 @@ public class PaginationUtil {
     public static PageRequest buildPageRequest(int page, int pagzSize, String sortBy, String sortType) {
         Sort sort = new Sort("ASC".equals(sortType) ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         return new PageRequest(page - 1, pagzSize, sort);
+    }
+
+    /**
+     * 刘亮明::试用期提出需求
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public static PageRequest buildPageRequest(int page, int pageSize) {
+
+        Sort.Order yxOrder = new Sort.Order(Sort.Direction.ASC, "depart.name");
+        Sort.Order zyOrder = new Sort.Order(Sort.Direction.ASC, "major.name");
+        Sort.Order bjOrder = new Sort.Order(Sort.Direction.ASC, "adClass.name");
+        Sort.Order xhOrder = new Sort.Order(Sort.Direction.ASC, "studentNo");
+        Sort.Order dahOrder = new Sort.Order(Sort.Direction.ASC, "archiveNo");
+
+        List<Sort.Order> orders = Lists.newArrayList(yxOrder, zyOrder, bjOrder, xhOrder, dahOrder);
+
+        return new PageRequest(page - 1, pageSize, new Sort(orders));
     }
 
 

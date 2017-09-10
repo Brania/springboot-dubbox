@@ -88,7 +88,16 @@ public interface StudentService {
     Student getStudentInfo(String searchParam);
 
     /**
+     * 扫描条码查询单个学生实体
+     *
+     * @param searchParam
+     * @return
+     */
+    Student getStudentInfoBarcode(String searchParam);
+
+    /**
      * 查询学生档案
+     *
      * @param keywords
      * @return
      */
@@ -167,6 +176,7 @@ public interface StudentService {
 
     /**
      * 查询学生档案转接次数
+     *
      * @param id
      * @return
      */

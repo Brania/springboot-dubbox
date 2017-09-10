@@ -118,6 +118,11 @@ public class StudentController {
         if (StringUtils.isNotBlank(searchParam)) {
             student = studentService.getStudentInfo(searchParam);
         }
+
+        // 兼容扫码枪自动查询
+        if (student == null) {
+            student = studentService.getStudentInfoBarcode(searchParam);
+        }
         return student;
     }
 

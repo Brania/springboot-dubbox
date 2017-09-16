@@ -8,12 +8,19 @@
 
 package cn.zhangxd.platform.admin.web.controller;
 
+import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.security.model.AuthUser;
+import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
+import cn.zhangxd.platform.admin.web.util.CacheUtils;
+import cn.zhangxd.platform.admin.web.util.Constants;
+import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.common.web.util.WebUtils;
 import cn.zhangxd.platform.system.api.entity.AcKeyMap;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -42,6 +50,12 @@ public class TransmitController {
 
     @Autowired
     private TransmitEventService transmitEventService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private CacheUtils cacheUtils;
+
+    private static final String ERROR = "办理失败: %s";
 
 
     @GetMapping(value = "/list")
@@ -77,6 +91,68 @@ public class TransmitController {
         return transmitEventService.handleTransmitEvent(request);
     }
 
+    @GetMapping(value = "/enroll/list")
+    public Map<String, Object> viewTransmitByEnroll() {
+
+        Map<String, Object> results = Maps.newHashMap();
+
+        results.put("students", cacheUtils.opsForHash().values(Constants.NJXZC_ENROLL_HASH));
+
+        Long totalOperTimes = cacheUtils.opsForHash().size(Constants.NJXZC_ENROLL_HASH);
+        results.put("totalOperTimes", totalOperTimes);
+        return results;
+    }
+
+
+    /**
+     * 办理入学档案
+     *
+     * @param keywords 支持条码及学号
+     * @return
+     */
+    @PostMapping(value = "/enroll/{keywords}")
+    public Map<String, Object> handleTransmitByEnroll(@PathVariable String keywords) {
+
+        // 办理逻辑: 检查档案状态 -> 办理 -> 写缓存 -> 返回缓存列表
+        Map<String, Object> results = Maps.newHashMap();
+        Boolean result = Boolean.FALSE;
+
+        Optional<Student> studentOptional = Optional.empty();
+        if (StringUtils.isNotBlank(keywords)) {
+            studentOptional = Optional.ofNullable(studentService.getStudentInfo(keywords));
+        }
+
+        // 兼容扫码枪自动查询
+        if (!studentOptional.isPresent()) {
+            studentOptional = Optional.ofNullable(studentService.getStudentInfoBarcode(keywords));
+        }
+
+        if (studentOptional.isPresent()) {
+
+            Student student = studentOptional.get();
+            if (student.getStatus().equals(TransmitEnum.TRANSIENT)) {
+                // 入学档案业务办理
+                result = transmitEventService.handleEnrollTransmitEvent(student);
+            } else {
+                results.put("message", String.format(ERROR, "非入学档案，不能重复办理入学"));
+            }
+            // 操作缓存
+            String listKey = String.format(Constants.ENROLL_KEY, student.getStudentNo());
+            if (!cacheUtils.opsForHash().hasKey(Constants.NJXZC_ENROLL_HASH, listKey)) {
+                cacheUtils.opsForHash().put(Constants.NJXZC_ENROLL_HASH, listKey, JSON.toJSONString(Generator.generate(student)));
+            }
+            results.put("students", cacheUtils.opsForHash().values(Constants.NJXZC_ENROLL_HASH));
+            Long totalOperTimes = cacheUtils.opsForHash().size(Constants.NJXZC_ENROLL_HASH);
+            results.put("totalOperTimes", totalOperTimes);
+        } else {
+            results.put("message", String.format(ERROR, "无效条码"));
+        }
+
+        results.put("success", result);
+        return results;
+    }
+
+
     /**
      * ##快捷办理转接业务##
      * 同意办理逻辑::转接类型NextStatus区分新生转入、转专业转入类型
@@ -110,7 +186,7 @@ public class TransmitController {
                 request.setRemarks("不同意转入。");
             }
             resultMap = transmitEventService.handleAuditTransmitEvent(request, flag);
-        }else{
+        } else {
             requestMap.put("success", Boolean.FALSE);
         }
         return resultMap;

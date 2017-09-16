@@ -10,10 +10,8 @@ package cn.zhangxd.platform.admin.web.domain;
 
 import cn.zhangxd.platform.admin.web.util.IdEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**

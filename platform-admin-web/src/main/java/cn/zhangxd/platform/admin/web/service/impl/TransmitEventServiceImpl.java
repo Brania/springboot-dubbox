@@ -157,6 +157,46 @@ public class TransmitEventServiceImpl implements TransmitEventService {
 
     @Override
     @Transactional
+    public Boolean handleEnrollTransmitEvent(Student student) {
+
+        Boolean flag = Boolean.FALSE;
+        try {
+            AuthUser user = WebUtils.getCurrentUser();
+            // 1. 修改档案状态
+            student.setStatus(TransmitEnum.ACCEPTED);
+
+            TransmitRecord transmitRecord = new TransmitRecord();
+            Optional<TransmitEvent> eventOptional = transmitEventRepository.findByEvent(TransmitEventEnum.NEW).stream().findFirst();
+
+            if (eventOptional.isPresent()) {
+                // 系统设置: 入学事由仅设置转入转接类型
+                Optional<TransmitEventType> eventTypeOptional = eventOptional.get().getEventTypes().stream().findFirst();
+                if (eventTypeOptional.isPresent()) {
+                    transmitRecord.setTransmitEventType(eventTypeOptional.get());
+                }
+            }
+
+            transmitRecord.setRemarks("入学档案");
+            transmitRecord.setDepart(student.getDepart());
+            transmitRecord.setFromDepart(student.getDepart());
+            transmitRecord.setStudent(student);
+            transmitRecord.setOpUserId(user.getId());
+            transmitRecord.setOpUserName(user.getLoginName());
+            // 入学保管人
+            transmitRecord.setCustodian(student.getDepart().getName());
+            transmitRecord.setFluctTime(new Date());
+            transmitRecordRepository.save(transmitRecord);
+
+            flag = Boolean.TRUE;
+
+        } catch (Exception e) {
+            log.error("办理入学档案失败：{}", e.getMessage());
+        }
+        return flag;
+    }
+
+    @Override
+    @Transactional
     public Map<String, Object> handleAuditTransmitEvent(TransmitRecordRequest recordRequest, Boolean flag) {
 
         Boolean success = Boolean.TRUE;

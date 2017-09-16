@@ -50,6 +50,13 @@ public interface TransmitEventService {
      */
     Map<String, Object> handleAuditTransmitEvent(TransmitRecordRequest recordRequest, Boolean flag);
 
+    /**
+     * 办理入学
+     *
+     * @param student
+     * @return
+     */
+    Boolean handleEnrollTransmitEvent(Student student);
 
     /**
      * 统计待接收档案数

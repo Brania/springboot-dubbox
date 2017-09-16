@@ -223,19 +223,8 @@ public class ArchiveController {
                 cacheUtils.pushRecord(sid);
             }
             // 档案查询状态转换
-            String transStatus;
+            String transStatus = Generator.convert(student.getStatus());
 
-            switch (student.getStatus()) {
-                case TRANSIENT:
-                    transStatus = TransmitEventEnum.NEW.getName();
-                    break;
-                case DETACHED:
-                    transStatus = TransmitEventEnum.DETACHED.getName();
-                    break;
-                default:
-                    transStatus = TransmitEventEnum.PERSIST.getName();
-                    break;
-            }
             results.put("transStatus", transStatus);
             results.put("transTimes", studentService.countStudentTransmitTimes(student.getId()));
         } else {

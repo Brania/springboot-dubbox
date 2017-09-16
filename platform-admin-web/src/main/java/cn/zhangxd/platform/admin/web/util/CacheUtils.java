@@ -16,6 +16,8 @@ import cn.zhangxd.platform.common.redis.RedisRepository;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,6 +57,28 @@ public class CacheUtils {
         return null;
     }
 
+    /**
+     * 获得List长度
+     *
+     * @param key
+     * @return
+     */
+    public Long length(String key) {
+        return redisRepository.length(key);
+    }
+
+
+    public List<String> findValuesRange(String key, int start, int end) {
+
+        try {
+            // 类型转换报错
+            return redisRepository.getList(key, start, end);
+        } catch (Exception e) {
+            log.error("从redis获取分页数据失败\n -- {}", e.getMessage());
+        }
+        return null;
+    }
+
 
     /**
      * SID是否首次查询档案数据
@@ -82,6 +106,19 @@ public class CacheUtils {
             total = redisRepository.length(Constants.STU_ARCHI_REC_LIST).intValue();
         }
         return total;
+    }
+
+
+    /**
+     * 入学档案
+     */
+
+    public ListOperations<String, String> opsForList() {
+        return redisRepository.opsForList();
+    }
+
+    public HashOperations<String, String, String> opsForHash() {
+        return redisRepository.opsForHash();
     }
 
 

@@ -8,14 +8,19 @@
 
 package cn.zhangxd.platform.admin.web.util;
 
+import cn.zhangxd.platform.admin.web.domain.Student;
 import cn.zhangxd.platform.admin.web.domain.StudentRelArchiveItem;
 import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
+import cn.zhangxd.platform.admin.web.domain.dto.StudentBizDto;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
+import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
+import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
 import org.springframework.http.HttpStatus;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +71,40 @@ public class Generator {
         dto.setOperUser(record.getOpUserName());
         return dto;
 
+    }
+
+
+    public static StudentBizDto generate(Student student) {
+
+        String depart = student.getDepart() != null ? student.getDepart().getName() : "";
+
+        return StudentBizDto.builder()
+                .examineeNo(student.getExamineeNo())
+                .entranceYear(student.getEntranceYear())
+                .studentNo(student.getStudentNo())
+                .name(student.getName())
+                .sex(student.getSex())
+                .status(convert(student.getStatus()))
+                .depart(depart)
+                .admissionNo(student.getAdmissionNo())
+                .bizTime(LocalDate.now()).build();
+    }
+
+
+    public static String convert(TransmitEnum status) {
+        String transStatus;
+        switch (status) {
+            case TRANSIENT:
+                transStatus = TransmitEventEnum.NEW.getName();
+                break;
+            case DETACHED:
+                transStatus = TransmitEventEnum.DETACHED.getName();
+                break;
+            default:
+                transStatus = TransmitEventEnum.PERSIST.getName();
+                break;
+        }
+        return transStatus;
     }
 
 

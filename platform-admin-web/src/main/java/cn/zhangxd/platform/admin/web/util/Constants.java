@@ -87,5 +87,8 @@ public class Constants {
 
     public static final long DAY = 1000 * 60 * 60 * 12;
 
+    public static final String NJXZC_ENROLL_HASH = "njxzc_enroll_hash";
+    public static final String ENROLL_KEY = "sno_%s_archive_rec";
+
 
 }

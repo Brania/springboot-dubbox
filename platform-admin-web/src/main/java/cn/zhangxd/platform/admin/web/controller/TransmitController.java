@@ -9,6 +9,7 @@
 package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.dto.ArchiveOperatorDto;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordRequest;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
@@ -27,9 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -56,6 +57,8 @@ public class TransmitController {
     private CacheUtils cacheUtils;
 
     private static final String ERROR = "办理失败: %s";
+    // 仅显示最近十条记录
+    private static final Integer ARCHIVE_TOTAL_INDEX = 10;
 
 
     @GetMapping(value = "/list")
@@ -96,10 +99,17 @@ public class TransmitController {
 
         Map<String, Object> results = Maps.newHashMap();
 
-        results.put("students", cacheUtils.opsForHash().values(Constants.NJXZC_ENROLL_HASH));
 
+        List<String> students = cacheUtils.opsForHash().values(Constants.NJXZC_ENROLL_HASH);
+
+        List<ArchiveOperatorDto> operatorDtoList = students.stream().map(s -> JSON.parseObject(s, ArchiveOperatorDto.class)).sorted(Comparator.comparing(ArchiveOperatorDto::getBizTime).reversed()).collect(Collectors.toList());
+
+        // 统计当天办理数量
+        Long todayOperTimes = operatorDtoList.stream().filter(archiveOperatorDto -> archiveOperatorDto.getBizTime().equals(LocalDate.now())).count();
+        results.put("students", JSON.toJSONString(operatorDtoList.size() > ARCHIVE_TOTAL_INDEX ? operatorDtoList.subList(0, ARCHIVE_TOTAL_INDEX) : operatorDtoList));
         Long totalOperTimes = cacheUtils.opsForHash().size(Constants.NJXZC_ENROLL_HASH);
         results.put("totalOperTimes", totalOperTimes);
+        results.put("todayOperTimes", todayOperTimes);
         return results;
     }
 

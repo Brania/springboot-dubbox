@@ -1,7 +1,6 @@
 package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.common.controller.BaseController;
-import cn.zhangxd.platform.admin.web.domain.common.License;
 import cn.zhangxd.platform.admin.web.service.DashboardService;
 import cn.zhangxd.platform.admin.web.util.SecurityUtils;
 import com.google.common.collect.Maps;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -50,6 +47,8 @@ public class DashboardController extends BaseController {
         statMap.put("statDeparts", dashboardService.statArchiveAmountByDepart());
         // 统计授权天数
         statMap.put("period", SecurityUtils.calculateLicense());
+        // 统计业务年份
+        statMap.put("statYear", LocalDate.now().getYear());
         return statMap;
     }
 

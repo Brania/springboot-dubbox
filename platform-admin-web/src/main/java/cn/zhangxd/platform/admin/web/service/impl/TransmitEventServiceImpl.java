@@ -78,26 +78,12 @@ public class TransmitEventServiceImpl implements TransmitEventService {
         return transmitRecordRepository.findByStudentAndTransmitEventTypeInOrderByFluctTimeDesc(student, eventTypes).stream().map(record -> Generator.generate(record)).collect(Collectors.toList());
     }
 
-    @Override
-    public Integer countArchiveRollOutAmountByDepart(Depart depart) {
-
-        List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.WAITING);
-        Integer departRollOutAmount = 0;
-        if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
-            departRollOutAmount = transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
-        }
-        return departRollOutAmount;
-    }
 
     @Override
-    public Integer countArchiveReceiveAmountByDepart(Depart depart) {
-        List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.RECEIVED);
-        Integer departReceivedAmount = 0;
-        if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
-            departReceivedAmount = transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
-        }
-        return departReceivedAmount;
+    public Long countArchiveAcceptedAmountByDepart(Depart depart, TransmitEventType type) {
+        return transmitRecordRepository.countByTransmitEventTypeAndDepart(type, depart);
     }
+
 
     @Override
     public Integer countArchiveRollOutAmount() {
@@ -182,6 +168,7 @@ public class TransmitEventServiceImpl implements TransmitEventService {
             transmitRecord.setStudent(student);
             transmitRecord.setOpUserId(user.getId());
             transmitRecord.setOpUserName(user.getLoginName());
+            transmitRecord.setCreateTime(new Date());
             // 入学保管人
             transmitRecord.setCustodian(student.getDepart().getName());
             transmitRecord.setFluctTime(new Date());

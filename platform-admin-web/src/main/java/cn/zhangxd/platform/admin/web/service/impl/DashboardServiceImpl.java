@@ -10,9 +10,11 @@ package cn.zhangxd.platform.admin.web.service.impl;
 
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.TransmitEventType;
 import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
 import cn.zhangxd.platform.admin.web.enums.TransmitEnum;
 import cn.zhangxd.platform.admin.web.repository.DepartRepository;
+import cn.zhangxd.platform.admin.web.repository.TransmitEventTypeRepository;
 import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.admin.web.service.DashboardService;
 import cn.zhangxd.platform.admin.web.service.DictService;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +50,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
     private TransmitEventService transmitEventService;
+    @Autowired
+    private TransmitEventTypeRepository transmitEventTypeRepository;
     @Autowired
     private StudentService studentService;
     @Autowired
@@ -97,13 +102,19 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public List<ArchiveStat> statArchiveAmountByDepart() {
 
-
         List<ArchiveStat> archiveStats = studentService.statisticsStudentsGroupByDepart();
-        // 统计各院系下::转入档案数::转出档案数
+        // 统计各院系已接收档案数及未接收档案数
         return archiveStats.stream().map(archiveStat -> {
             Depart depart = departRepository.findByName(archiveStat.getDname());
-            archiveStat.setRecAmount(transmitEventService.countArchiveReceiveAmountByDepart(depart));
-            archiveStat.setRollAmount(transmitEventService.countArchiveRollOutAmountByDepart(depart));
+
+            Optional<TransmitEventType> eventTypeOptional = transmitEventTypeRepository.findByNextStatus(TransmitEnum.ACCEPTED).stream().findFirst();
+            Integer acceptCount = 0;
+            if (eventTypeOptional.isPresent()) {
+                acceptCount = transmitEventService.countArchiveAcceptedAmountByDepart(depart, eventTypeOptional.get()).intValue();
+            }
+
+            archiveStat.setAcceptedAmount(acceptCount);
+            archiveStat.setWaitingAmount(archiveStat.getTotalAmount() - acceptCount);
             return archiveStat;
         }).collect(Collectors.toList());
     }

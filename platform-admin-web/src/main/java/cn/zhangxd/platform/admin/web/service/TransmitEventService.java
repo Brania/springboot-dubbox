@@ -10,6 +10,7 @@ package cn.zhangxd.platform.admin.web.service;
 
 import cn.zhangxd.platform.admin.web.domain.Depart;
 import cn.zhangxd.platform.admin.web.domain.Student;
+import cn.zhangxd.platform.admin.web.domain.TransmitEventType;
 import cn.zhangxd.platform.admin.web.domain.TransmitRecord;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitEventTreeNode;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
@@ -79,10 +80,7 @@ public interface TransmitEventService {
      */
     Integer countArchiveReceiveAmount();
 
-    Integer countArchiveRollOutAmountByDepart(Depart depart);
-
-    Integer countArchiveReceiveAmountByDepart(Depart depart);
-
+    Long countArchiveAcceptedAmountByDepart(Depart depart, TransmitEventType type);
     /**
      * 查询学生档案
      *

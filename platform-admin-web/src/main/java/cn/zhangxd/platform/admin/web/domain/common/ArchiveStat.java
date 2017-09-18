@@ -38,12 +38,13 @@ public class ArchiveStat implements Serializable {
      * 总档案数
      */
     private Integer totalAmount;
+
     /**
-     * 接收档案数
+     * 已接收档案数
      */
-    private Integer recAmount;
+    private Integer acceptedAmount;
     /**
-     * 转出档案数
+     * 待接收档案数
      */
-    private Integer rollAmount;
+    private Integer waitingAmount;
 }

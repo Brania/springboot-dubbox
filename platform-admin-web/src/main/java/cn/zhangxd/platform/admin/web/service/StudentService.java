@@ -168,7 +168,7 @@ public interface StudentService {
     List<Student> findByRollDepartAndStatus(Depart depart, TransmitEnum status);
 
     /**
-     * 统计各院系不同状态的档案数量 TODO 添加年份
+     * 统计当前年份各院系不同状态的档案数量
      *
      * @return
      */

@@ -39,6 +39,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -103,9 +104,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<ArchiveStat> statisticsStudentsGroupByDepart() {
+
+        // 默认按照当前年份统计
+        Integer year = LocalDate.now().getYear();
         List<ArchiveStat> archiveStats = Lists.newArrayList();
 
-        List<Map<String, Object>> groupList = studentRepository.statStudentsGroupByDepart();
+        List<Map<String, Object>> groupList = studentRepository.statStudentsGroupByDepart(year);
 
         if (null != groupList && groupList.size() > 0) {
             archiveStats = groupList.stream().map(groupMap -> {

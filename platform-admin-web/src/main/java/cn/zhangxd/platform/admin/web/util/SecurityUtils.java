@@ -33,21 +33,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SecurityUtils {
 
-    /**
-     * 计算系统在线运行天数
-     *
-     * @return
-     */
-    public static License calculateLicense() {
-        License license = new License();
-        Long onlineDays = ChronoUnit.DAYS.between(license.getBuyTime(), LocalDate.now());
-        license.setOnlineDays(onlineDays);
-        license.setLimitDays(license.getLicenseDays() - onlineDays);
-        if (onlineDays + license.getWarnDays() > license.getLimitDays()) {
-            license.setWarning(Boolean.TRUE);
-        }
-        return license;
-    }
 
     /**
      * 判断当前登录者身份是否为管理员

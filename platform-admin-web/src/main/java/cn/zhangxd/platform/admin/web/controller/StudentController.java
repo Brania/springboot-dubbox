@@ -20,6 +20,8 @@ import cn.zhangxd.platform.admin.web.task.ImportStudentExcelTask;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import cn.zhangxd.platform.common.web.annotations.Action;
+import cn.zhangxd.platform.common.web.annotations.License;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -70,6 +72,7 @@ public class StudentController {
     private ArchiveService archiveService;
 
     @GetMapping(value = "/list")
+    @License(action = Action.Check)
     public Page<Student> list(@RequestParam(value = "pageNum", defaultValue = "1") int page,
                               @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                               @RequestParam Map<String, Object> searchParams) {

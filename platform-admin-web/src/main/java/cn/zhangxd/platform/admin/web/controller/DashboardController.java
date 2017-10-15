@@ -3,6 +3,9 @@ package cn.zhangxd.platform.admin.web.controller;
 import cn.zhangxd.platform.admin.web.common.controller.BaseController;
 import cn.zhangxd.platform.admin.web.service.DashboardService;
 import cn.zhangxd.platform.admin.web.util.SecurityUtils;
+import cn.zhangxd.platform.common.web.annotations.Action;
+import cn.zhangxd.platform.common.web.annotations.License;
+import cn.zhangxd.platform.common.web.util.LicenseUtils;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ public class DashboardController extends BaseController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "")
+    @License(action = Action.Skip)
     public Map<String, Object> get() {
 
         Map<String, Object> statMap = Maps.newHashMap();
@@ -46,7 +50,7 @@ public class DashboardController extends BaseController {
         // 院系统计
         statMap.put("statDeparts", dashboardService.statArchiveAmountByDepart());
         // 统计授权天数
-        statMap.put("period", SecurityUtils.calculateLicense());
+        statMap.put("period", LicenseUtils.check());
         // 统计业务年份
         statMap.put("statYear", LocalDate.now().getYear());
         return statMap;

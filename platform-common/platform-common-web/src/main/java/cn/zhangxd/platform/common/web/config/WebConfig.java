@@ -26,7 +26,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LicenseInterceptor()).addPathPatterns("/auth/token");
+        registry.addInterceptor(new LicenseInterceptor()).addPathPatterns("/**").excludePathPatterns("/auth/**");
     }
 
     /**

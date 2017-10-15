@@ -23,6 +23,8 @@ import cn.zhangxd.platform.admin.web.util.CacheUtils;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import cn.zhangxd.platform.common.web.annotations.Action;
+import cn.zhangxd.platform.common.web.annotations.License;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -64,6 +66,7 @@ public class ArchiveController {
 
 
     @GetMapping(value = "/list")
+    @License(action = Action.Check)
     public List<ArchiveItemDto> list() {
         Sort sort = new Sort(Sort.Direction.ASC, "sort");
         List<ArchiveItemDto> list = Lists.newArrayList();
@@ -96,6 +99,7 @@ public class ArchiveController {
 
 
     @GetMapping(value = "/report/list")
+    @License(action = Action.Check)
     public Page<ArchiveDto> reportList(@RequestParam(value = "pageNum", defaultValue = "1") int page,
                                        @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                                        @RequestParam Map<String, Object> searchParams) {

@@ -13,6 +13,8 @@ import cn.zhangxd.platform.admin.web.service.DictService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import cn.zhangxd.platform.common.web.annotations.Action;
+import cn.zhangxd.platform.common.web.annotations.License;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,7 @@ public class DictController {
 
 
     @GetMapping(value = "/depart/list")
+    @License(action = Action.Check)
     public Page<Depart> listDepart(@RequestParam(value = "page", defaultValue = "1") int page,
                                    @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                                    @RequestParam Map<String, Object> searchParams) {

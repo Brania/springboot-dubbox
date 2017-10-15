@@ -19,6 +19,8 @@ import cn.zhangxd.platform.admin.web.service.TransmitEventService;
 import cn.zhangxd.platform.admin.web.util.CacheUtils;
 import cn.zhangxd.platform.admin.web.util.Constants;
 import cn.zhangxd.platform.admin.web.util.Generator;
+import cn.zhangxd.platform.common.web.annotations.Action;
+import cn.zhangxd.platform.common.web.annotations.License;
 import cn.zhangxd.platform.common.web.util.WebUtils;
 import cn.zhangxd.platform.system.api.entity.AcKeyMap;
 import com.alibaba.fastjson.JSON;
@@ -62,6 +64,7 @@ public class TransmitController {
 
 
     @GetMapping(value = "/list")
+    @License(action = Action.Check)
     public List<TransmitEventTreeNode> list() {
         return transmitEventService.getTransmitEventList();
     }
@@ -95,6 +98,7 @@ public class TransmitController {
     }
 
     @GetMapping(value = "/enroll/list")
+    @License(action = Action.Check)
     public Map<String, Object> viewTransmitByEnroll() {
 
         Map<String, Object> results = Maps.newHashMap();

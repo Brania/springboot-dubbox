@@ -20,7 +20,7 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/njxzc?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: hodoo123
+    password: hodoo123 #MYSQL密码njxzc!QAZ
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:

@@ -172,7 +172,7 @@ public interface StudentService {
      *
      * @return
      */
-    List<ArchiveStat> statisticsStudentsGroupByDepart();
+    List<ArchiveStat> statisticsStudentsGroupByDepart(Integer acaYear);
 
     /**
      * 查询学生档案转接次数

@@ -1,6 +1,5 @@
 package cn.zhangxd.platform.common.web.annotations;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,21 +23,21 @@ public class LicenseSubject implements Serializable {
     /**
      * 剩余天数
      */
-    private Long licenseDays = 60l;
+    private Long licenseDays = 60L;
     /**
      * 剩余天数（根据当前时间动态计算）
      */
-    private Long limitDays = 0l;
+    private Long limitDays = 0L;
     /**
      * 系统运行天数
      */
-    private Long onlineDays = 0l;
+    private Long onlineDays = 0L;
     /**
      * 剩余不足天数开始告警
      */
     private Integer warnDays = 15;
 
-    private LocalDate buyTime = LocalDate.of(2017, Month.AUGUST, 30);
+    private LocalDate buyTime = LocalDate.of(2018, Month.MAY, 30);
     /**
      * 是否免费
      */

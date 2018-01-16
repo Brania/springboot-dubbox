@@ -46,7 +46,7 @@ public interface DashboardService {
      *
      * @return
      */
-    List<ArchiveStat> statArchiveAmountByDepart();
+    List<ArchiveStat> statArchiveAmountByDepart(Integer statYear);
 
 
 }

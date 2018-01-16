@@ -103,13 +103,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<ArchiveStat> statisticsStudentsGroupByDepart() {
+    public List<ArchiveStat> statisticsStudentsGroupByDepart(Integer acaYear) {
 
         // 默认按照当前年份统计
-        Integer year = LocalDate.now().getYear();
+//        Integer year = LocalDate.now().getYear();
         List<ArchiveStat> archiveStats = Lists.newArrayList();
 
-        List<Map<String, Object>> groupList = studentRepository.statStudentsGroupByDepart(year);
+        List<Map<String, Object>> groupList = studentRepository.statStudentsGroupByDepart(acaYear);
 
         if (null != groupList && groupList.size() > 0) {
             archiveStats = groupList.stream().map(groupMap -> {

@@ -100,9 +100,9 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<ArchiveStat> statArchiveAmountByDepart() {
+    public List<ArchiveStat> statArchiveAmountByDepart(Integer statYear) {
 
-        List<ArchiveStat> archiveStats = studentService.statisticsStudentsGroupByDepart();
+        List<ArchiveStat> archiveStats = studentService.statisticsStudentsGroupByDepart(statYear);
         // 统计各院系已接收档案数及未接收档案数
         return archiveStats.stream().map(archiveStat -> {
             Depart depart = departRepository.findByName(archiveStat.getDname());

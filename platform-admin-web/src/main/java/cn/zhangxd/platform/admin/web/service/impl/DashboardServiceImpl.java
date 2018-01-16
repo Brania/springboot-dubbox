@@ -105,7 +105,7 @@ public class DashboardServiceImpl implements DashboardService {
         List<ArchiveStat> archiveStats = studentService.statisticsStudentsGroupByDepart(statYear);
         // 统计各院系已接收档案数及未接收档案数
         return archiveStats.stream().map(archiveStat -> {
-            Depart depart = departRepository.findByName(archiveStat.getDname());
+            Depart depart = departRepository.findByCode(archiveStat.getDepartCode());
 
             Optional<TransmitEventType> eventTypeOptional = transmitEventTypeRepository.findByNextStatus(TransmitEnum.ACCEPTED).stream().findFirst();
             Integer acceptCount = 0;
@@ -115,6 +115,7 @@ public class DashboardServiceImpl implements DashboardService {
 
             archiveStat.setAcceptedAmount(acceptCount);
             archiveStat.setWaitingAmount(archiveStat.getTotalAmount() - acceptCount);
+            archiveStat.setDepartName(depart.getName());
             return archiveStat;
         }).collect(Collectors.toList());
     }

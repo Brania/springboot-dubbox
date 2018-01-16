@@ -65,7 +65,7 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
     @Query("select s from Student s where s.depart.code = ?1")
     List<Student> findStudentListBySearch(String departName);
 
-    @Query("select s.depart.name as dname,count(s.id) as totalAmount from Student s where s.entranceYear=?1 group by s.depart.name")
+    @Query("select s.depart.code as code,count(s.id) as totalAmount from Student s where s.entranceYear=?1 group by s.depart.code")
     List<Map<String, Object>> statStudentsGroupByDepart(Integer year);
 
 

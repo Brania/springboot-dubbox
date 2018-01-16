@@ -2,14 +2,13 @@ spring:
   redis:
     database: 0
     host: 127.0.0.1
-    port: 7000
+    port: 6379
     timeout: 0
     pool:
       max-active: 8 #最大连接数
       max-idle: 8 #最大空闲连接数
       max-wait: -1 #最大等待时间
       min-idle: 0
-    password: iDoo0Hao123 #初始化连接数
   http:
     multipart:
       enabled: true # Enable support of multi-part uploads.
@@ -20,7 +19,7 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/njxzc?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: hodoo123 #MYSQL密码njxzc!QAZ
+    password: njxzc!QAZ #MYSQL密码njxzc!QAZ
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:

@@ -4,7 +4,7 @@ spring:
     write:
       url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
       username: root
-      password: njxzc!QAZ
+      password: hodoo123
       driver-class-name: com.mysql.jdbc.Driver
       max-active: 20
       initial-size: 1
@@ -25,7 +25,7 @@ spring:
     read:
       url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
       username: root
-      password: njxzc!QAZ
+      password: hodoo123
       driver-class-name: com.mysql.jdbc.Driver
       max-active: 20
       initial-size: 1
@@ -46,8 +46,8 @@ spring:
   redis:
     database: 2
     host: 127.0.0.1
-    #password: # Login password of the redis server.
-    port: 6379
+    password: iDoo0Hao123
+    port: 7000
     timeout: 0
     pool:
       max-active: 8 #最大连接数
@@ -55,12 +55,12 @@ spring:
       max-wait: -1 #最大等待时间
       min-idle: 0 #初始化连接数
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: admin
-    password: admin
-    virtualHost: /
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: admin
+#    password: admin
+#    virtualHost: /
   mail:
     host: xxx
     port: 25

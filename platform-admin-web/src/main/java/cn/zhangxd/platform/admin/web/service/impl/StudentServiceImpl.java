@@ -106,7 +106,6 @@ public class StudentServiceImpl implements StudentService {
     public List<ArchiveStat> statisticsStudentsGroupByDepart(Integer acaYear) {
 
         // 默认按照当前年份统计
-//        Integer year = LocalDate.now().getYear();
         List<ArchiveStat> archiveStats = Lists.newArrayList();
 
         List<Map<String, Object>> groupList = studentRepository.statStudentsGroupByDepart(acaYear);
@@ -114,7 +113,7 @@ public class StudentServiceImpl implements StudentService {
         if (null != groupList && groupList.size() > 0) {
             archiveStats = groupList.stream().map(groupMap -> {
                 ArchiveStat archiveStat = new ArchiveStat();
-                archiveStat.setDname(String.valueOf(groupMap.get("dname")));
+                archiveStat.setDepartCode(String.valueOf(groupMap.get("code")));
                 archiveStat.setTotalAmount(Integer.parseInt(String.valueOf(groupMap.get("totalAmount"))));
                 return archiveStat;
             }).collect(Collectors.toList());

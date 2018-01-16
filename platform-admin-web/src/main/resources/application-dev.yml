@@ -2,8 +2,8 @@ spring:
   redis:
     database: 0
     host: 127.0.0.1
-    #password: # Login password of the redis server.
-    port: 6379
+    password: iDoo0Hao123
+    port: 7000
     timeout: 0
     pool:
       max-active: 8 #最大连接数
@@ -17,6 +17,15 @@ spring:
       location: /tmp # Intermediate location of uploaded files.
       max-file-size: 5Mb # Max file size. Values can use the suffixed "MB" or "KB" to indicate a Megabyte or Kilobyte size.
       max-request-size: 50Mb # Max request size. Values can use the suffixed "MB" or "KB" to indicate a Megabyte or Kilobyte size.
+  datasource:
+      url: jdbc:mysql://127.0.0.1:3306/njxzc?useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: hodoo123 #MYSQL密码njxzc!QAZ
+      driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
 
 server:
   port: 8080

@@ -31,9 +31,13 @@ public class ArchiveStat implements Serializable {
     private static final long serialVersionUID = -1666329497790124952L;
 
     /**
+     * 院系机构代码
+     */
+    private String departCode;
+    /**
      * 院系机构名称
      */
-    private String dname;
+    private String departName;
     /**
      * 总档案数
      */

@@ -46,11 +46,13 @@ public class DictController {
     @Autowired
     private StudentService studentService;
 
+    private static final String REJECT_DELETE_MSG = "%s已存在%s份学生档案，不能进行删除。";
+
 
     @GetMapping(value = "/depart/list")
     @License(action = Action.Check)
     public Page<Depart> listDepart(@RequestParam(value = "page", defaultValue = "1") int page,
-                                   @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
+                                   @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE_DOUBLE) int pageSize,
                                    @RequestParam Map<String, Object> searchParams) {
 
 
@@ -78,9 +80,7 @@ public class DictController {
         if (null != depart) {
             Long count = studentService.countByDepart(depart);
             if (count > 0) {
-                StringJoiner sj = new StringJoiner("");
-                sj.add("共有").add(String.valueOf(count)).add("名学生归属于").add(depart.getName()).add("，您无法删除该院系!");
-                message = sj.toString();
+                message = String.format(REJECT_DELETE_MSG, depart.getName(), count);
             } else {
                 flag = dictService.deleteDepartById(id);
             }

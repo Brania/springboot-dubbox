@@ -24,6 +24,8 @@ public class Constants {
 
 
     public static final String PAGE_SIZE = "10";
+    public static final String PAGE_SIZE_DOUBLE = "20";
+
 
     /**
      * 院系编码前缀
@@ -60,6 +62,11 @@ public class Constants {
      */
     public static final String DRT = "double";
     public static final String LEAVE_EVENT = "1";
+
+    /**
+     * 默认统计年份
+     */
+    public static final String DEFAULT_STAT_YEAR = "2018";
 
 
     public static final SimpleDateFormat SF_YEAR = new SimpleDateFormat("yyyy");

@@ -8,15 +8,11 @@
 
 package cn.zhangxd.platform.admin.web.util;
 
-import cn.zhangxd.platform.admin.web.domain.common.License;
 import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.common.web.util.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
-
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 

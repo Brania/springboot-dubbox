@@ -66,17 +66,23 @@ public class ArchiveServiceImpl implements ArchiveService {
     public Map<String, Object> deleteClassify(Long id) {
 
         Boolean success = Boolean.FALSE;
+        String message = "";
         Map<String, Object> results = Maps.newHashMap();
         try {
             ArchiveClassify classify = archiveClassifyRepository.findOne(id);
-
-            archiveClassifyRepository.delete(classify);
-            success = Boolean.TRUE;
+            Boolean isAllow = classify.getItems().stream().filter(archiveItem -> archiveItem.getForced()).count() == 0;
+            if (isAllow) {
+                success = Boolean.TRUE;
+                archiveClassifyRepository.delete(classify);
+            } else {
+                message = "操作失败，档案分类中包含必选类目！";
+            }
         } catch (Exception e) {
-            results.put("message", e.getMessage());
+            message = "服务器异常";
             log.error("删除档案分类失败：{}", e.getMessage());
         }
         results.put("success", success);
+        results.put("message", message);
         return results;
     }
 
@@ -179,14 +185,25 @@ public class ArchiveServiceImpl implements ArchiveService {
     public Map<String, Object> deleteArchiveItem(Long id) {
 
         Boolean success = Boolean.TRUE;
+        String message = "";
         Map<String, Object> results = Maps.newHashMap();
         try {
-            archiveItemRepository.delete(id);
+            ArchiveItem archiveItem = archiveItemRepository.findOne(id);
+            if (archiveItem.getForced()) {
+                // 必选类目
+                success = Boolean.FALSE;
+                message = "操作失败，禁止删除必选类目";
+            } else {
+                archiveItemRepository.delete(archiveItem);
+            }
         } catch (Exception e) {
             success = Boolean.FALSE;
-            log.error("删除档案项目失败：{}", e.getMessage());
+            message = "服务器异常，删除档案类目失败！";
+            results.put("message", e.getMessage());
         }
         results.put("success", success);
+        results.put("message", message);
+
         return results;
     }
 

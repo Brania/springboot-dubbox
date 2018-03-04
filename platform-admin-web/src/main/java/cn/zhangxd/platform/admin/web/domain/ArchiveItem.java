@@ -38,9 +38,13 @@ public class ArchiveItem extends IdEntity {
     private Boolean enabled;
     /**
      * 是否必备
+     *  0: 否
+     *  1: 是
      */
     private Boolean forced;
-
+    /**
+     * 档案分类
+     */
     private ArchiveClassify classify;
 
     @Digits(integer = 3, fraction = 0)

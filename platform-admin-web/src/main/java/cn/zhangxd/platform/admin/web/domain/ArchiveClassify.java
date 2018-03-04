@@ -28,7 +28,6 @@ import java.util.List;
 @Table(name = "xz_archive_classify")
 public class ArchiveClassify extends IdEntity {
 
-
     private String name;
 
     private List<ArchiveItem> items = Lists.newArrayList();
@@ -46,7 +45,6 @@ public class ArchiveClassify extends IdEntity {
     public List<ArchiveItem> getItems() {
         return items;
     }
-
     public void setItems(List<ArchiveItem> items) {
         this.items = items;
     }

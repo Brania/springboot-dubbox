@@ -159,4 +159,10 @@ public interface ISystemService {
      */
     void deleteRoleById(String roleId);
 
+    /**
+     * 查询档案交接人员列表
+     * @return
+     */
+    List<SysUser> queryPreTransformUsers();
+
 }

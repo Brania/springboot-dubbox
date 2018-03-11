@@ -38,6 +38,15 @@
         where a.id = #{userId}
     </select>
 
+    <select id="queryPreTransformUsers" resultType="cn.zhangxd.platform.system.api.entity.SysUser">
+        <include refid="selectColumns"/>
+        WHERE NOT exists(
+          SELECT * from sys_user_access b WHERE b.user_id=a.id
+        ) AND a.enabled=1 and not exists(
+          SELECT * from sys_user_role c WHERE c.user_id=a.id AND c.role_id!='1'
+        )
+    </select>
+
     <!-- 根据登录名查询用户 -->
     <select id="getByLoginName" resultType="cn.zhangxd.platform.system.api.entity.SysUser">
         <include refid="selectColumns"/>

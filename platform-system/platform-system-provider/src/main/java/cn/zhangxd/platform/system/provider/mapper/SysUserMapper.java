@@ -79,4 +79,10 @@ public interface SysUserMapper extends CrudDao<SysUser> {
      * @param user the user
      */
     void updateInfo(SysUser user);
+
+    /**
+     * 查询可以将档案交接给对方的系统成员
+     * @return
+     */
+    List<SysUser> queryPreTransformUsers();
 }

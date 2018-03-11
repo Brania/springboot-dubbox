@@ -34,6 +34,8 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     Student findByExamineeNo(String examineeNo);
 
+    Student findByIdCardAndStudentNo(String idCard, String studentNo);
+
     Long countByExamineeNo(String examineeNo);
 
     Student findByStudentNo(String sno);

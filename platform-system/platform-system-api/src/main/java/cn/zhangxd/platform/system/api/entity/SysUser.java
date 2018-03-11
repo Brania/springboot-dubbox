@@ -66,6 +66,10 @@ public class SysUser extends DataEntity {
      * 菜单列表
      */
     private List<SysMenu> menus = new ArrayList<>();
+    /**
+     * 档案转接接收成员（不持久化，动态计算）
+     */
+    private Boolean beTransform = Boolean.FALSE;
 
     public SysUser() {
         super();
@@ -170,5 +174,13 @@ public class SysUser extends DataEntity {
 
     public void setDeparts(List<AcKeyMap> departs) {
         this.departs = departs;
+    }
+
+    public Boolean getBeTransform() {
+        return beTransform;
+    }
+
+    public void setBeTransform(Boolean beTransform) {
+        this.beTransform = beTransform;
     }
 }

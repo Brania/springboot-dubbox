@@ -338,4 +338,10 @@ public class SystemService implements ISystemService {
     public void deleteRoleById(String roleId) {
         sysRoleMapper.deleteById(roleId);
     }
+
+
+    @Override
+    public List<SysUser> queryPreTransformUsers() {
+        return sysUserMapper.queryPreTransformUsers();
+    }
 }

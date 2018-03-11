@@ -34,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,6 +74,7 @@ public class StudentController {
 
     @GetMapping(value = "/list")
     @License(action = Action.Check)
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_DEPT')")
     public Page<Student> list(@RequestParam(value = "pageNum", defaultValue = "1") int page,
                               @RequestParam(value = "page.size", defaultValue = Constants.PAGE_SIZE) int pageSize,
                               @RequestParam Map<String, Object> searchParams) {

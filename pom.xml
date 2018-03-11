@@ -26,9 +26,6 @@
     </parent>
 
 
-
-
-
     <repositories>
         <repository>
             <id>nexus</id>
@@ -38,11 +35,11 @@
     </repositories>
 
     <!--<pluginRepositories>-->
-        <!--<pluginRepository>-->
-            <!--<id>nexus</id>-->
-            <!--<name>nexus</name>-->
-            <!--<url>http://115.28.32.143:8081/repository/maven-public/</url>-->
-        <!--</pluginRepository>-->
+    <!--<pluginRepository>-->
+    <!--<id>nexus</id>-->
+    <!--<name>nexus</name>-->
+    <!--<url>http://115.28.32.143:8081/repository/maven-public/</url>-->
+    <!--</pluginRepository>-->
     <!--</pluginRepositories>-->
 
     <properties>
@@ -72,6 +69,7 @@
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <webmagic.version>0.6.1</webmagic.version>
         <poi.version>3.14</poi.version>
+        <hutool.version>4.0.6</hutool.version>
     </properties>
 
     <dependencyManagement>
@@ -85,6 +83,12 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
 
             <!-- dubbox -->

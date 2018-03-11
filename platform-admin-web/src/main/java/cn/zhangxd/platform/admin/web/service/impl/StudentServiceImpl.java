@@ -8,6 +8,7 @@
 
 package cn.zhangxd.platform.admin.web.service.impl;
 
+import cn.hutool.core.util.IdcardUtil;
 import cn.zhangxd.platform.admin.web.domain.*;
 import cn.zhangxd.platform.admin.web.domain.common.ArchiveStat;
 import cn.zhangxd.platform.admin.web.domain.common.LogImpExcel;
@@ -39,7 +40,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -380,11 +380,20 @@ public class StudentServiceImpl implements StudentService {
             student = this.studentRepository.findByStudentNo(keywords);
         }
 
-        // 兼容条码枪自动查询
+        // 兼容外网学生档案查询
+        // 查询条件: 身份证号码+学号
         if (student == null) {
-            student = this.getStudentInfoBarcode(keywords);
+            String idCard = StringUtils.substring(keywords, 0, keywords.length() - Constants.NJXZC_BARCODE_RULES);
+            log.info("解析身份证号码:{}", idCard);
+            // TODO: 身份证的合法性校验无意义
+            if (IdcardUtil.isValidCard(idCard)) {
+                String studentNo = keywords.substring(idCard.length());
+                student = this.studentRepository.findByIdCardAndStudentNo(idCard, studentNo);
+            }else{
+                // 查询规则: 将字符串末尾八位作为学号字段
+                student = this.getStudentInfoBarcode(keywords);
+            }
         }
-
         return student;
     }
 

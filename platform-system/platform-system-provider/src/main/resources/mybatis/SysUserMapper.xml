@@ -53,6 +53,12 @@
         WHERE a.login_name = #{loginName}
     </select>
 
+
+    <select id="getById" resultType="cn.zhangxd.platform.system.api.entity.SysUser">
+        <include refid="selectColumns"/>
+        WHERE a.id = #{id}
+    </select>
+
     <!-- 分页查询用户信息 -->
     <select id="findList" resultType="cn.zhangxd.platform.system.api.entity.SysUser">
         <include refid="selectColumns"/>

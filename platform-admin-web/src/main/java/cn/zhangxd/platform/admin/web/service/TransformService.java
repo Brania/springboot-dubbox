@@ -24,11 +24,20 @@ public interface TransformService {
      *
      * @return
      */
-    Boolean finishTransformEvent();
+    Boolean finishTransformEvent(String id) throws Exception;
 
-
+    /**
+     * 检查所有未完成的档案交接流程
+     *
+     * @return
+     */
     List<Transform> listAllUndo();
 
-    Boolean findNotifyByLogin();
+    /**
+     * 登录查询，是否需要接收档案交接
+     *
+     * @return
+     */
+    Transform findNotifyByLogin();
 
 }

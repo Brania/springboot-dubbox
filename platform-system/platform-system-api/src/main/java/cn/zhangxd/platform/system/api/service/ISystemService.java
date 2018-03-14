@@ -161,8 +161,18 @@ public interface ISystemService {
 
     /**
      * 查询档案交接人员列表
+     *
      * @return
      */
     List<SysUser> queryPreTransformUsers();
+
+    /**
+     * 完成档案交接流程
+     *
+     * @param fromMemId
+     * @param toMemId
+     * @return
+     */
+    Boolean handleFinishTransform(String fromMemId, String toMemId);
 
 }

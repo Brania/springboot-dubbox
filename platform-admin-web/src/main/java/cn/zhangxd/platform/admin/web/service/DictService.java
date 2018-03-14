@@ -42,6 +42,8 @@ public interface DictService {
 
     Depart findDepartById(Long id);
 
+    Depart findDepartByCode(String code);
+
     Depart findCurrentUserDepart();
 
     Depart persistDepart(Depart depart);

@@ -46,7 +46,29 @@ public class SystemService implements ISystemService {
     @Autowired
     private SysMenuMapper sysMenuMapper;
 
-    //User
+    @Override
+    @Transactional(readOnly = false)
+    public Boolean handleFinishTransform(String fromMemId, String toMemId) {
+
+        Boolean hasRole = sysRoleMapper.findListByUserId(toMemId).stream().filter(sysRole -> sysRole.getName().equals("ROLE_DEPT")).count() > 0;
+        if (!hasRole) {
+            // 设置档案管理员角色&菜单
+            SysUser sysUser = sysUserMapper.getById(toMemId);
+            SysUser fromUser = sysUserMapper.getById(fromMemId);
+            fromUser.setEnabled(Boolean.FALSE);
+
+            SysRole sysRole = sysRoleMapper.findAllList().stream().filter(sysRole1 -> sysRole1.getName().equals("ROLE_DEPT")).findFirst().get();
+            List<SysRole> sysRoles = sysUser.getRoles();
+            sysRoles.add(sysRole);
+            sysUser.setRoles(sysRoles);
+
+            sysUser.setDeparts(sysUserMapper.getUserAccessPolicy(fromUser.getId()));
+            sysUserMapper.insertUserRole(sysUser);
+            sysUserMapper.insertUserAccessPolicy(sysUser);
+            sysUserMapper.update(fromUser);
+        }
+        return Boolean.TRUE;
+    }
 
     @Override
     public SysUser getUserByLoginName(String loginName) {

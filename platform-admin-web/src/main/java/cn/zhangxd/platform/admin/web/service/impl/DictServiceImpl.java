@@ -65,6 +65,11 @@ public class DictServiceImpl implements DictService {
 
 
     @Override
+    public Depart findDepartByCode(String code) {
+        return departRepository.findByCode(code);
+    }
+
+    @Override
     public Depart findCurrentUserDepart() {
         AuthUser authUser = WebUtils.getCurrentUser();
         List<AcKeyMap> acKeyMaps = authUser.getAccessPolicy();

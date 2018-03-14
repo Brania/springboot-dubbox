@@ -1,6 +1,7 @@
 package cn.zhangxd.platform.admin.web.domain;
 
 import cn.zhangxd.platform.admin.web.util.IdEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -17,7 +18,8 @@ public class Transform extends IdEntity {
     private String fromMemberId;
     private String toMemberId;
     private Boolean done;
-    private String fromDepart;
+    private String deptName;
+    private String deptCode;
     private String marks;
 
     @Column(name = "form_member_id")
@@ -47,14 +49,22 @@ public class Transform extends IdEntity {
         this.done = done;
     }
 
-
-    @Column(name = "from_depart")
-    public String getFromDepart() {
-        return fromDepart;
+    @Column(name = "dept_name")
+    public String getDeptName() {
+        return deptName;
     }
 
-    public void setFromDepart(String fromDepart) {
-        this.fromDepart = fromDepart;
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    @Column(name = "dept_code")
+    public String getDeptCode() {
+        return deptCode;
+    }
+
+    public void setDeptCode(String deptCode) {
+        this.deptCode = deptCode;
     }
 
     @Column(name = "marks")

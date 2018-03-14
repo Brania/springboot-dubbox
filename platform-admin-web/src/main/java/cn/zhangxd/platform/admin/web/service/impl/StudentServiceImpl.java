@@ -1,11 +1,3 @@
-/*
- * Author:  ch-hui
- *
- * Copyright (c) 2017 Nanjing Hodoo Information Technology Co.,Ltd. All rights reserved.
- *
- * Email:   ch000.hui@gmail.com
- */
-
 package cn.zhangxd.platform.admin.web.service.impl;
 
 import cn.hutool.core.util.IdcardUtil;

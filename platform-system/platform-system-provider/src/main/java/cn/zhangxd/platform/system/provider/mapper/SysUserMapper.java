@@ -25,6 +25,13 @@ public interface SysUserMapper extends CrudDao<SysUser> {
     SysUser getByLoginName(String loginName);
 
     /**
+     * 根据ID查询用户
+     * @param id
+     * @return
+     */
+    SysUser getById(String id);
+
+    /**
      * 查询用户访问策略
      *
      * @param userId

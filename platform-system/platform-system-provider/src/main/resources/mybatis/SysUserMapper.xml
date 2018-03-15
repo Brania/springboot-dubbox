@@ -41,9 +41,9 @@
     <select id="queryPreTransformUsers" resultType="cn.zhangxd.platform.system.api.entity.SysUser">
         <include refid="selectColumns"/>
         WHERE NOT exists(
-          SELECT * from sys_user_access b WHERE b.user_id=a.id
+        SELECT * from sys_user_access b WHERE b.user_id=a.id
         ) AND a.enabled=1 and not exists(
-          SELECT * from sys_user_role c WHERE c.user_id=a.id AND c.role_id!='1'
+        SELECT * from sys_user_role c WHERE c.user_id=a.id AND c.role_id!='1'
         )
     </select>
 
@@ -174,6 +174,13 @@
             SELECT #{id}, #{depart.code}, #{depart.name} FROM dual
         </foreach>
     </insert>
+
+
+    <select id="getAcMapByCode" resultType="cn.zhangxd.platform.system.api.entity.AcKeyMap">
+        select user_id as uid, ac_depart_code as code, ac_depart_name as name
+        from sys_user_access
+        where ac_depart_code = #{code}
+    </select>
 
     <!-- 插入用户和角色关联表数据 -->
     <insert id="insertUserRole">

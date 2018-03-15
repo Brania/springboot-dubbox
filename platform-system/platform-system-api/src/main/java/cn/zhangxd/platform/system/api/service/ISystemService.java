@@ -17,6 +17,13 @@ import java.util.List;
 public interface ISystemService {
 
     /**
+     * 根据具有选中院系代码访问权限的用户名
+     * @param code
+     * @return
+     */
+    String loadUsernameByAcKeyCode(String code);
+
+    /**
      * 根据登录名获取用户
      *
      * @param loginName 登录名
@@ -174,5 +181,8 @@ public interface ISystemService {
      * @return
      */
     Boolean handleFinishTransform(String fromMemId, String toMemId);
+
+
+
 
 }

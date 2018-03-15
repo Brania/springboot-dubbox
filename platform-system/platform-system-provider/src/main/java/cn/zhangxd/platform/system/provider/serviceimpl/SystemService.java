@@ -1,5 +1,6 @@
 package cn.zhangxd.platform.system.provider.serviceimpl;
 
+import cn.zhangxd.platform.system.api.entity.AcKeyMap;
 import cn.zhangxd.platform.system.provider.mapper.SysMenuMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -45,6 +46,17 @@ public class SystemService implements ISystemService {
      */
     @Autowired
     private SysMenuMapper sysMenuMapper;
+
+
+    @Override
+    public String loadUsernameByAcKeyCode(String code) {
+        String username = "";
+        List<AcKeyMap> keys = sysUserMapper.getAcMapByCode(code);
+        if (null != keys && keys.size() > 0) {
+            username = keys.stream().findFirst().map(acKeyMap -> sysUserMapper.get(acKeyMap.getUid()).getName()).get();
+        }
+        return username;
+    }
 
     @Override
     @Transactional(readOnly = false)

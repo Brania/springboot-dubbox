@@ -295,6 +295,7 @@ public class StudentServiceImpl implements StudentService {
         } else {
             saveOrUpdateStudent = new Student();
             saveOrUpdateStudent.setCreateTime(createOrUpdateTime);
+            saveOrUpdateStudent.setStatus(TransmitEnum.TRANSIENT);
         }
         // TODO : 重构Student实体，对允许为空属性使用Optional容器包裹
         saveOrUpdateStudent.setExamineeNo(student.getExamineeNo());
@@ -351,7 +352,7 @@ public class StudentServiceImpl implements StudentService {
         saveOrUpdateStudent.setPrimaryPhone(student.getPrimaryPhone());
         saveOrUpdateStudent.setBackupPhone(student.getBackupPhone());
         saveOrUpdateStudent.setSources(Constants.ADD_SOURCE);
-        saveOrUpdateStudent.setStatus(TransmitEnum.TRANSIENT);
+
         return studentRepository.save(saveOrUpdateStudent);
     }
 

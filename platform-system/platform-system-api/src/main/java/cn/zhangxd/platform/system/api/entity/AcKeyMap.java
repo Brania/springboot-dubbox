@@ -25,6 +25,8 @@ public class AcKeyMap implements Serializable {
 
     private static final long serialVersionUID = -1798673550419169714L;
 
+    private String uid;
+
     private String code;
 
     private String name;
@@ -43,5 +45,13 @@ public class AcKeyMap implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

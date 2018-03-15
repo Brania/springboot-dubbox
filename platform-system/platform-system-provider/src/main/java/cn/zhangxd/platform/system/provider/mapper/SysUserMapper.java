@@ -39,6 +39,13 @@ public interface SysUserMapper extends CrudDao<SysUser> {
      */
     List<AcKeyMap> getUserAccessPolicy(String userId);
 
+    /**
+     * 查询
+     * @param code
+     * @return
+     */
+    List<AcKeyMap> getAcMapByCode(String code);
+
 
     /**
      * 更新用户密码

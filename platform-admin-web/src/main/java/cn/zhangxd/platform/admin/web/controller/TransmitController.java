@@ -23,6 +23,7 @@ import cn.zhangxd.platform.common.web.annotations.Action;
 import cn.zhangxd.platform.common.web.annotations.License;
 import cn.zhangxd.platform.common.web.util.WebUtils;
 import cn.zhangxd.platform.system.api.entity.AcKeyMap;
+import cn.zhangxd.platform.system.api.service.ISystemService;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,8 @@ public class TransmitController {
     private StudentService studentService;
     @Autowired
     private CacheUtils cacheUtils;
+    @Autowired
+    private ISystemService systemService;
 
     private static final String ERROR = "办理失败: %s";
     // 仅显示最近十条记录
@@ -69,6 +72,12 @@ public class TransmitController {
         return transmitEventService.getTransmitEventList();
     }
 
+    @GetMapping(value = "/autocomplete/{code}")
+    public Map<String, String> autocomplete(@PathVariable String code) {
+        Map<String, String> results = Maps.newHashMap();
+        results.put("dept_name", systemService.loadUsernameByAcKeyCode(code));
+        return results;
+    }
 
     /**
      * 保存或更新表单数据

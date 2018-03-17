@@ -31,6 +31,10 @@ spring:
 
 server:
   port: 8080
+  ssl:
+    key-store: classpath:_.njxzc.edu.cn_tomcat.jks
+    key-store-password: MYNIC13579
+    enabled: true
   tomcat:
     accesslog:
       debug: true #请求响应数据调试

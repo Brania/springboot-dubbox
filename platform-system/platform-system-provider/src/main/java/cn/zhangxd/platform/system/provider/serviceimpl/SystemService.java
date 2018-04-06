@@ -130,7 +130,19 @@ public class SystemService implements ISystemService {
 
     @Override
     @Transactional(readOnly = false)
-    public SysUser saveUser(SysUser user) {
+    public SysUser saveUser(SysUser user) throws Exception {
+        Boolean hasAccessPolicy = Boolean.FALSE;
+        // 更新用户与管理院系关联
+        if (user.getDeparts() != null && !user.getDeparts().isEmpty()) {
+            // TODO: 前端设置限制最多选择一个院系
+            String deptCode = user.getDeparts().get(0).getCode();
+            // TODO: 主管院系涉及到档案转接，只允许设置一个院系主管
+            if (sysUserMapper.getAcMapByCode(deptCode).size() > 0) {
+                throw new Exception(String.format("%s档案管理员已接管，如需更换管理员请启动交接流程。", user.getDeparts().get(0).getName()));
+            }
+            hasAccessPolicy = Boolean.TRUE;
+        }
+
         if (StringHelper.isBlank(user.getId())) {
             user.preInsert();
             sysUserMapper.insert(user);
@@ -147,10 +159,8 @@ public class SystemService implements ISystemService {
             sysUserMapper.insertUserRole(user);
         }
 
-        // 更新用户与管理院系关联
-        if (user.getDeparts() != null && !user.getDeparts().isEmpty()) {
+        if (hasAccessPolicy) {
             sysUserMapper.insertUserAccessPolicy(user);
-
         }
         return user;
     }

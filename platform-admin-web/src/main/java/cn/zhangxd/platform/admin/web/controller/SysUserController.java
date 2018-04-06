@@ -146,7 +146,7 @@ public class SysUserController extends BaseController {
      */
     @PreAuthorize("hasAuthority('sys:user:edit')")
     @PostMapping(value = "")
-    public SysUser saveUser(@Valid @RequestBody SysUser user) {
+    public SysUser saveUser(@Valid @RequestBody SysUser user) throws Exception {
 
         String password = user.getPassword();
         //用户密码不能为空

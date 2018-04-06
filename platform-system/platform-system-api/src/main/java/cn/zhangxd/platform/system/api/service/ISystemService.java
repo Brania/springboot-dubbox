@@ -18,6 +18,7 @@ public interface ISystemService {
 
     /**
      * 根据具有选中院系代码访问权限的用户名
+     *
      * @param code
      * @return
      */
@@ -54,7 +55,7 @@ public interface ISystemService {
      * @param user 用户
      * @return the sys user
      */
-    SysUser saveUser(SysUser user);
+    SysUser saveUser(SysUser user) throws Exception;
 
     /**
      * 更新用户信息
@@ -181,8 +182,6 @@ public interface ISystemService {
      * @return
      */
     Boolean handleFinishTransform(String fromMemId, String toMemId);
-
-
 
 
 }

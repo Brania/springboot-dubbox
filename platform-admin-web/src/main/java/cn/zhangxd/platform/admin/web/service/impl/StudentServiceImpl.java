@@ -75,6 +75,11 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Student getStudentByIdCard(String idCard) {
+        return studentRepository.getStudentByIdCard(idCard);
+    }
+
+    @Override
     public Integer countStudentTransmitTimes(Long id) {
         Integer times = 0;
         Student student = studentRepository.findOne(id);

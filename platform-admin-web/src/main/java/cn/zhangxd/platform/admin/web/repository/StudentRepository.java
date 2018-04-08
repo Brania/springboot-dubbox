@@ -50,6 +50,9 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     List<Student> findByRollDepartAndStatus(Depart depart, TransmitEnum status);
 
+    @Query(value = "select * from xz_student s where right(s.id_card,6)=?1",nativeQuery = true)
+    Student getStudentByIdCard(String idCard);
+
     /**
      * 统计院系学生人数
      *

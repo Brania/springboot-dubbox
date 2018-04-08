@@ -45,6 +45,7 @@ public class AuthUser extends AbstractAuthUser {
      */
     private String mobile;
 
+
     /**
      * 访问决策
      */
@@ -151,4 +152,5 @@ public class AuthUser extends AbstractAuthUser {
     public void setAccessPolicy(List<AcKeyMap> accessPolicy) {
         this.accessPolicy = accessPolicy;
     }
+
 }

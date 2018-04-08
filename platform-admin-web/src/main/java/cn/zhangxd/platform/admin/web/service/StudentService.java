@@ -39,6 +39,13 @@ public interface StudentService {
     Iterable<Student> findAll();
 
     /**
+     * 根据身份证后六位查询
+     * @param idCard
+     * @return
+     */
+    Student getStudentByIdCard(String idCard);
+
+    /**
      * 指定勾选记录导出学生条码
      *
      * @param ids

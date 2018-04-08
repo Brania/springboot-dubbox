@@ -1,7 +1,9 @@
 package cn.zhangxd.platform.admin.web;
 
+import cn.zhangxd.platform.admin.web.security.utils.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,8 +12,13 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The type Web admin application.
@@ -24,6 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class})
 public class WebAdminApplication {
 
+    @Autowired
+    private TokenUtil jwtTokenUtil;
+
     /**
      * Logger
      */
@@ -35,8 +45,18 @@ public class WebAdminApplication {
      * @return the string
      */
     @RequestMapping
-    public String hello() {
-        return "Hello World!";
+    public Map<String, Object> hello(Authentication authentication) {
+        final UserDetails userDetails = (UserDetails) authentication.getDetails();
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        Map<String, Object> tokenMap = new HashMap<>();
+
+        tokenMap.put("access_token", token);
+        tokenMap.put("expires_in", jwtTokenUtil.getExpiration());
+        tokenMap.put("token_type", TokenUtil.TOKEN_TYPE_BEARER);
+        // 认证学号
+        tokenMap.put("credentials", authentication.getCredentials());
+        return tokenMap;
     }
 
 

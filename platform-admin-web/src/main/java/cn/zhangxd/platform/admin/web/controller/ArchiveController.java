@@ -16,15 +16,14 @@ import cn.zhangxd.platform.admin.web.domain.dto.ArchiveDto;
 import cn.zhangxd.platform.admin.web.domain.dto.ArchiveItemDto;
 import cn.zhangxd.platform.admin.web.domain.dto.TransmitRecordDto;
 import cn.zhangxd.platform.admin.web.enums.TransmitEventEnum;
+import cn.zhangxd.platform.admin.web.security.model.AuthUser;
 import cn.zhangxd.platform.admin.web.service.ArchiveService;
 import cn.zhangxd.platform.admin.web.service.StudentService;
 import cn.zhangxd.platform.admin.web.service.TransmitEventService;
-import cn.zhangxd.platform.admin.web.util.CacheUtils;
-import cn.zhangxd.platform.admin.web.util.Constants;
-import cn.zhangxd.platform.admin.web.util.Generator;
-import cn.zhangxd.platform.admin.web.util.PaginationUtil;
+import cn.zhangxd.platform.admin.web.util.*;
 import cn.zhangxd.platform.common.web.annotations.Action;
 import cn.zhangxd.platform.common.web.annotations.License;
+import cn.zhangxd.platform.common.web.util.WebUtils;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -34,11 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA
@@ -161,9 +162,14 @@ public class ArchiveController {
      * @return
      */
     @GetMapping(value = "/search/{keywords}")
-    public Map<String, Object> searchStudentArchive(@PathVariable String keywords) {
+    public Map<String, Object> searchStudentArchive(@PathVariable String keywords) throws Exception {
 
-
+        AuthUser authUser = WebUtils.getCurrentUser();
+        // 未授权角色
+        Boolean unauthorized = authUser.getAuthorities().size() == 1 && authUser.getAuthorities().stream().filter(simpleGrantedAuthority -> StringUtils.equals("ROLE_USER", simpleGrantedAuthority.getAuthority())).count() == 1;
+        if (unauthorized && !StringUtils.equals(keywords, authUser.getPassword())) {
+            throw new Exception("非法操作异常");
+        }
         StopWatch stopWatch = new StopWatch(ArchiveController.class.getName());
         stopWatch.start(Constants.ARCHIVE_QUERY_METHOD);
 

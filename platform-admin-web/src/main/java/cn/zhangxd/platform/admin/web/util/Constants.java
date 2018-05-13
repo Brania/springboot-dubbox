@@ -94,11 +94,19 @@ public class Constants {
 
     public static final long DAY = 1000 * 60 * 60 * 12;
 
+    /**
+     * 记录入学办理全部数据
+     * <p>招就处管理员</p>
+     */
     public static final String NJXZC_ENROLL_HASH = "njxzc_enroll_hash";
+
+    /**
+     * 记录系统用户办理入学档案列表
+     * <p>院系档案管理员</p>
+     */
+    public static final String NJXZC_ENROLL_LIST = "%s_NJXZC_ENROLL_LIST";
+
     public static final String ENROLL_KEY = "sno_%s_archive_rec";
-
-
-
 
 
 }

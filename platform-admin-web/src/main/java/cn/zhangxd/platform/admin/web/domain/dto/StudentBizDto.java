@@ -19,6 +19,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 档案转接办理记录DTO
@@ -75,5 +76,5 @@ public class StudentBizDto implements Serializable {
     private String status;
 
 
-    private LocalDate bizTime;
+    private LocalDateTime bizTime;
 }

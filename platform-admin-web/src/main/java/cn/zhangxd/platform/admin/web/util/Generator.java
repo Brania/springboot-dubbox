@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,7 +88,7 @@ public class Generator {
                 .status(convert(student.getStatus()))
                 .depart(depart)
                 .admissionNo(student.getAdmissionNo())
-                .bizTime(LocalDate.now()).build();
+                .bizTime(LocalDateTime.now()).build();
     }
 
 

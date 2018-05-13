@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -111,16 +112,17 @@ public class TransmitController {
     public Map<String, Object> viewTransmitByEnroll() {
 
         Map<String, Object> results = Maps.newHashMap();
+        AuthUser authUser = WebUtils.getCurrentUser();
+        String operKey = String.format(Constants.NJXZC_ENROLL_LIST, authUser.getId());
+        List<String> students = cacheUtils.opsForHash().values(operKey);
 
-
-        List<String> students = cacheUtils.opsForHash().values(Constants.NJXZC_ENROLL_HASH);
-
-        List<ArchiveOperatorDto> operatorDtoList = students.stream().map(s -> JSON.parseObject(s, ArchiveOperatorDto.class)).sorted(Comparator.comparing(ArchiveOperatorDto::getBizTime).reversed()).collect(Collectors.toList());
+        // 仅显示当天办理记录
+        List<ArchiveOperatorDto> operatorDtoList = students.stream().map(s -> JSON.parseObject(s, ArchiveOperatorDto.class)).filter(archiveOperatorDto -> archiveOperatorDto.getBizTime().toLocalDate().isEqual(LocalDate.now())).sorted(Comparator.comparing(ArchiveOperatorDto::getBizTime).reversed()).collect(Collectors.toList());
 
         // 统计当天办理数量
-        Long todayOperTimes = operatorDtoList.stream().filter(archiveOperatorDto -> archiveOperatorDto.getBizTime().equals(LocalDate.now())).count();
-        results.put("students", JSON.toJSONString(operatorDtoList.size() > ARCHIVE_TOTAL_INDEX ? operatorDtoList.subList(0, ARCHIVE_TOTAL_INDEX) : operatorDtoList));
-        Long totalOperTimes = cacheUtils.opsForHash().size(Constants.NJXZC_ENROLL_HASH);
+        Long todayOperTimes = operatorDtoList.stream().filter(archiveOperatorDto -> archiveOperatorDto.getBizTime().toLocalDate().equals(LocalDate.now())).count();
+        results.put("students", JSON.toJSONString(operatorDtoList));
+        Long totalOperTimes = cacheUtils.opsForHash().size(operKey);
         results.put("totalOperTimes", totalOperTimes);
         results.put("todayOperTimes", todayOperTimes);
         return results;
@@ -151,7 +153,6 @@ public class TransmitController {
         }
 
         if (studentOptional.isPresent()) {
-
             Student student = studentOptional.get();
             if (student.getStatus().equals(TransmitEnum.TRANSIENT)) {
                 // 入学档案业务办理
@@ -161,16 +162,14 @@ public class TransmitController {
             }
             // 操作缓存
             String listKey = String.format(Constants.ENROLL_KEY, student.getStudentNo());
-            if (!cacheUtils.opsForHash().hasKey(Constants.NJXZC_ENROLL_HASH, listKey)) {
-                cacheUtils.opsForHash().put(Constants.NJXZC_ENROLL_HASH, listKey, JSON.toJSONString(Generator.generate(student)));
-            }
-            results.put("students", cacheUtils.opsForHash().values(Constants.NJXZC_ENROLL_HASH));
-            Long totalOperTimes = cacheUtils.opsForHash().size(Constants.NJXZC_ENROLL_HASH);
-            results.put("totalOperTimes", totalOperTimes);
+            AuthUser operAuthUser = WebUtils.getCurrentUser();
+            String operKey = String.format(Constants.NJXZC_ENROLL_LIST, operAuthUser.getId());
+            cacheUtils.opsForHash().put(operKey, listKey, JSON.toJSONString(Generator.generate(student)));
+            results.put("students", cacheUtils.opsForHash().values(operKey));
+            results.put("totalOperTimes", cacheUtils.opsForHash().size(operKey));
         } else {
             results.put("message", String.format(ERROR, "无效条码"));
         }
-
         results.put("success", result);
         return results;
     }

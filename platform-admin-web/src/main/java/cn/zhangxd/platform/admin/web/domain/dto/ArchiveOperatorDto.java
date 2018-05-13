@@ -16,7 +16,7 @@ import cn.zhangxd.platform.admin.web.enums.SexEnum;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 对REDIS中档案JSON字符串转换
@@ -73,7 +73,7 @@ public class ArchiveOperatorDto implements Serializable {
     /**
      * 操作日期
      */
-    private LocalDate bizTime;
+    private LocalDateTime bizTime;
 
 
 }

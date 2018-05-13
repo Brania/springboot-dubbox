@@ -30,7 +30,7 @@ spring:
 
 
 server:
-  port: 8080
+  port: 9081
   ssl:
     key-store: classpath:_.njxzc.edu.cn_tomcat.jks
     key-store-password: MYNIC13579

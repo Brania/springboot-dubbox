@@ -67,4 +67,4 @@ spring:
     password: xxx
     testConnection: false
 server:
-  port: 8085
+  port: 9082

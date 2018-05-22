@@ -31,7 +31,7 @@ public interface DashboardService {
      *
      * @return
      */
-    Map<String, Integer> countArchiveAmount();
+    Map<String, Integer> countArchiveAmount(Integer statYear);
 
 
     /**

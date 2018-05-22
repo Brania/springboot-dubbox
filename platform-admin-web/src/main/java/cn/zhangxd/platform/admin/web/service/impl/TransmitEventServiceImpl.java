@@ -80,13 +80,13 @@ public class TransmitEventServiceImpl implements TransmitEventService {
 
 
     @Override
-    public Long countArchiveAcceptedAmountByDepart(Depart depart, TransmitEventType type) {
-        return transmitRecordRepository.countByTransmitEventTypeAndDepart(type, depart);
+    public Long countArchiveAcceptedAmountByDepart(Depart depart, TransmitEventType type, Integer statYear) {
+        return transmitRecordRepository.countByTransmitEventTypeAndDepartAndStudentEntranceYear(type, depart, statYear);
     }
 
 
     @Override
-    public Integer countArchiveRollOutAmount() {
+    public Integer countArchiveRollOutAmount(Integer statYear) {
 
         Integer rollOutAmount = 0;
 
@@ -94,13 +94,13 @@ public class TransmitEventServiceImpl implements TransmitEventService {
 
         List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.WAITING);
         if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
-            rollOutAmount = SecurityUtils.hasAdminRole() ? transmitRecordRepository.countByTransmitEventType(transmitEventTypes.get(0)).intValue() : transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
+            rollOutAmount = SecurityUtils.hasAdminRole() ? transmitRecordRepository.countByTransmitEventType(transmitEventTypes.get(0)).intValue() : transmitRecordRepository.countByTransmitEventTypeAndDepartAndStudentEntranceYear(transmitEventTypes.get(0), depart, statYear).intValue();
         }
         return rollOutAmount;
     }
 
     @Override
-    public Integer countArchiveReceiveAmount() {
+    public Integer countArchiveReceiveAmount(Integer statYear) {
 
 
         Integer receiveAmount = 0;
@@ -109,7 +109,7 @@ public class TransmitEventServiceImpl implements TransmitEventService {
 
         List<TransmitEventType> transmitEventTypes = transmitEventTypeRepository.findByNextStatus(TransmitEnum.RECEIVED);
         if (null != transmitEventTypes && transmitEventTypes.size() > 0) {
-            receiveAmount = SecurityUtils.hasAdminRole() ? transmitRecordRepository.countByTransmitEventType(transmitEventTypes.get(0)).intValue() : transmitRecordRepository.countByTransmitEventTypeAndDepart(transmitEventTypes.get(0), depart).intValue();
+            receiveAmount = SecurityUtils.hasAdminRole() ? transmitRecordRepository.countByTransmitEventType(transmitEventTypes.get(0)).intValue() : transmitRecordRepository.countByTransmitEventTypeAndDepartAndStudentEntranceYear(transmitEventTypes.get(0), depart, statYear).intValue();
         }
 
         return receiveAmount;
@@ -122,7 +122,7 @@ public class TransmitEventServiceImpl implements TransmitEventService {
      * @return
      */
     @Override
-    public Integer countArchiveToReceiveAmount() {
+    public Integer countArchiveToReceiveAmount(Integer statYear) {
 
         List<TransmitEnum> list = Lists.newArrayList();
         list.add(TransmitEnum.TRANSIENT);

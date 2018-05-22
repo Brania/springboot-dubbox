@@ -64,23 +64,32 @@ public interface TransmitEventService {
      *
      * @return
      */
-    Integer countArchiveToReceiveAmount();
+    Integer countArchiveToReceiveAmount(Integer statYear);
 
     /**
      * 统计转专业转出档案数
      *
      * @return
      */
-    Integer countArchiveRollOutAmount();
+    Integer countArchiveRollOutAmount(Integer statYear);
 
     /**
      * 统计转专业转入档案数
      *
      * @return
      */
-    Integer countArchiveReceiveAmount();
+    Integer countArchiveReceiveAmount(Integer statYear);
 
-    Long countArchiveAcceptedAmountByDepart(Depart depart, TransmitEventType type);
+    /**
+     * 按入学年份统计已接收档案数
+     *
+     * @param depart
+     * @param type
+     * @param statYear
+     * @return
+     */
+    Long countArchiveAcceptedAmountByDepart(Depart depart, TransmitEventType type, Integer statYear);
+
     /**
      * 查询学生档案
      *

@@ -31,7 +31,7 @@ public interface TransmitRecordRepository extends PagingAndSortingRepository<Tra
 
     List<TransmitRecord> findByStudentOrderByFluctTimeDesc(Student student);
 
-    Long countByTransmitEventTypeAndDepart(TransmitEventType transmitEventType, Depart depart);
+    Long countByTransmitEventTypeAndDepartAndStudentEntranceYear(TransmitEventType transmitEventType, Depart depart, Integer statYear);
 
     Long countByTransmitEventType(TransmitEventType transmitEventType);
 

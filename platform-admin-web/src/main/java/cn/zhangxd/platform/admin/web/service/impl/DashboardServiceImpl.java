@@ -66,7 +66,7 @@ public class DashboardServiceImpl implements DashboardService {
      * @return
      */
     @Override
-    public Map<String, Integer> countArchiveAmount() {
+    public Map<String, Integer> countArchiveAmount(Integer statYear) {
         Map<String, Integer> archiveMap = Maps.newHashMap();
         if (SecurityUtils.hasAdminRole()) {
             archiveMap.put("totalCount", studentService.countTotalArchive().intValue());
@@ -74,11 +74,11 @@ public class DashboardServiceImpl implements DashboardService {
             archiveMap.put("totalCount", studentService.countArchiveByDepart(dictService.findCurrentUserDepart()).intValue());
         }
         // 待接收
-        archiveMap.put("toRecCount", transmitEventService.countArchiveToReceiveAmount());
+        archiveMap.put("toRecCount", transmitEventService.countArchiveToReceiveAmount(statYear));
         // 转出
-        archiveMap.put("rollOutCount", transmitEventService.countArchiveRollOutAmount());
+        archiveMap.put("rollOutCount", transmitEventService.countArchiveRollOutAmount(statYear));
         // 转入
-        archiveMap.put("receiveCount", transmitEventService.countArchiveReceiveAmount());
+        archiveMap.put("receiveCount", transmitEventService.countArchiveReceiveAmount(statYear));
 
         return archiveMap;
     }
@@ -110,7 +110,7 @@ public class DashboardServiceImpl implements DashboardService {
             Optional<TransmitEventType> eventTypeOptional = transmitEventTypeRepository.findByNextStatus(TransmitEnum.ACCEPTED).stream().findFirst();
             Integer acceptCount = 0;
             if (eventTypeOptional.isPresent()) {
-                acceptCount = transmitEventService.countArchiveAcceptedAmountByDepart(depart, eventTypeOptional.get()).intValue();
+                acceptCount = transmitEventService.countArchiveAcceptedAmountByDepart(depart, eventTypeOptional.get(), statYear).intValue();
             }
 
             archiveStat.setAcceptedAmount(acceptCount);

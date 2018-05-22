@@ -68,7 +68,6 @@ public class TransmitRecord extends IdEntity {
     /**
      * 转接操作时间
      */
-    //private LocalDateTime localDateTime = LocalDateTime.now();
     private Date fluctTime;
 
 

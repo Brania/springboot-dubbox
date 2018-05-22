@@ -45,7 +45,7 @@ public class DashboardController extends BaseController {
         Map<String, Object> statMap = Maps.newHashMap();
         log.info("统计年份={}", statYear);
         // 汇总
-        statMap.putAll(dashboardService.countArchiveAmount());
+        statMap.putAll(dashboardService.countArchiveAmount(statYear));
         // 待转入档案列表
         statMap.put("rollStudents", dashboardService.findTransmitTodoList());
         // 院系统计

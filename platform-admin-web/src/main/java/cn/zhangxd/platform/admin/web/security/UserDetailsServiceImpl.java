@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         SysUser user = systemService.getUserByLoginName(loginName);
 
         if (user == null) {
-            // TODO: 新增逻辑，根据学生档案身份证后六位查询
+            // TODO: 新增逻辑，根据学生档案身份证后八位查询
             Student student = studentService.getStudentByIdCard(loginName);
             // 构造学生授权对象
             if (null != student) {

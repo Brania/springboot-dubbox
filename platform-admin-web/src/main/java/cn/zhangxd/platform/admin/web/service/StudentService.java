@@ -39,7 +39,17 @@ public interface StudentService {
     Iterable<Student> findAll();
 
     /**
+     * 批量标记档案
+     *
+     * @param remarks
+     * @param stuIds
+     * @return
+     */
+    Boolean flagStudent(List<String> stuIds, String remarks);
+
+    /**
      * 根据身份证后六位查询
+     *
      * @param idCard
      * @return
      */

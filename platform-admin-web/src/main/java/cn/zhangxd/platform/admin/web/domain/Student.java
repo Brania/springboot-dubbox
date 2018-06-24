@@ -130,6 +130,10 @@ public class Student extends IdEntity {
      */
     private String trackNo;
 
+    /**
+     * 标记-add
+     */
+    private String remarks;
 
     /**
      * 更新时间
@@ -384,14 +388,12 @@ public class Student extends IdEntity {
         this.trackNo = trackNo;
     }
 
+    @Column(name = "remarks")
+    public String getRemarks() {
+        return remarks;
+    }
 
-/**
- * 转接记录按照时间降序排序,第一条记录作为状态值
- *
- * @return
- */
-//    public TransmitRecord findLastestRecord() {
-//        Stream<TransmitRecord> stream = records.stream().sorted((v1, v2) -> v2.getLocalDateTime().isAfter(v1.getLocalDateTime()) ? 0 : 1);
-//        return stream.findFirst().get();
-//    }
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 }

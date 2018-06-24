@@ -75,6 +75,23 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Boolean flagStudent(List<String> stuIds, String remarks) {
+
+        Boolean flag = true;
+        try {
+            stuIds.forEach(sid -> {
+                Student student = this.findOne(Long.parseLong(sid));
+                student.setRemarks(remarks);
+                studentRepository.save(student);
+            });
+        } catch (Exception e) {
+            flag = false;
+            log.error("批量标记学生档案失败: {}", e.getMessage());
+        }
+        return flag;
+    }
+
+    @Override
     public Student getStudentByIdCard(String idCard) {
         return studentRepository.getStudentByIdCard(idCard);
     }
@@ -88,6 +105,7 @@ public class StudentServiceImpl implements StudentService {
         }
         return times;
     }
+
 
     @Override
     public Long countArchiveByDepart(Depart depart) {
@@ -387,7 +405,7 @@ public class StudentServiceImpl implements StudentService {
             if (IdcardUtil.isValidCard(idCard)) {
                 String studentNo = keywords.substring(idCard.length());
                 student = this.studentRepository.findByIdCardAndStudentNo(idCard, studentNo);
-            }else{
+            } else {
                 // 查询规则: 将字符串末尾八位作为学号字段
                 student = this.getStudentInfoBarcode(keywords);
             }
@@ -434,33 +452,28 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Page<Student> getStudentPages(Map<String, Object> searchParams, Paging paging) {
-
-
-//        String[] sortParams = PaginationUtil.buildSortableParam(String.valueOf(searchParams.get("orderBy")));
-//        paging.setOrderBy(sortParams[0]);
-//        paging.setOrderType(sortParams[1]);
-
-
-//        PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize(), paging.getOrderBy(), paging.getOrderType());
-
         // 限定查询排序规则
         PageRequest pageRequest = PaginationUtil.buildPageRequest(paging.getPageNum(), paging.getPageSize());
         return studentRepository.findAll((Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             List<Predicate> orPredicate = new ArrayList<>();
-
+            // 性别
             if (null != searchParams.get("gender") && String.valueOf(searchParams.get("gender")).length() > 0) {
                 predicates.add(criteriaBuilder.equal(root.get("sex"), SexEnum.valueOf(String.valueOf(searchParams.get("gender")))));
             }
-
+            // 院系
             if (null != searchParams.get("depart") && String.valueOf(searchParams.get("depart")).length() > 0) {
                 predicates.add(criteriaBuilder.equal(root.get("depart").get("code"), String.valueOf(searchParams.get("depart"))));
             }
-
+            // 录取年份
             if (null != searchParams.get("entranceYear") && String.valueOf(searchParams.get("entranceYear")).length() > 0) {
                 predicates.add(criteriaBuilder.equal(root.get("entranceYear"), Integer.parseInt(String.valueOf(searchParams.get("entranceYear")))));
             }
-
+            // 档案状态
+            if (null != searchParams.get("status") && String.valueOf(searchParams.get("status")).length() > 0) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), TransmitEnum.valueOf(String.valueOf(searchParams.get("status")))));
+            }
+            // 模糊匹配
             if (null != searchParams.get("sno") && String.valueOf(searchParams.get("sno")).length() > 0) {
                 StringJoiner joiner = new StringJoiner("");
                 joiner.add("%").add(String.valueOf(searchParams.get("sno"))).add("%");

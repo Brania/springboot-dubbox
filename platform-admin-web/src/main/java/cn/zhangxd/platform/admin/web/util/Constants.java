@@ -55,6 +55,8 @@ public class Constants {
      */
     public static final String IMPORT_SOURCE = "IMP";
     public static final String ADD_SOURCE = "ADD";
+    public static final String XLS = "xls";
+    public static final String XLSX = "xlsx";
 
 
     /**

@@ -24,7 +24,7 @@ public enum TransmitEnum {
      * 晓庄转接事由逻辑::WAITING->仅转专业::转出一条记录
      * ## 修改枚举需要同步前端项目字典数据 ##
      */
-    TRANSIENT("入学待接收"), ACCEPTED("入学已接受"), WAITING("转出待接收"), RECEIVED("转专业已接收"), DETACHED("毕业转出");
+    TRANSIENT("入学待接收"), ACCEPTED("入学已接收"), WAITING("转出待接收"), RECEIVED("转专业已接收"), DETACHED("毕业转出");
 
     private String name;
 

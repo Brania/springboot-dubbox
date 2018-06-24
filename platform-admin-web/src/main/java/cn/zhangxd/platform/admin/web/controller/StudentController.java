@@ -1,11 +1,3 @@
-/*
- * Author:  ch-hui
- *
- * Copyright (c) 2017 Nanjing Hodoo Information Technology Co.,Ltd. All rights reserved.
- *
- * Email:   ch000.hui@gmail.com
- */
-
 package cn.zhangxd.platform.admin.web.controller;
 
 import cn.zhangxd.platform.admin.web.domain.Student;
@@ -22,6 +14,7 @@ import cn.zhangxd.platform.admin.web.util.Generator;
 import cn.zhangxd.platform.admin.web.util.PaginationUtil;
 import cn.zhangxd.platform.common.web.annotations.Action;
 import cn.zhangxd.platform.common.web.annotations.License;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -46,6 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Created with IntelliJ IDEA
@@ -80,6 +74,25 @@ public class StudentController {
                               @RequestParam Map<String, Object> searchParams) {
 
         return studentService.getStudentPages(searchParams, PaginationUtil.generate(page, pageSize));
+    }
+
+    @PostMapping(value = "/flag")
+    public Map<String, Object> flagStudent(@RequestBody Map<String, String> params) {
+        Map<String, Object> resMap = Maps.newHashMap();
+        String stuIds = params.get("studentIds");
+        String remarks = params.get("remarks");
+        if (StringUtils.isNotEmpty(stuIds) && StringUtils.isNotEmpty(remarks)) {
+            List<String> stuList = Lists.newArrayList();
+            StringTokenizer stringTokenizer = new StringTokenizer(stuIds, Constants.DOT);
+            while (stringTokenizer.hasMoreElements()) {
+                stuList.add(stringTokenizer.nextToken());
+            }
+            resMap.put("success", studentService.flagStudent(stuList, remarks));
+        } else {
+            resMap.put("success", Boolean.FALSE);
+            resMap.put("message", "参数校验错误");
+        }
+        return resMap;
     }
 
 
@@ -164,7 +177,6 @@ public class StudentController {
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentLength(res.length);
-//        log.info("Print File Size={}", res.length);
 
         return new ResponseEntity<>(res, headers, status);
     }
@@ -186,7 +198,7 @@ public class StudentController {
             String suffix = originFileName.substring(originFileName
                     .lastIndexOf(".") + 1);
 
-            if ("xls".equals(suffix) || "xlsx".equals(suffix)) {
+            if (StringUtils.equals(Constants.XLS, suffix) || StringUtils.equals(Constants.XLSX, suffix)) {
                 ImportStudentExcelTask importStudentExcelTask = new ImportStudentExcelTask();
                 importStudentExcelTask.setStudentService(studentService);
                 importStudentExcelTask.setExcelFile(file);

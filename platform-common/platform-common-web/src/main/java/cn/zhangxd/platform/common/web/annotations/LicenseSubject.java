@@ -37,7 +37,7 @@ public class LicenseSubject implements Serializable {
      */
     private Integer warnDays = 15;
 
-    private LocalDate buyTime = LocalDate.of(2018, Month.MAY, 30);
+    private LocalDate buyTime = LocalDate.of(2020, Month.MAY, 30);
     /**
      * 是否免费
      */

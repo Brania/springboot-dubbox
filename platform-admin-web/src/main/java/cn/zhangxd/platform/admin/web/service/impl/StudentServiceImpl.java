@@ -481,6 +481,7 @@ public class StudentServiceImpl implements StudentService {
                 orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), String.valueOf(searchParams.get("sno"))));
                 orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), String.valueOf(searchParams.get("sno"))));
                 orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));
+                orPredicate.add(criteriaBuilder.like(root.get("remarks"), joiner.toString()));
                 predicates.add(criteriaBuilder.or(orPredicate.toArray(new Predicate[]{})));
             }
             return predicates.size() > 0 ? PaginationUtil.buildQueryPredicate(predicates, criteriaBuilder) : null;

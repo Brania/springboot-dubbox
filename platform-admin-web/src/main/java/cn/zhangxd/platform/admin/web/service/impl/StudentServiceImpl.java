@@ -617,6 +617,10 @@ public class StudentServiceImpl implements StudentService {
                     student.setTrackNo(s.getYdh());
                 }
 
+                if (StringUtils.isNoneBlank(s.getRemarks())) {
+                    student.setRemarks(s.getRemarks());
+                }
+
                 studentRepository.save(student);
             });
         }

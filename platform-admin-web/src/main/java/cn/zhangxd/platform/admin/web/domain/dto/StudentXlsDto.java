@@ -51,6 +51,10 @@ public class StudentXlsDto implements Serializable {
     private String daqx;
     private String jsdw;
     private String ydh;
+    /**
+     * 档案标记
+     */
+    private String remarks;
 
 
 }

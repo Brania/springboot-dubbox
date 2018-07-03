@@ -61,7 +61,7 @@ public class ReportController {
     @Autowired
     private StudentService studentService;
 
-    private static final String[] COLUMNS = {"ksh", "lqh", "xh", "xm", "xb", "mz", "sfzh", "zy", "yx", "bj", "lqnf", "txdz", "yzbm", "lxr", "lxdh1", "lxdh2", "dah", "sydq", "daqx", "jsdw", "ydh"};
+    private static final String[] COLUMNS = {"ksh", "lqh", "xh", "xm", "xb", "mz", "sfzh", "zy", "yx", "bj", "lqnf", "txdz", "yzbm", "lxr", "lxdh1", "lxdh2", "dah", "sydq", "daqx", "jsdw", "ydh", "remarks"};
 
     /**
      * 导出学生档案Excel表格
@@ -149,6 +149,7 @@ public class ReportController {
             stuMap.put(COLUMNS[18], student.getArchiveGonePlace());
             stuMap.put(COLUMNS[19], student.getReceiveUnit());
             stuMap.put(COLUMNS[20], student.getTrackNo());
+            stuMap.put(COLUMNS[21], student.getRemarks());
             return stuMap;
         }).collect(Collectors.toList());
 

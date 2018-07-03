@@ -76,6 +76,13 @@ public class StudentController {
         return studentService.getStudentPages(searchParams, PaginationUtil.generate(page, pageSize));
     }
 
+
+    /**
+     * 手动档案标记
+     *
+     * @param params
+     * @return
+     */
     @PostMapping(value = "/flag")
     public Map<String, Object> flagStudent(@RequestBody Map<String, String> params) {
         Map<String, Object> resMap = Maps.newHashMap();

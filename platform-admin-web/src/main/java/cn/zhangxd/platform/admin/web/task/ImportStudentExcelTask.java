@@ -160,6 +160,10 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
                                 case 20:
                                     dto.setYdh(cellStr);
                                     break;
+                                // 标记
+                                case 21:
+                                    dto.setRemarks(cellStr);
+                                    break;
                             }
                         } else {
                             continue;

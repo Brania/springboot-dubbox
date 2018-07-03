@@ -180,6 +180,7 @@ public class StudentServiceImpl implements StudentService {
                 orPredicate.add(criteriaBuilder.equal(root.get("examineeNo"), studentNo));
                 orPredicate.add(criteriaBuilder.equal(root.get("studentNo"), studentNo));
                 orPredicate.add(criteriaBuilder.like(root.get("name"), joiner.toString()));
+                orPredicate.add(criteriaBuilder.like(root.get("remarks"), joiner.toString()));
                 predicates.add(criteriaBuilder.or(orPredicate.toArray(new Predicate[]{})));
 
             }

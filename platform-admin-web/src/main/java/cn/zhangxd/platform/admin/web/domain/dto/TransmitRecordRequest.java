@@ -59,5 +59,10 @@ public class TransmitRecordRequest implements Serializable{
      */
     private String depart;
 
+    /**
+     * 批量办理档案标记
+     */
+    private String requestParam;
+
 
 }

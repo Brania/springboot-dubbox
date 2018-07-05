@@ -44,13 +44,15 @@ public interface StudentRepository extends PagingAndSortingRepository<Student, L
 
     List<Student> findByIdIn(Collection<Long> ids);
 
+    List<Student> findByRemarksLike(String remarks);
+
     List<Student> findByStatusIn(Collection<TransmitEnum> status);
 
     List<Student> findByDepartAndStatusIn(Depart depart, Collection<TransmitEnum> status);
 
     List<Student> findByRollDepartAndStatus(Depart depart, TransmitEnum status);
 
-    @Query(value = "select * from xz_student s where right(s.id_card,8)=?1",nativeQuery = true)
+    @Query(value = "select * from xz_student s where right(s.id_card,8)=?1", nativeQuery = true)
     Student getStudentByIdCard(String idCard);
 
     /**

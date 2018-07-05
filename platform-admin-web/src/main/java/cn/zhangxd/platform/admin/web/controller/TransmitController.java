@@ -29,6 +29,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -105,6 +106,29 @@ public class TransmitController {
     @PostMapping(value = "/handle")
     public Map<String, Object> handleTransmitRecord(@RequestBody TransmitRecordRequest request) {
         return transmitEventService.handleTransmitEvent(request);
+    }
+
+    /**
+     * 按照档案标记设置离校档案
+     *
+     * @param requestMap
+     * @return
+     */
+    @PostMapping(value = "/detached/archive")
+    public Map<String, Object> setDetachedArchive(@RequestBody Map<String, String> requestMap) {
+
+        Map<String, Object> resMap = Maps.newHashMap();
+        String searchRequest = requestMap.get("remarks");
+        Assert.isTrue(StringUtils.isNotEmpty(searchRequest), "批量毕业离校条件不能为空");
+        Boolean success = transmitEventService.handleDetachedArchive(searchRequest);
+        if (!success) {
+            resMap.put("success", Boolean.FALSE);
+            resMap.put("message", "批量办理离校档案失败");
+        } else {
+            resMap.put("success", Boolean.TRUE);
+            resMap.put("message", "办理离校成功");
+        }
+        return resMap;
     }
 
     @GetMapping(value = "/enroll/list")

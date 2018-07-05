@@ -48,6 +48,17 @@ public interface StudentService {
     Boolean flagStudent(List<String> stuIds, String remarks);
 
     /**
+     * 模糊匹配标记档案
+     *
+     * @param remarks
+     * @return
+     */
+    List<Student> getStudentLikeFlag(String remarks);
+
+
+    Student saveOne(Student student);
+
+    /**
      * 根据身份证后六位查询
      *
      * @param idCard

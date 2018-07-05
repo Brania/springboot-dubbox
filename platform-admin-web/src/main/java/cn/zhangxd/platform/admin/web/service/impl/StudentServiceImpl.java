@@ -75,6 +75,16 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
+    public Student saveOne(Student student) {
+        return studentRepository.save(student);
+    }
+
+    @Override
+    public List<Student> getStudentLikeFlag(String remarks) {
+        return studentRepository.findByRemarksLike(remarks);
+    }
+
+    @Override
     public Boolean flagStudent(List<String> stuIds, String remarks) {
 
         Boolean flag = true;
@@ -245,7 +255,10 @@ public class StudentServiceImpl implements StudentService {
                 if (null != rec.getFromDepart()) {
                     transmitRecordDto.setTransmitForm(rec.getFromDepart().getName());
                 }
-                transmitRecordDto.setTransmitTo(rec.getDepart().getName());
+                if(null != rec.getDepart()){
+                    transmitRecordDto.setTransmitTo(rec.getDepart().getName());
+                }
+
                 return transmitRecordDto;
             }).collect(Collectors.toList()));
         }

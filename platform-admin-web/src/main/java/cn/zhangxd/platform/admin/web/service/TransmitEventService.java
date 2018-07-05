@@ -52,6 +52,14 @@ public interface TransmitEventService {
     Map<String, Object> handleAuditTransmitEvent(TransmitRecordRequest recordRequest, Boolean flag);
 
     /**
+     * 根据查询条件批量设置离校档案
+     *
+     * @param searchRequest
+     * @return
+     */
+    Boolean handleDetachedArchive(String searchRequest);
+
+    /**
      * 办理入学
      *
      * @param student

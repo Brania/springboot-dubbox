@@ -216,6 +216,51 @@ public class TransmitEventServiceImpl implements TransmitEventService {
         return results;
     }
 
+    @Override
+    public Boolean handleDetachedArchive(String searchRequest) {
+
+        AuthUser authUser = WebUtils.getCurrentUser();
+        Boolean flag = Boolean.TRUE;
+        try {
+            if (StringUtils.isNotEmpty(searchRequest)) {
+                List<Student> students = studentService.getStudentLikeFlag(searchRequest);
+                if (null != students && students.size() > 0) {
+                    log.info("批量设置学生档案离校，设置离校档案数: {}", students.size());
+
+                    students.forEach(student -> {
+                        // 改变档案状态
+
+                        Student student1 = studentService.findOne(student.getId());
+                        student1.setStatus(TransmitEnum.DETACHED);
+                        studentService.saveOne(student1);
+
+                        // 添加转接记录
+
+                        TransmitRecord transmitRecord = new TransmitRecord();
+                        // 毕业离校状态只允许设置单个
+                        TransmitEventType transmitEventType = transmitEventTypeRepository.findByNextStatus(TransmitEnum.DETACHED).stream().findFirst().get();
+                        transmitRecord.setTransmitEventType(transmitEventType);
+                        transmitRecord.setRemarks("批量设置毕业离校");
+                        transmitRecord.setStudent(student1);
+                        transmitRecord.setOpUserId(authUser.getId());
+                        transmitRecord.setOpUserName(authUser.getLoginName());
+                        Date currentTime = new Date();
+                        transmitRecord.setFluctTime(currentTime);
+                        transmitRecord.setCustodian("毕业档案");
+                        transmitRecord.setCreateTime(currentTime);
+
+                        transmitRecordRepository.save(transmitRecord);
+                    });
+                }
+            }
+
+        } catch (Exception e) {
+            flag = Boolean.FALSE;
+            log.error("招就处批量设置离校档案失败: {}", e.getMessage());
+        }
+        return flag;
+    }
+
     /**
      * 核心业务处理::转接办理
      *
@@ -271,9 +316,14 @@ public class TransmitEventServiceImpl implements TransmitEventService {
                 }
             } else {
                 // 批量处理
-                Map<String, Object> searchMap = Maps.newHashMap();
-                searchMap.put("depart", recordRequest.getDepart());
-                List<Student> students = studentService.findStudentBySearchParam(searchMap);
+                String searchParam = recordRequest.getRequestParam();
+                List<Student> students = studentService.getStudentLikeFlag(recordRequest.getRequestParam());
+                if (students.size() == 0) {
+                    Student student = studentService.getStudentInfo(searchParam);
+                    if (null != student) {
+                        students.add(student);
+                    }
+                }
                 students.stream().map(s -> this.generate(recordRequest, s, transmitEventType, user)).forEach(record -> transmitRecordRepository.save(record));
                 for (Student student : students) {
                     if (student.getStatus().equals(TransmitEnum.DETACHED)) {

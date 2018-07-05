@@ -56,5 +56,10 @@ public class StudentXlsDto implements Serializable {
      */
     private String remarks;
 
+    /**
+     * 毕业年份
+     */
+    private String graduationYear;
+
 
 }

@@ -164,6 +164,10 @@ public class ImportStudentExcelTask extends AbstractExecutableTask {
                                 case 21:
                                     dto.setRemarks(cellStr);
                                     break;
+                                // 毕业年份
+                                case 22:
+                                    dto.setGraduationYear(cellStr);
+                                    break;
                             }
                         } else {
                             continue;

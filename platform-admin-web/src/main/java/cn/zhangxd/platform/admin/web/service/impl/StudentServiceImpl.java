@@ -256,7 +256,7 @@ public class StudentServiceImpl implements StudentService {
                 if (null != rec.getFromDepart()) {
                     transmitRecordDto.setTransmitForm(rec.getFromDepart().getName());
                 }
-                if(null != rec.getDepart()){
+                if (null != rec.getDepart()) {
                     transmitRecordDto.setTransmitTo(rec.getDepart().getName());
                 }
 
@@ -634,6 +634,10 @@ public class StudentServiceImpl implements StudentService {
 
                 if (StringUtils.isNoneBlank(s.getRemarks())) {
                     student.setRemarks(s.getRemarks());
+                }
+
+                if (StringUtils.isNotEmpty(s.getGraduationYear())) {
+                    student.setGraduationYear(Integer.parseInt(s.getGraduationYear()));
                 }
 
                 studentRepository.save(student);

@@ -77,6 +77,11 @@ public class StudentDetailDto implements Serializable {
      * 录取年份
      */
     private Integer entranceYear;
+
+    /**
+     * 毕业年份
+     */
+    private Integer graduationYear;
     /**
      * 家庭地址
      */

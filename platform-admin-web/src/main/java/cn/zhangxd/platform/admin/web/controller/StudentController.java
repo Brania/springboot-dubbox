@@ -88,7 +88,7 @@ public class StudentController {
         Map<String, Object> resMap = Maps.newHashMap();
         String stuIds = params.get("studentIds");
         String remarks = params.get("remarks");
-        if (StringUtils.isNotEmpty(stuIds) && StringUtils.isNotEmpty(remarks)) {
+        if (StringUtils.isNotEmpty(stuIds)) {
             List<String> stuList = Lists.newArrayList();
             StringTokenizer stringTokenizer = new StringTokenizer(stuIds, Constants.DOT);
             while (stringTokenizer.hasMoreElements()) {

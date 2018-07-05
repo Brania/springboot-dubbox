@@ -226,6 +226,7 @@ public class StudentServiceImpl implements StudentService {
             dto.setName(student.getName());
             dto.setSex(student.getSex());
             dto.setEntranceYear(student.getEntranceYear());
+            dto.setGraduationYear(student.getGraduationYear());
             dto.setExamineeNo(student.getExamineeNo());
             dto.setFamilyAddress(student.getFamilyAddress());
             dto.setIdCard(student.getIdCard());

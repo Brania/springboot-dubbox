@@ -85,6 +85,10 @@ public class Student extends IdEntity {
      */
     private Integer entranceYear;
     /**
+     * 毕业年份
+     */
+    private Integer graduationYear;
+    /**
      * 家庭地址->档案邮寄通信地址
      */
     private String familyAddress;
@@ -395,5 +399,14 @@ public class Student extends IdEntity {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    @Column(name = "graduation_year")
+    public Integer getGraduationYear() {
+        return graduationYear;
+    }
+
+    public void setGraduationYear(Integer graduationYear) {
+        this.graduationYear = graduationYear;
     }
 }
